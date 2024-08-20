@@ -1,3 +1,20 @@
+/*
+ * @Description: 
+ * @Author: wangyonghong
+ * @Date: 2024-08-16 22:56:16
+ * @LastEditTime: 2024-08-20 14:17:53
+ */
+// import React, { Component } from 'react'
+// import { Rate } from 'antd';
+
+// export default class App extends Component {
+//   render() {
+//     return (
+//       <Rate allowHalf defaultValue={2.5} />
+//     )
+//   }
+// }
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -23,3 +40,4 @@ function App() {
 }
 
 export default App;
+
