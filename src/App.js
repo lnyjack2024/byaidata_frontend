@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-16 22:56:16
- * @LastEditTime: 2024-08-20 17:37:31
+ * @LastEditTime: 2024-08-27 18:26:53
  */
 import React, { Component } from 'react'
 import { BrowserRouter , Route , Routes } from 'react-router-dom';
@@ -14,8 +14,8 @@ export default class App extends Component {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path='/' Component={Home}></Route>
-          <Route path='/login' Component={Login}></Route>
+          <Route path='/home' Component={Home}></Route>
+          <Route path='/' Component={Login}></Route>
         </Routes>
       </BrowserRouter>
       )
