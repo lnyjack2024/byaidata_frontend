@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-16 22:56:16
- * @LastEditTime: 2024-08-20 16:11:16
+ * @LastEditTime: 2024-09-25 17:14:21
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -12,9 +12,9 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <App />
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
