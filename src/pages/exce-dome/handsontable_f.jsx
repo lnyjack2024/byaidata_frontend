@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-23 10:22:54
- * @LastEditTime: 2024-09-26 16:03:54
+ * @LastEditTime: 2024-09-27 10:54:15
  */
 import React from 'react'
 import { useRef, useState, useEffect } from 'react';
@@ -10,33 +10,39 @@ import { Button } from 'antd';
 import { HotTable } from "@handsontable/react";
 // import { data } from "./constants";
 import { addClassesToRows } from "./hooksCallbacks.ts";
-import { reqHandsontableDatas } from '../../api/index'
+import { reqHandsontableDatas, reqHandsontableDatasUpdate } from '../../api/index'
 
 import 'handsontable/dist/handsontable.full.min.css';
 
 export default function HotInstance_f() {
     const hotRef = useRef(null);
     const [data, setData ] = useState([])
-    useEffect(()=>{
-      const fetchData = async () => {
-        const reqData = await reqHandsontableDatas()
-        console.log(333,reqData)
-        setData(reqData)
-        };
-      fetchData();
-    },[])
+          useEffect(()=>{
+            const fetchData = async () => {
+              const reqData = await reqHandsontableDatas()
+              setData(reqData)
+              };
+            fetchData();
+          },[])
+
     const saveClickCallback = (event) => {
         const hot = hotRef.current?.hotInstance;
-        fetch('https://handsontable.com/docs/scripts/json/save.json', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ data: hot?.getData() }),
-        }).then(() => {
-          console.log(555,hot?.getData());
-        });
+        // fetch('https://handsontable.com/docs/scripts/json/save.json', {
+        //   method: 'POST',
+        //   mode: 'no-cors',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({ data: hot?.getData() }),
+        // }).then(() => {
+        //   console.log(555,hot?.getData());
+        // });
+        // console.log(555,hot?.getData());
+        // console.log(666,JSON.stringify({ data: hot?.getData() }));
+        const response = reqHandsontableDatasUpdate(hot?.getData())
+        if(response){
+
+        }
     };
 
   return (
@@ -65,10 +71,18 @@ export default function HotInstance_f() {
               beforeRenderer={addClassesToRows}
               manualRowMove={true}
               navigableHeaders={true}
-              minSpareRows={1}
+              // minSpareRows={1}
               persistentState={true} //开启本地保存
-            
               licenseKey="non-commercial-and-evaluation"
+              afterChange={(changes)=>{
+                changes?.forEach(([row, prop, oldValue, newValue]) => {
+                    // console.log(666,row, prop, oldValue, newValue)
+                    var rowData = hotRef.current?.hotInstance.getDataAtRow(row);
+                    console.log(rowData[0],prop,newValue);
+
+                })
+              }}
+            
           />
     </div>
   )

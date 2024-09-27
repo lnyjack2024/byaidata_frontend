@@ -2,26 +2,35 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-08-29 18:48:30
+ * @LastEditTime: 2024-09-27 19:32:29
  */
 import React from 'react'
+import { Navigate } from 'react-router-dom'
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
+import { reqLogin } from '../../api/index'
 
 export default function Login() {
     const navigate = useNavigate();
-    const onFinish =(values) => {
-        const { username, password } = values
+    const onFinish = async (values) => {
+        const response = await reqLogin(values)
+        const username = response?.data?.[0].name
 
-        if(username === 'wyh' && password === 'admin'){
+        if(response.status === 1){
             message.success('登录成功...')
             memoryUtils.user = username
+            storageUtils.saveUser(username)
             navigate('/')
         }else{
           message.error('账户密码错误...')
         }
+    }
+    const user = memoryUtils.user
+    if(user !== undefined){
+      return <Navigate to='/' replace/>
     }
     return (
         // <div className='login'>

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-20 17:15:33
- * @LastEditTime: 2024-08-30 14:25:28
+ * @LastEditTime: 2024-09-27 17:23:05
  */
 
 import React, { Component }  from 'react';
@@ -14,9 +14,9 @@ import LeftNav from '../../components/left-nav'
 const { Header, Footer, Sider, Content } = Layout;
 
 const headerStyle = {
-  textAlign: 'center',
+  textAlign: 'right',
   color: '#fff',
-  height: 90,
+  height: 70,
   paddingInline: 48,
   lineHeight: '64px',
   // backgroundColor: '#4096ff',
