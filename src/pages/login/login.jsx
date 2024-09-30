@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-09-27 19:32:29
+ * @LastEditTime: 2024-09-29 14:42:53
  */
 import React from 'react'
 import { Navigate } from 'react-router-dom'
@@ -35,7 +35,7 @@ export default function Login() {
     return (
         // <div className='login'>
         <div style={{width:'100%',height:'100%',display:'flex'}}>
-          <div style={{height: '500px',width:'500px',margin:'auto',paddingLeft:'60px',paddingTop:'80px'}}>
+          <div style={{height: '500px',width:'500px',margin:'auto',paddingLeft:'60px',paddingTop:'250px'}}>
           <div style={{paddingLeft:'65px',paddingBottom:'30px',fontSize:'30px',fontWeight:'bold'}}>本原智数管理系统</div>
           <Form style={{ maxWidth: 360 }} onFinish={onFinish} >
               <Form.Item

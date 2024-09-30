@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-20 17:15:10
- * @LastEditTime: 2024-08-29 17:46:46
+ * @LastEditTime: 2024-09-30 13:21:50
  */
 import React, { Component } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -17,8 +17,6 @@ export default class Login extends Component {
   }
 
   onFinish = (values) => {
-    console.log(222,this)
-
     const { username, password } = values
     if(username === 'admin' && password === 'admin'){
         message.success('登录成功...')
@@ -26,16 +24,10 @@ export default class Login extends Component {
   }
   
   onFinishFailed = (errorInfo) => {
-          console.log('Fail:', errorInfo);
-
-    // if(!username === 'admin' || !password === 'admin'){
-    //   console.log('Fail:', errorInfo);
-    //   message.error('账户或者密码错误...')
     
   }
   render() {
     return (
-      // <div className='login'>
       <div style={{width:'100%',height:'100%',display:'flex'}}>
         <div style={{height: '500px',width:'500px',margin:'auto',paddingLeft:'60px',paddingTop:'80px'}}>
         <div style={{paddingLeft:'65px',paddingBottom:'30px',fontSize:'30px',fontWeight:'bold'}}>本原智数管理系统</div>
