@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-09-30 20:45:38
+ * @LastEditTime: 2024-09-30 21:03:06
  */
 import React from 'react'
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -159,7 +159,7 @@ const Home = () => {
         <div>
             <header style={{color:'white',display:'flex',alignItems:'center', height:'80px'}}>
                 <img src={logo} alt='logo' style={{width:'50px', height:'50px',margin:'0 15px'}}/>
-                <h1>本原智数系统</h1>
+                <div>本原智数系统</div>
                 </header>
                 <Menu
                     defaultSelectedKeys={['/']}

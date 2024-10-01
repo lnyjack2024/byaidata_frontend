@@ -2,19 +2,22 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-09-29 14:42:53
+ * @LastEditTime: 2024-10-01 11:36:57
  */
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
 import { reqLogin } from '../../api/index'
 
 export default function Login() {
     const navigate = useNavigate();
+    // const user = memoryUtils.user
+    // if(!storageUtils.getUser()){
+    //   return <Navigate to='/' replace/>
+    // }
     const onFinish = async (values) => {
         const response = await reqLogin(values)
         const username = response?.data?.[0].name
@@ -28,10 +31,7 @@ export default function Login() {
           message.error('账户密码错误...')
         }
     }
-    const user = memoryUtils.user
-    if(user !== undefined){
-      return <Navigate to='/' replace/>
-    }
+   
     return (
         // <div className='login'>
         <div style={{width:'100%',height:'100%',display:'flex'}}>
