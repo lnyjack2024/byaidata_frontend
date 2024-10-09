@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-10-01 11:36:57
+ * @LastEditTime: 2024-10-09 09:57:43
  */
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -21,11 +21,11 @@ export default function Login() {
     const onFinish = async (values) => {
         const response = await reqLogin(values)
         const username = response?.data?.[0].name
-
         if(response.status === 1){
             message.success('登录成功...')
             memoryUtils.user = username
             storageUtils.saveUser(username)
+            storageUtils.saveToken(response.token)
             navigate('/')
         }else{
           message.error('账户密码错误...')

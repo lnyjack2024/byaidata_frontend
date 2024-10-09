@@ -2,7 +2,7 @@
  * @Description: 储存登录用户信息
  * @Author: wangyonghong
  * @Date: 2024-09-27 16:48:55
- * @LastEditTime: 2024-09-27 19:29:42
+ * @LastEditTime: 2024-10-09 10:19:00
  */
 const store = require('store')
 const USER_KEY = 'user_key'
@@ -21,6 +21,12 @@ const myStore = {
     removeUser(){
         // localStorage.removeItem(USER_KEY)
         store.remove(USER_KEY)
+    },
+    saveToken(token){
+        localStorage.setItem('TOKEN',token)
+    },
+    getToken(){
+        return localStorage.getItem('TOKEN')
     }
 }
 
