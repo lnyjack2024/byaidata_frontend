@@ -2,9 +2,9 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-10-08 16:30:41
+ * @LastEditTime: 2024-10-09 15:14:05
  */
-import React , { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, Select, message } from 'antd'
 import moment from 'moment';
@@ -93,10 +93,6 @@ const User = () => {
     {
       title: '角色',
       dataIndex: 'role',
-    },
-    {
-      title: '角色ID',
-      dataIndex: 'role_id',
     },
     {
       title: '创建时间',

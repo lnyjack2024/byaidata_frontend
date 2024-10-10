@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-10-09 09:57:43
+ * @LastEditTime: 2024-10-09 15:43:14
  */
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -14,17 +14,15 @@ import { reqLogin } from '../../api/index'
 
 export default function Login() {
     const navigate = useNavigate();
-    // const user = memoryUtils.user
-    // if(!storageUtils.getUser()){
-    //   return <Navigate to='/' replace/>
-    // }
     const onFinish = async (values) => {
         const response = await reqLogin(values)
         const username = response?.data?.[0].name
+        const role_id = response?.data?.[0].role_id
         if(response.status === 1){
             message.success('登录成功...')
             memoryUtils.user = username
             storageUtils.saveUser(username)
+            storageUtils.saveRole(role_id)
             storageUtils.saveToken(response.token)
             navigate('/')
         }else{
@@ -33,7 +31,6 @@ export default function Login() {
     }
    
     return (
-        // <div className='login'>
         <div style={{width:'100%',height:'100%',display:'flex'}}>
           <div style={{height: '500px',width:'500px',margin:'auto',paddingLeft:'60px',paddingTop:'250px'}}>
           <div style={{paddingLeft:'65px',paddingBottom:'30px',fontSize:'30px',fontWeight:'bold'}}>本原智数管理系统</div>
