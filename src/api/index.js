@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-09 15:01:15
+ * @LastEditTime: 2024-10-10 15:17:33
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -26,3 +26,11 @@ export const reqAddUserDatas = (data) => reqApi( BASE + '/user/add', data, 'POST
 //权限管理-角色列表
 //查询
 export const reqGetRoleDatas = () => reqApi( BASE + '/role/search', {}, 'GET')
+
+//人员管理-部门列表
+export const reqGetDepartmentDatas = (e) => reqApi( BASE + '/person/department', e, 'GET')
+
+//部门列表-删除
+export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/department/delete', data, 'POST')
+
+
