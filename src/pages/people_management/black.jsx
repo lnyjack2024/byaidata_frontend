@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-10-14 17:19:25
+ * @LastEditTime: 2024-10-14 17:27:39
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
 import { Button, Form, Input, Table, Select, Col, Row, DatePicker } from 'antd'
 import dayjs from 'dayjs';
-import './dimission.css'
+import './black.css'
 import { reqGetRosterDatas } from '../../api/index'
 const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
@@ -291,7 +291,7 @@ const Black = () => {
   ];
  
   return (
-    <div className='dimission'>
+    <div className='black'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'
