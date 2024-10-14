@@ -2,33 +2,34 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-11 18:16:48
+ * @LastEditTime: 2024-10-14 15:42:54
  */
 
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
-import { Button, Form, Input, Modal, Popconfirm, Table, Select, message, Col, Row, DatePicker } from 'antd'
-import moment from 'moment';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker } from 'antd'
+import dayjs from 'dayjs';
 import './roster.css'
-import { reqGetUserDatas, reqAddUserDatas } from '../../api/index'
+import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas } from '../../api/index'
 const { RangePicker } = DatePicker;
-const itemLayout = {
-  labelCol:{span:5},wrapperCol:{span:15}
-}
+const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
 
 const Roster = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ id, setId ] = useState(0)
+  const [ dimission_status, setDimissionStatus ] = useState(true)
+  const [ _disable, setDisable ] = useState(false)
   const [ form ] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
-
+  const [ form_add ] = Form.useForm();
+  const [ messageApi, contextHolder ] = message.useMessage();
   useEffect(() => {
     getTableData()
   },[])
 
   const getTableData = async () => {
-    const reqData = await reqGetUserDatas()
+    const reqData = await reqGetRosterDatas()
       setData(reqData.data)
   }
 
@@ -36,41 +37,72 @@ const Roster = () => {
     setIsModalOpen(!isModalOpen)
     if(type === 'add'){
       setModalType(0)
+      setDimissionStatus(true)
+      setDisable(false)
     }else{ 
       setModalType(1)
+      setDimissionStatus(false)
+      setDisable(true)
+      const cloneData = JSON.parse(JSON.stringify(rowData))
+      cloneData.entry_date = dayjs(cloneData.entry_date)
+      cloneData.become_date = dayjs(cloneData.become_date)
+      cloneData.graduation_time = dayjs(cloneData.graduation_time)
+      cloneData.birthday = dayjs(cloneData.birthday)
+      setId(cloneData.id)
+      form_add.setFieldsValue(cloneData)
     }
   }
-  const handDelete = () => {
+  // const handDelete = () => {
+
+  // }
+  const hangFinish = (e) => {
 
   }
-  const hangFinish = (e) => {
-    console.log(e)
-  }
+
   const handleOk = () => {
-    form.validateFields().then( async (val)=>{
-    if(val.base === undefined){
-      val.base = ''
-    }
-    if(val.department === undefined){
-      val.department = ''
-    }
-    const result = await reqAddUserDatas(val)
-    if(result.status === 1){
-      getTableData()
-      setIsModalOpen(false)
-      form.resetFields()
-      message.info('新增成功...')
-    }else{
-      message.error('新增失败...')
-    }
-    console.log(result)
-    }).catch(()=>{
-      messageApi.error('参数有误...请检查!!!')
+    form_add.validateFields().then( async (val)=>{
+     val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
+     val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
+     val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
+     val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
+     if(modalType === 0){
+      const result = await reqAddRosterDatas(val)
+      if(result.status === 1){
+        getTableData()
+        setIsModalOpen(false)
+        form.resetFields()
+        message.info('新增成功...')
+      }else{
+        message.error('新增失败...')
+      }
+     }else{
+      val.edit_id = id
+      const result = await reqEditRosterDatas(val)
+      if(result.status === 1){
+        getTableData()
+        setIsModalOpen(false)
+        form.resetFields()
+        message.info('编辑成功...')
+      }else{
+        message.error('编辑失败...')
+      }
+     }
+   
+     }).catch(()=>{
+       messageApi.error('参数有误...请检查!!!')
     })
+  
   }
+
   const handleCancle = () => {
     setIsModalOpen(false)
-    form.resetFields()
+    form_add.resetFields()
+  }
+  const handSearch = () => {
+    form.validateFields().then( async (val)=>{
+      const reqData = await reqGetRosterDatas(val)
+      setData(reqData.data)
+    })
   }
 
   const handReset = () => {
@@ -78,16 +110,16 @@ const Roster = () => {
   }
   
   const onChange = (date, dateString) => {
-    console.log(dateString);
   };
+
   const column = [
-    {
-      title: '账号',
-      dataIndex: 'account',
-    },
     {
       title: '姓名',
       dataIndex: 'name',
+    },
+    {
+      title: '性别',
+      dataIndex: 'sex',
     },
     {
       title: '部门',
@@ -102,19 +134,208 @@ const Roster = () => {
       dataIndex: 'role',
     },
     {
-      title: '创建时间',
-      dataIndex: 'create_time',
-      render:(create_time)=>{
+      title: '直属上级',
+      dataIndex: 'immediate_superior',
+    },
+    {
+      title: '入职日期',
+      dataIndex: 'entry_date',
+      render:(entry_date)=>{
         return (
-          moment(create_time).format('YYYY-MM-DD HH:mm:ss')
+          dayjs(entry_date).format('YYYY-MM-DD')
         )
       }
     },
     {
-      title: '更新时间',
-      dataIndex: 'update_time', render:(update_time)=>{
+      title: '转正日期',
+      dataIndex: 'become_date',
+      render:(become_date)=>{
         return (
-          moment(update_time).format('YYYY-MM-DD HH:mm:ss')
+          dayjs(become_date).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '合同类型',
+      dataIndex: 'contract_type',
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
+    },
+    {
+      title: '项目名称',
+      dataIndex: 'item',
+    },
+    {
+      title: '项目类型',
+      dataIndex: 'item_type',
+    },
+    {
+      title: '职级',
+      dataIndex: 'position_level',
+    },
+    {
+      title: '是否签约发薪平台',
+      dataIndex: 'is_payment',
+    },
+    {
+      title: '是否购买雇主责任',
+      dataIndex: 'is_employer',
+    },
+    {
+      title: '是否缴纳社保',
+      dataIndex: 'is_social_security',
+    },
+    {
+      title: '出生年月日',
+      dataIndex: 'birthday',
+      render:(birthday)=>{
+        return (
+          dayjs(birthday).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '年龄',
+      dataIndex: 'age',
+    },
+    {
+      title: '身份证',
+      dataIndex: 'id_card',
+    },
+    {
+      title: '身份证有效期',
+      dataIndex: 'id_card_time',
+    },
+    {
+      title: '政治面貌',
+      dataIndex: 'politics_status',
+    },
+    {
+      title: '名族',
+      dataIndex: 'family_name',
+    },
+    {
+      title: '婚姻状况',
+      dataIndex: 'marital_status',
+    },
+    {
+      title: '手机号码',
+      dataIndex: 'number',
+    },
+    {
+      title: '邮箱',
+      dataIndex: 'email',
+    },
+    {
+      title: '户籍所在地',
+      dataIndex: 'domicile',
+    },
+    {
+      title: '现居住地',
+      dataIndex: 'urrent_address',
+    },
+    {
+      title: '紧急联系人',
+      dataIndex: 'emergency_contact',
+    },
+    {
+      title: '与紧急联系人关系',
+      dataIndex: 'emergency_contact_relation',
+    },
+    {
+      title: '紧急联系人手机号',
+      dataIndex: 'emergency_contact_number',
+    },
+    {
+      title: '银行卡卡',
+      dataIndex: 'bank_card',
+    },
+    {
+      title: '银行卡开户行信息',
+      dataIndex: 'pasbank_card_detail',
+    },
+    {
+      title: '是否毕业',
+      dataIndex: 'is_graduation',
+    },
+    {
+      title: '是否留学生',
+      dataIndex: 'is_overseas_student',
+    },
+    {
+      title: '是否全日制',
+      dataIndex: 'is_full_time',
+    },
+    {
+      title: '毕业院校',
+      dataIndex: 'school',
+    },
+    {
+      title: '所学专业',
+      dataIndex: 'specialty',
+    },
+    {
+      title: '毕业时间',
+      dataIndex: 'graduation_time',
+      render:(graduation_time)=>{
+        return (
+          dayjs(graduation_time).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '最高学历',
+      dataIndex: 'education',
+    },
+    {
+      title: '所持证书',
+      dataIndex: 'certificate',
+    },
+    {
+      title: '语言能力',
+      dataIndex: 'language_competence',
+    },
+    {
+      title: '是否二次入职',
+      dataIndex: 'is_two_entry',
+    },
+    {
+      title: '工作经历',
+      dataIndex: 'work_experience',
+    },
+    {
+      title: '招聘渠道',
+      dataIndex: 'recruitment_channel',
+    },
+    {
+      title: '离职日期',
+      dataIndex: 'dimission_date',
+      render:(dimission_date)=>{
+        if(dimission_date){
+          return (
+            dayjs(dimission_date).format('YYYY-MM-DD')
+          )
+        }else{
+          return <></>
+        }
+      }
+    },
+    {
+      title: '离职类型',
+      dataIndex: 'dimission_type',
+    },
+    {
+      title: '离职原因',
+      dataIndex: 'dimission_reason',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
+        return (
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
         )
       }
     },
@@ -124,14 +345,14 @@ const Roster = () => {
         return (
           <div>
             <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
-            <Popconfirm
+            {/* <Popconfirm
               description='是否删除?'
               okText='确认'
               cancelText='取消'
               onConfirm={ () => handDelete(rowData)}
             >
               <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
-            </Popconfirm>
+            </Popconfirm> */}
           </div>
         )
       }
@@ -148,12 +369,12 @@ const Roster = () => {
         >
           <Row>
             <Col span={6}>
-              <Form.Item name="a" label="姓名" {...itemLayout}>
+              <Form.Item name="name" label="姓名" {...itemLayout}>
                 <Input placeholder='请输入姓名'/>
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="b" label="基地" {...itemLayout}>
+              <Form.Item name="base" label="基地" {...itemLayout}>
                 <Select
                   placeholder='请输入基地'
                   style={{textAlign:'left'}}
@@ -195,7 +416,7 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="c" label="部门" {...itemLayout}>
+              <Form.Item name="department" label="部门" {...itemLayout}>
                 <Select
                   style={{textAlign:'left'}}
                   placeholder='请输入部门'
@@ -241,7 +462,7 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="e" label="业务线" {...itemLayout}>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
               <Select
                   placeholder='请输入业务线'
                   style={{textAlign:'left'}}
@@ -275,7 +496,7 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="d" label="合同类型" {...itemLayout}>
+              <Form.Item name="contract_type" label="合同类型" {...itemLayout}>
                 <Select
                   placeholder='请输入合同类型'
                   style={{textAlign:'left'}}
@@ -293,73 +514,77 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="f" label="角色" {...itemLayout}>
+              <Form.Item name="role" label="角色" {...itemLayout}>
                 <Select
                   placeholder='请输入角色'
                   style={{textAlign:'left'}}
                   options={[
                     {
-                      value: '管理者-1',
+                      value: '管理者',
                       label: '管理者',
                     },
                     {
-                      value: '运营负责人-2',
+                      value: '运营负责人',
                       label: '运营负责人',
                     },
                     {
-                      value: '运营人员-3',
+                      value: '运营人员',
                       label: '运营人员',
                     },
                     {
-                      value: '人力总监-4',
+                      value: '人力总监',
                       label: '人力总监',
                     },
                     {
-                      value: '人力经理或主管-5',
+                      value: '人力经理或主管',
                       label: '人力经理或主管',
                     },
                     {
-                      value: '产品经理-6',
+                      value: '产品经理',
                       label: '产品经理',
                     },
                     {
-                      value: '开发人员-7',
+                      value: '开发人员',
                       label: '开发人员',
                     },
                     {
-                      value: '业务负责人-8',
+                      value: '业务负责人',
                       label: '业务负责人',
                     },
                     {
-                      value: '项目负责人-9',
+                      value: '项目负责人',
                       label: '项目负责人',
                     },
                     {
-                      value: '项目经理-10',
+                      value: '项目经理',
                       label: '项目经理',
                     },
                     {
-                      value: '项目主管-11',
+                      value: '项目主管',
                       label: '项目主管',
                     },
                     {
-                      value: '培训师-12',
+                      value: '培训师',
                       label: '培训师',
                     },
                     {
-                      value: '小组长-13',
+                      value: '小组长',
                       label: '小组长',
                     },
                     {
-                      value: '骨干-14',
+                      value: '骨干',
                       label: '骨干',
+                    },
+                    {
+                      value: '标注员',
+                      label: '标注员',
                     }
                   ]}
             />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="g" label="入职日期" {...itemLayout}>
+              <Form.Item name="entry_date" label="入职日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
                   onChange={onChange} 
@@ -370,14 +595,19 @@ const Roster = () => {
             <Col span={6}>
               <Form.Item  >
                 <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;
-                <Button onClick={handReset} type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
-                <Button type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
+                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
           </Row>
         </Form>
       </div>
-      <Table columns={ column } dataSource={ data } rowKey={ data => data.id }/>
+      <Table 
+        columns={ column } 
+        dataSource={ data } 
+        rowKey={ data => data.id }  
+        scroll={{x: 'max-content'}}
+      />
       {contextHolder}
       <Modal
         open={isModalOpen}
@@ -390,7 +620,7 @@ const Roster = () => {
         width={950}
       >
         <Form
-          form={form}
+          form={form_add}
           labelCol={{span:5}} 
           wrapperCol={{span:10}} 
           style={{marginTop:'50px'}}
@@ -400,21 +630,36 @@ const Roster = () => {
             name="name"
             rules={[{required:true,message:'请输入姓名'}]}
           >
-            <Input placeholder='请输入姓名' />
+            <Input placeholder='请输入姓名' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='性别'
             name="sex"
             rules={[{required:true,message:'请输入性别'}]}
           >
-            <Input placeholder='请输入性别' />
+            <Select
+                placeholder='请输入性别'
+                disabled={_disable}
+                options={[
+                  {
+                    value: '男',
+                    label: '男',
+                  },
+                  {
+                    value: '女',
+                    label: '女',
+                  }
+                ]}
+            />
           </Form.Item>
           <Form.Item
             label='部门'
             name="department"
+            initialValue=''
           >
             <Select
               placeholder='请输入部门'
+              disabled={_disable}
               options={[
                 {
                   value: '总经办',
@@ -458,6 +703,7 @@ const Roster = () => {
           <Form.Item
             label='基地'
             name="base"
+            initialValue=''
           >
               <Select
                 placeholder='请输入基地'
@@ -500,68 +746,69 @@ const Roster = () => {
           <Form.Item
             label='角色'
             name="role"
+            initialValue=''
           >
             <Select
               placeholder='请输入角色'
               options={[
                 {
-                  value: '管理者-1',
+                  value: '管理者',
                   label: '管理者',
                 },
                 {
-                  value: '运营负责人-2',
+                  value: '运营负责人',
                   label: '运营负责人',
                 },
                 {
-                  value: '运营人员-3',
+                  value: '运营人员',
                   label: '运营人员',
                 },
                 {
-                  value: '人力总监-4',
+                  value: '人力总监',
                   label: '人力总监',
                 },
                 {
-                  value: '人力经理或主管-5',
+                  value: '人力经理或主管',
                   label: '人力经理或主管',
                 },
                 {
-                  value: '产品经理-6',
+                  value: '产品经理',
                   label: '产品经理',
                 },
                 {
-                  value: '开发人员-7',
+                  value: '开发人员',
                   label: '开发人员',
                 },
                 {
-                  value: '业务负责人-8',
+                  value: '业务负责人',
                   label: '业务负责人',
                 },
                 {
-                  value: '项目负责人-9',
+                  value: '项目负责人',
                   label: '项目负责人',
                 },
                 {
-                  value: '项目经理-10',
+                  value: '项目经理',
                   label: '项目经理',
                 },
                 {
-                  value: '项目主管-11',
+                  value: '项目主管',
                   label: '项目主管',
                 },
                 {
-                  value: '培训师-12',
+                  value: '培训师',
                   label: '培训师',
                 },
                 {
-                  value: '小组长-13',
+                  value: '小组长',
                   label: '小组长',
                 },
                 {
-                  value: '骨干-14',
+                  value: '骨干',
                   label: '骨干',
                 },
                 {
-                  value: '标注员-14',
+                  value: '标注员',
                   label: '标注员',
                 }
               ]}
@@ -570,6 +817,7 @@ const Roster = () => {
           <Form.Item
             label='直属上级'
             name="immediate_superior"
+            initialValue=''
           >
             <Input placeholder='请输入直属上级' />
           </Form.Item>
@@ -581,6 +829,7 @@ const Roster = () => {
             <DatePicker
               placeholder={['请选择时间']}
               style={{width:'200px'}}
+              disabled={_disable}
               />
           </Form.Item>
           <Form.Item
@@ -588,7 +837,7 @@ const Roster = () => {
             name="become_date"
             rules={[{required:true,message:'请输入转正日期'}]}
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
+            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='合同类型'
@@ -597,6 +846,7 @@ const Roster = () => {
           >
             <Select
               placeholder='请输入合同类型'
+              disabled={_disable}
               options={[
                 {
                   value: '劳动合同',
@@ -612,6 +862,7 @@ const Roster = () => {
           <Form.Item
             label='业务线'
             name="service_line"
+            initialValue=''
           >
               <Select
                   placeholder='请输入业务线'
@@ -646,12 +897,14 @@ const Roster = () => {
           <Form.Item
             label='项目名称'
             name="item"
+            initialValue=''
           >
             <Input placeholder='请输入项目名称' />
           </Form.Item>
           <Form.Item
             label='项目类型'
             name="item_type"
+            initialValue=''
           >
               <Select
                   placeholder='请输入项目类型'
@@ -669,10 +922,12 @@ const Roster = () => {
           </Form.Item>
           <Form.Item
             label='职级'
-            name="rank"
+            name="position_level"
+            initialValue=''
           >
               <Select
                 placeholder='请输入职级'
+                disabled={_disable}
                 options={[
                   {
                     value: '初级',
@@ -704,9 +959,11 @@ const Roster = () => {
           <Form.Item
             label='是否签约发薪平台'
             name="is_payment"
+            initialValue='是'
           >
              <Select
                 placeholder='请输入是否签约发薪平台'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -722,9 +979,11 @@ const Roster = () => {
           <Form.Item
             label='是否购买雇主责任'
             name="is_employer"
+            initialValue='是'
           >
             <Select
                 placeholder='请输入是否购买雇主责任'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -741,9 +1000,11 @@ const Roster = () => {
             label='是否缴纳社保'
             name="is_social_security"
             rules={[{required:true,message:'请输入是否缴纳社保'}]}
+            initialValue='是'
           >
             <Select
                 placeholder='请输入是否缴纳社保'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -757,39 +1018,32 @@ const Roster = () => {
               />
           </Form.Item>
           <Form.Item
-            label='人员类别'
-            name="type"
-          >
-            <Input placeholder='请输入人员类别' />
-          </Form.Item>
-         
-          <Form.Item
             label='出生年月日'
             name="birthday"
             rules={[{required:true,message:'请输入出生年月日'}]}
           >
-            <Input placeholder='请输入出生年月日' />
+            <DatePicker placeholder={['请选择出生年月日']} style={{width:'200px'}} disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='年龄'
             name="age"
             rules={[{required:true,message:'请输入年龄'}]}
           >
-            <Input placeholder='请输入年龄' />
+            <Input placeholder='请输入年龄' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='身份证'
             name="id_card"
             rules={[{required:true,message:'请输入身份证'}]}
           >
-            <Input placeholder='请输入身份证' />
+            <Input placeholder='请输入身份证' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='身份证有效期'
             name="id_card_time"
             rules={[{required:true,message:'请输入身份证有效期'}]}
           >
-            <Input placeholder='请输入身份证有效期' />
+            <Input placeholder='请输入身份证有效期' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='政治面貌'
@@ -798,6 +1052,7 @@ const Roster = () => {
           >
             <Select
                 placeholder='请输入政治面貌'
+                disabled={_disable}
                 options={[
                   {
                     value: '群众',
@@ -822,9 +1077,11 @@ const Roster = () => {
             label='名族'
             name="family_name"
             rules={[{required:true,message:'请输入名族'}]}
+            initialValue='汉族'
           >
             <Select
                 placeholder='请输入名族'
+                disabled={_disable}
                 options={[
                   {
                     value: '汉族',
@@ -844,6 +1101,7 @@ const Roster = () => {
           >
             <Select
                 placeholder='请输入婚姻状况'
+                disabled={_disable}
                 options={[
                   {
                     value: '已婚',
@@ -861,21 +1119,21 @@ const Roster = () => {
             name="number"
             rules={[{required:true,message:'请输入手机号码'}]}
           >
-            <Input placeholder='请输入手机号码' />
+            <Input placeholder='请输入手机号码' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='邮箱'
             name="email"
             rules={[{required:true,message:'请输入邮箱'}]}
           >
-            <Input placeholder='请输入邮箱' />
+            <Input placeholder='请输入邮箱' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='户籍所在地'
             name="domicile"
             rules={[{required:true,message:'请输入户籍所在地'}]}
           >
-            <Input placeholder='请输入户籍所在地' />
+            <Input placeholder='请输入户籍所在地' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='现居住地'
@@ -889,43 +1147,45 @@ const Roster = () => {
             name="emergency_contact"
             rules={[{required:true,message:'请输入紧急联系人'}]}
           >
-            <Input placeholder='请输入紧急联系人' />
+            <Input placeholder='请输入紧急联系人' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='与紧急联系人关系'
             name="emergency_contact_relation"
             rules={[{required:true,message:'请输入与紧急联系人关系'}]}
           >
-            <Input placeholder='请输入与紧急联系人关系' />
+            <Input placeholder='请输入与紧急联系人关系' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='紧急联系人手机号'
             name="emergency_contact_number"
             rules={[{required:true,message:'请输入紧急联系人手机号'}]}
           >
-            <Input placeholder='请输入紧急联系人手机号' />
+            <Input placeholder='请输入紧急联系人手机号' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='银行卡卡号'
             name="bank_card"
             rules={[{required:true,message:'请输入银行卡卡号'}]}
           >
-            <Input placeholder='请输入银行卡卡号' />
+            <Input placeholder='请输入银行卡卡号' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='银行卡开户行信息'
             name="pasbank_card_detail"
             rules={[{required:true,message:'请输入银行卡开户行信息'}]}
           >
-            <Input placeholder='请输入银行卡开户行信息' />
+            <Input placeholder='请输入银行卡开户行信息' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='是否毕业'
             name="is_graduation"
             rules={[{required:true,message:'请输入是否毕业'}]}
+            initialValue='是'
           >
             <Select
                 placeholder='请输入是否毕业'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -942,9 +1202,11 @@ const Roster = () => {
             label='是否留学生'
             name="is_overseas_student"
             rules={[{required:true,message:'请输入是否留学生'}]}
+            initialValue='否'
           >
             <Select
                 placeholder='请输入留学生'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -961,9 +1223,11 @@ const Roster = () => {
             label='是否全日制'
             name="is_full_time"
             rules={[{required:true,message:'请输入是否全日制'}]}
+            initialValue='是'
           >
             <Select
                 placeholder='请输入是否全日制'
+                disabled={_disable}
                 options={[
                   {
                     value: '是',
@@ -981,29 +1245,30 @@ const Roster = () => {
             name="school"
             rules={[{required:true,message:'请输入毕业院校'}]}
           >
-            <Input placeholder='请输入毕业院校' />
+            <Input placeholder='请输入毕业院校' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='所学专业'
             name="specialty"
             rules={[{required:true,message:'请输入所学专业'}]}
           >
-            <Input placeholder='请输入所学专业' />
+            <Input placeholder='请输入所学专业' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='毕业时间'
             name="graduation_time"
             rules={[{required:true,message:'请输入毕业时间'}]}
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
+            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='最高学历'
             name="education"
-            rules={[{message:'请输入最高学历'}]}
+            rules={[{required:true,message:'请输入最高学历'}]}
           >
             <Select
                 placeholder='请输入最高学历'
+                disabled={_disable}
                 options={[
                   {
                     value: '1',
@@ -1031,24 +1296,28 @@ const Roster = () => {
           <Form.Item
             label='所持证书'
             name="certificate"
+            initialValue=''
           >
-            <Input placeholder='请输入所持证书' />
+            <Input placeholder='请输入所持证书' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='语言能力'
             name="language_competence"
+            initialValue=''
           >
             <Input placeholder='请输入语言能力' />
           </Form.Item>
           <Form.Item
             label='工具技能'
             name="ability"
+            initialValue=''
           >
             <Input placeholder='请输入工具技能' />
           </Form.Item>
           <Form.Item
             label='是否二次入职'
             name="is_two_entry"
+            initialValue=''
           >
             <Select
                 placeholder='请输入是否二次入职'
@@ -1067,15 +1336,18 @@ const Roster = () => {
           <Form.Item
             label='工作经历'
             name="work_experience"
+            initialValue=''
           >
             <Input placeholder='请输入工作经历' />
           </Form.Item>
           <Form.Item
             label='招聘渠道'
             name="recruitment_channel"
+            initialValue=''
           >
             <Select
                 placeholder='请输入招聘渠道'
+                disabled={_disable}
                 options={[
                   {
                     value: '1',
@@ -1092,33 +1364,37 @@ const Roster = () => {
                 ]}
               />
           </Form.Item>
-          <Form.Item
-            label='离职时间'
+          {/* <Form.Item
+            label='离职日期'
             name="dimission_date"
+            // initialValue=''
+            hidden={dimission_status}
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label='离职类型'
             name="dimission_type"
+            initialValue=''
+            hidden={dimission_status}
           >
             <Select
                 placeholder='请输入离职类型'
                 options={[
                   {
-                    value: '1',
+                    value: '主动离职',
                     label: '主动离职',
                   },
                   {
-                    value: '2',
+                    value: '单方解除',
                     label: '单方解除',
                   },
                   {
-                    value: '3',
+                    value: '协商解除',
                     label: '协商解除',
                   },
                   {
-                    value: '4',
+                    value: '合同终止',
                     label: '合同终止',
                   }
                 ]}
@@ -1127,28 +1403,30 @@ const Roster = () => {
           <Form.Item
             label='离职原因'
             name="dimission_reason"
+            initialValue=''
+            hidden={dimission_status}
           >
             <Select
                 placeholder='请输入离职原因'
                 options={[
                   {
-                    value: '1',
+                    value: '态度问题',
                     label: '态度问题',
                   },
                   {
-                    value: '2',
+                    value: '个人发展',
                     label: '个人发展',
                   },
                   {
-                    value: '3',
+                    value: '培训不通过',
                     label: '培训不通过',
                   },
                   {
-                    value: '4',
+                    value: '薪资待遇',
                     label: '薪资待遇',
                   },
                   {
-                    value: '5',
+                    value: '工作能力不达标',
                     label: '工作能力不达标',
                   }
                 ]}

@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.20.1",
     "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "g": "^2.0.1",
     "handsontable": "^14.5.0",
     "less": "^4.2.0",

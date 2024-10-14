@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-10-09 17:14:06
- * @LastEditTime: 2024-10-10 12:59:24
+ * @LastEditTime: 2024-10-14 16:54:32
  */
 import { AppstoreOutlined,ContainerOutlined,DesktopOutlined,PieChartOutlined,MailOutlined,CalendarOutlined } from '@ant-design/icons';
 
@@ -26,16 +26,16 @@ export const items = [
                 label: '人员花名册',
             },
             {
-                key: '/person/portrait',
-                label: '人员画像',
-            },
-            {
                 key: '/person/dimission',
-                label: '离职人员列表',
+                label: '人员花名册-离职',
             },
             {
                 key: '/person/black',
-                label: '人员黑名单列表',
+                label: '人员花名册-黑名单',
+            },
+            {
+                key: '/person/portrait',
+                label: '人员画像',
             },
             {
                 key: '/person/clocking',

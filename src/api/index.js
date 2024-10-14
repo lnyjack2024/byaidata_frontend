@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-10 15:17:33
+ * @LastEditTime: 2024-10-14 15:34:16
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -33,4 +33,13 @@ export const reqGetDepartmentDatas = (e) => reqApi( BASE + '/person/department',
 //部门列表-删除
 export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/department/delete', data, 'POST')
 
+//人员管理-人员花名册
+//查询
+export const reqGetRosterDatas = (data) => reqApi( BASE + '/person/roster/search', data, 'GET')
+
+//新增
+export const reqAddRosterDatas = (data) => reqApi( BASE + '/person/roster/add', data, 'POST')
+
+//编辑
+export const reqEditRosterDatas = (data) => reqApi( BASE + '/person/roster/edit', data, 'POST')
 

@@ -2,7 +2,7 @@
  * @Description: 部门列表
  * @Author: wangyonghong
  * @Date: 2024-09-29 15:25:05
- * @LastEditTime: 2024-10-10 15:35:56
+ * @LastEditTime: 2024-10-14 15:24:34
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
@@ -47,8 +47,8 @@ const Department = () => {
   const hangFinish = async (e) => {
       const reqData = await reqGetDepartmentDatas({name:e.keyword})
       setData(reqData.data)
-
   }
+  
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
     if(val.base === undefined){
