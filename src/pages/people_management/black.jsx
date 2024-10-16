@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-10-14 17:27:39
+ * @LastEditTime: 2024-10-15 17:03:47
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
@@ -15,6 +15,7 @@ const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
 
 const Black = () => {
   const [ data, setData ] = useState([])
+  const [ table_loading, setTableLoading ] = useState(true)
   const [ form ] = Form.useForm();
   useEffect(() => {
     getTableData()
@@ -23,6 +24,7 @@ const Black = () => {
   const getTableData = async () => {
     const reqData = await reqGetRosterDatas()
       setData(reqData.data)
+      setTableLoading(false)
   }
 
   const hangFinish = (e) => {
@@ -33,6 +35,7 @@ const Black = () => {
     form.validateFields().then( async (val)=>{
       const reqData = await reqGetRosterDatas(val)
       setData(reqData.data)
+      setTableLoading(false)
     })
   }
 
@@ -532,12 +535,15 @@ const Black = () => {
           </Row>
         </Form>
       </div>
-      <Table 
-        columns={ column } 
-        dataSource={ data } 
-        rowKey={ data => data.id }  
-        scroll={{x: 'max-content'}}
-      />
+      <div style={{ width: '100%', height: '90%', overflow:'auto' }}>
+        <Table 
+          columns={ column } 
+          dataSource={ data } 
+          rowKey={ data => data.id }  
+          scroll={{x: 'max-content'}}
+          loading={table_loading}
+        />
+      </div>
     </div>
   )
 }

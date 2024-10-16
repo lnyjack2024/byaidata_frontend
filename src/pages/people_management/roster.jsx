@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-14 15:42:54
+ * @LastEditTime: 2024-10-15 17:08:41
  */
 
 import React, { useEffect, useState } from 'react'
@@ -21,6 +21,7 @@ const Roster = () => {
   const [ id, setId ] = useState(0)
   const [ dimission_status, setDimissionStatus ] = useState(true)
   const [ _disable, setDisable ] = useState(false)
+  const [ table_loading, setTableLoading ] = useState(true)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
@@ -31,6 +32,7 @@ const Roster = () => {
   const getTableData = async () => {
     const reqData = await reqGetRosterDatas()
       setData(reqData.data)
+      setTableLoading(false)
   }
 
   const handClink = (type,rowData) => {
@@ -102,6 +104,7 @@ const Roster = () => {
     form.validateFields().then( async (val)=>{
       const reqData = await reqGetRosterDatas(val)
       setData(reqData.data)
+      setTableLoading(false)
     })
   }
 
@@ -602,12 +605,15 @@ const Roster = () => {
           </Row>
         </Form>
       </div>
-      <Table 
-        columns={ column } 
-        dataSource={ data } 
-        rowKey={ data => data.id }  
-        scroll={{x: 'max-content'}}
-      />
+      <div style={{ width: '100%', height: '90%', overflow:'auto' }}>
+        <Table 
+          columns={ column } 
+          dataSource={ data } 
+          rowKey={ data => data.id }  
+          scroll={{x: 'max-content'}}
+          loading={table_loading}
+        />
+      </div>
       {contextHolder}
       <Modal
         open={isModalOpen}

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-10-10 13:03:45
+ * @LastEditTime: 2024-10-15 16:37:36
  */
 import React,{useState,useEffect} from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -13,7 +13,7 @@ import logo from '../../assets/images/logoMG.jpg'
 // import {exportedItems} from '../../config/menusConfig'
 import storageUtils from '../../utils/storageUtils'
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 let role = storageUtils.getRole()
 // const items = [
 //   {
@@ -140,6 +140,7 @@ const Home = () => {
 
   const navigate = useNavigate();
   const { pathname } = useLocation(); // 获取当前url
+
   const onClickData = (e) => {
       navigate(e.key)
   }
@@ -155,12 +156,12 @@ const Home = () => {
                 <Menu
                     selectedKeys={[pathname]}
                     // defaultOpenKeys={[pathname]}
-                    // openKeys={[pathname]}
                     mode="inline"
                     theme="dark"
                     items={data}
                     onClick={onClickData}
                     // onOpenChange={openKey}
+                    // openKeys={keys}
                 />
         </div>
         </Sider>
@@ -171,7 +172,7 @@ const Home = () => {
         <Content style={{textAlign: 'center',minHeight: 120,lineHeight: '120px',color: 'red'}}>
             <Outlet />
         </Content>
-        <Footer style={{textAlign: 'center',color: '#ccccc',backgroundColor:'#FFFFFF',height:'60px'}}>推荐使用谷歌浏览器、欢迎使用本原智数系统...</Footer>
+        {/* <Footer style={{textAlign: 'center',color: '#ccccc',height:'60px',paddingTop:'15px'}}>推荐使用谷歌浏览器、欢迎使用本原智数系统...</Footer> */}
         </Layout>
     </Layout>
   )
