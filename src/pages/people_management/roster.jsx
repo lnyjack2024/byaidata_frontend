@@ -2,17 +2,37 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-15 17:08:41
+ * @LastEditTime: 2024-10-16 17:34:08
  */
 
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker } from 'antd'
+import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker,Upload } from 'antd'
 import dayjs from 'dayjs';
 import './roster.css'
 import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas } from '../../api/index'
-const { RangePicker } = DatePicker;
+import storageUtils from '../../utils/storageUtils'
+
+// const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
+const props = {
+  name: 'file',
+  action: 'http://localhost:3003/person/roster/upload',
+  headers: {
+    authorization: 'authorization-text',
+    'token': storageUtils.getToken()
+  },
+  onChange(info) {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 
 const Roster = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -112,8 +132,8 @@ const Roster = () => {
     form.resetFields()
   }
   
-  const onChange = (date, dateString) => {
-  };
+  // const onChange = (date, dateString) => {
+  // };
 
   const column = [
     {
@@ -586,7 +606,7 @@ const Roster = () => {
             />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Form.Item name="entry_date" label="入职日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
@@ -594,14 +614,25 @@ const Roster = () => {
                   style={{width:'250px'}}
                 />
               </Form.Item>
+            </Col> */}
+             <Col span={2}>
+              <Form.Item  >
+                <Upload  {...props}>
+                  <Button icon={<UploadOutlined />}>导入</Button>
+                </Upload>
+              </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col span={5} >
               <Form.Item  >
                 <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;
+                {/* <Upload  {...props}>
+                  <Button icon={<UploadOutlined />}>导入</Button>
+                </Upload> */}
                 <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
                 <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
+           
           </Row>
         </Form>
       </div>

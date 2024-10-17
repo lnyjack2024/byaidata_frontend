@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-15 15:22:31
+ * @LastEditTime: 2024-10-16 14:25:53
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -54,5 +54,10 @@ export const reqAddPortraitDatas = (data) => reqApi( BASE + '/person/portrait/ad
 export const reqEditPortraitDatas = (data) => reqApi( BASE + '/person/portrait/edit', data, 'POST')
 
 //人员管理-人员考勤
-//查询
 export const reqGetClockingDatas = (data) => reqApi( BASE + '/person/clocking/search', data, 'GET')
+
+//人员管理-人员花名册-离职
+export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/search', data, 'GET')
+
+//人员管理-人员花名册-黑名单
+export const reqGetBlackDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')

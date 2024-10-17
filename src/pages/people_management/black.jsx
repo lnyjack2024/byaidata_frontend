@@ -2,15 +2,15 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-10-15 17:03:47
+ * @LastEditTime: 2024-10-16 14:21:17
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
-import { Button, Form, Input, Table, Select, Col, Row, DatePicker } from 'antd'
+import { Button, Form, Input, Table, Select, Col, Row } from 'antd'
 import dayjs from 'dayjs';
 import './black.css'
-import { reqGetRosterDatas } from '../../api/index'
-const { RangePicker } = DatePicker;
+import { reqGetBlackDatas } from '../../api/index'
+// const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
 
 const Black = () => {
@@ -22,7 +22,7 @@ const Black = () => {
   },[])
 
   const getTableData = async () => {
-    const reqData = await reqGetRosterDatas()
+    const reqData = await reqGetBlackDatas()
       setData(reqData.data)
       setTableLoading(false)
   }
@@ -33,7 +33,7 @@ const Black = () => {
 
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
-      const reqData = await reqGetRosterDatas(val)
+      const reqData = await reqGetBlackDatas(val)
       setData(reqData.data)
       setTableLoading(false)
     })
@@ -43,8 +43,8 @@ const Black = () => {
     form.resetFields()
   }
   
-  const onChange = (date, dateString) => {
-  };
+  // const onChange = (date, dateString) => {
+  // };
 
   const column = [
     {
@@ -517,7 +517,7 @@ const Black = () => {
             />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Form.Item name="entry_date" label="入职日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
@@ -525,7 +525,7 @@ const Black = () => {
                   style={{width:'250px'}}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={6}>
               <Form.Item  >
                 <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
