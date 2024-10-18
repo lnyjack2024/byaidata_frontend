@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2024-10-09 15:46:09
+ * @LastEditTime: 2024-10-17 16:56:38
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
@@ -49,7 +49,7 @@ export default function Header() {
     <Dropdown
       menu={{items}}
     >
-      <Avatar style={{ backgroundColor: '#B0E0E6' }} icon={<UserOutlined />} />
+      <Avatar style={{ backgroundColor: '#1677FF' }} icon={<UserOutlined />} />
     </Dropdown>
     <div style={{marginLeft:'10px'}}>欢迎登录... { username }</div>
   </div>

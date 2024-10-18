@@ -2,37 +2,22 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-16 17:34:08
+ * @LastEditTime: 2024-10-18 17:03:19
  */
 
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker,Upload } from 'antd'
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload } from 'antd'
 import dayjs from 'dayjs';
 import './roster.css'
 import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
-
+const { TextArea } = Input;
 // const { RangePicker } = DatePicker;
-const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
-const props = {
-  name: 'file',
-  action: 'http://localhost:3003/person/roster/upload',
-  headers: {
-    authorization: 'authorization-text',
-    'token': storageUtils.getToken()
-  },
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+const itemLayout = { 
+  labelCol:{span:5},
+  wrapperCol:{span:15} 
+}
 
 const Roster = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -74,48 +59,71 @@ const Roster = () => {
       form_add.setFieldsValue(cloneData)
     }
   }
-  // const handDelete = () => {
 
-  // }
   const hangFinish = (e) => {
 
   }
 
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
-     val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
-     val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
-     val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
-     val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
-     if(modalType === 0){
-      const result = await reqAddRosterDatas(val)
-      if(result.status === 1){
-        getTableData()
-        setIsModalOpen(false)
-        form.resetFields()
-        message.info('新增成功...')
-      }else{
-        message.error('新增失败...')
-      }
-     }else{
-      val.edit_id = id
-      const result = await reqEditRosterDatas(val)
-      if(result.status === 1){
-        getTableData()
-        setIsModalOpen(false)
-        form.resetFields()
-        message.info('编辑成功...')
-      }else{
-        message.error('编辑失败...')
-      }
-     }
-   
+        val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
+        val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
+        val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
+        val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
+        if(modalType === 0){
+          const result = await reqAddRosterDatas(val)
+          if(result.status === 1){
+            getTableData()
+            setIsModalOpen(false)
+            form.resetFields()
+            message.info('新增成功...')
+          }else{
+            message.error('新增失败...')
+          }
+        }else{
+          val.edit_id = id
+          const result = await reqEditRosterDatas(val)
+          if(result.status === 1){
+            getTableData()
+            setIsModalOpen(false)
+            form.resetFields()
+            message.info('编辑成功...')
+          }else{
+            message.error('编辑失败...')
+          }
+        }
      }).catch(()=>{
        messageApi.error('参数有误...请检查!!!')
     })
-  
   }
 
+  const props = {
+    name: 'file',
+    action: 'http://localhost:3003/person/roster/upload',
+    headers: {
+      authorization: 'authorization-text',
+      'token': storageUtils.getToken()
+    },
+    onChange(info) {
+      setTableLoading(true)
+      if (info.file.status === 'done') {
+        if(info.file.response.status === 1){
+          message.success(`文件${info.file.name}导入成功`);
+          getTableData()
+          setTableLoading(false)
+        }else if(info.file.response.status === 0){
+          message.error(`文件${info.file.name}导入失败`);
+          setTableLoading(false)
+        }else if(info.file.response.status === 3){
+          message.error(info.file.response.msg);
+          setTableLoading(false)
+        }
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name}上传失败`);
+        setTableLoading(false)
+      }
+    },
+  };
   const handleCancle = () => {
     setIsModalOpen(false)
     form_add.resetFields()
@@ -132,9 +140,6 @@ const Roster = () => {
     form.resetFields()
   }
   
-  // const onChange = (date, dateString) => {
-  // };
-
   const column = [
     {
       title: '姓名',
@@ -617,18 +622,19 @@ const Roster = () => {
             </Col> */}
              <Col span={2}>
               <Form.Item  >
-                <Upload  {...props}>
+                <Upload  
+                  showUploadList={false} 
+                  {...props}
+                  	
+                >
                   <Button icon={<UploadOutlined />}>导入</Button>
                 </Upload>
               </Form.Item>
             </Col>
             <Col span={5} >
               <Form.Item  >
-                <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;
-                {/* <Upload  {...props}>
-                  <Button icon={<UploadOutlined />}>导入</Button>
-                </Upload> */}
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
+                <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;&nbsp;
                 <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
@@ -636,7 +642,7 @@ const Roster = () => {
           </Row>
         </Form>
       </div>
-      <div style={{ width: '100%', height: '90%', overflow:'auto' }}>
+      <div style={{ width: '100%', height: '85%', overflow:'auto'}}>
         <Table 
           columns={ column } 
           dataSource={ data } 
@@ -1375,7 +1381,7 @@ const Roster = () => {
             name="work_experience"
             initialValue=''
           >
-            <Input placeholder='请输入工作经历' />
+            <TextArea placeholder='请输入工作经历' rows={4} />
           </Form.Item>
           <Form.Item
             label='招聘渠道'
@@ -1419,20 +1425,28 @@ const Roster = () => {
                 placeholder='请输入离职类型'
                 options={[
                   {
-                    value: '主动离职',
+                    value: '1',
                     label: '主动离职',
                   },
                   {
-                    value: '单方解除',
+                    value: '2',
                     label: '单方解除',
                   },
                   {
-                    value: '协商解除',
+                    value: '3',
                     label: '协商解除',
                   },
                   {
-                    value: '合同终止',
-                    label: '合同终止',
+                    value: '4',
+                    label: '合同到期',
+                  },
+                  {
+                    value: '5',
+                    label: '严重违反公司规定损害公司利益(黑名单)',
+                  },
+                  {
+                    value: '6',
+                    label: '影响团队氛围人际关系恶劣(黑名单)',
                   }
                 ]}
               />
@@ -1443,31 +1457,7 @@ const Roster = () => {
             initialValue=''
             hidden={dimission_status}
           >
-            <Select
-                placeholder='请输入离职原因'
-                options={[
-                  {
-                    value: '态度问题',
-                    label: '态度问题',
-                  },
-                  {
-                    value: '个人发展',
-                    label: '个人发展',
-                  },
-                  {
-                    value: '培训不通过',
-                    label: '培训不通过',
-                  },
-                  {
-                    value: '薪资待遇',
-                    label: '薪资待遇',
-                  },
-                  {
-                    value: '工作能力不达标',
-                    label: '工作能力不达标',
-                  }
-                ]}
-              />
+            <TextArea placeholder='请输入离职原因' rows={4} />
           </Form.Item>
         </Form>
       </Modal>
