@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-16 14:25:53
+ * @LastEditTime: 2024-10-21 16:56:04
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -16,15 +16,13 @@ export const reqHandsontableDatasUpdate = (data) => reqApi( BASE + '/test/update
 //登录
 export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
 
-//权限管理-操作员列表
-//查询
+//权限管理-操作员列表-查询
 export const reqGetUserDatas = () => reqApi( BASE + '/user/search', {}, 'GET')
 
 //新增
 export const reqAddUserDatas = (data) => reqApi( BASE + '/user/add', data, 'POST')
 
-//权限管理-角色列表
-//查询
+//权限管理-角色列表-查询
 export const reqGetRoleDatas = () => reqApi( BASE + '/role/search', {}, 'GET')
 
 //人员管理-部门列表
@@ -33,8 +31,7 @@ export const reqGetDepartmentDatas = (e) => reqApi( BASE + '/person/department',
 //部门列表-删除
 export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/department/delete', data, 'POST')
 
-//人员管理-人员花名册
-//查询
+//人员管理-人员花名册-查询
 export const reqGetRosterDatas = (data) => reqApi( BASE + '/person/roster/search', data, 'GET')
 
 //新增
@@ -43,8 +40,7 @@ export const reqAddRosterDatas = (data) => reqApi( BASE + '/person/roster/add', 
 //编辑
 export const reqEditRosterDatas = (data) => reqApi( BASE + '/person/roster/edit', data, 'POST')
 
-//人员管理-人员画像
-//查询
+//人员管理-人员画像-查询
 export const reqGetPortraitDatas = (data) => reqApi( BASE + '/person/portrait/search', data, 'GET')
 
 //新增
@@ -61,3 +57,24 @@ export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/
 
 //人员管理-人员花名册-黑名单
 export const reqGetBlackDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//项目管理-查询
+export const reqGetItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//项目管理-新增
+export const reqAddItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//项目管理-编辑
+export const reqEditItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//项目管理-删除
+export const reqDeleteItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//配置管理-业务线-查询
+export const reqGetServiceLineDatas = () => reqApi( BASE + '/config/serviceline/search', {}, 'GET')
+
+//配置管理-业务线-新增
+export const reqAddServiceLineDatas = (data) => reqApi( BASE + '/config/serviceline/add', data, 'POST')
+
+//配置管理-业务线-删除
+export const reqDeleteServiceLineDatas = (data) => reqApi( BASE + '/config/serviceline/delete', data, 'POST')

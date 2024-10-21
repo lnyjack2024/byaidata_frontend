@@ -1,4 +1,12 @@
-import { AppstoreOutlined,ContainerOutlined,DesktopOutlined,PieChartOutlined,MailOutlined,CalendarOutlined,SettingOutlined } from '@ant-design/icons';
+import { AccountBookOutlined,
+         ContainerOutlined,
+         UsergroupAddOutlined,
+         PieChartOutlined,
+         AppstoreAddOutlined,
+         CalendarOutlined,
+         SettingOutlined,
+         ClusterOutlined 
+} from '@ant-design/icons';
 
 export const items = [
     {
@@ -9,7 +17,7 @@ export const items = [
     {
         key: '/person',
         label: '人员管理',
-        icon: <DesktopOutlined />,
+        icon: <UsergroupAddOutlined />,
         children: [
             {
                 key: '/person/section',
@@ -44,7 +52,7 @@ export const items = [
     {
         key: '/items',
         label: '项目管理',
-        icon: <MailOutlined />,
+        icon: <AppstoreAddOutlined />,
         children: [
             {
                 key: '/items/item',
@@ -70,7 +78,7 @@ export const items = [
     {
         key: '/finance',
         label: '财务管理',
-        icon: <AppstoreOutlined />,
+        icon: <AccountBookOutlined />,
         children: [
             {
                 key: '/finance/settle',
@@ -86,6 +94,17 @@ export const items = [
             {
                 key: '/performances/performance_zj',
                 label: '字节绩效列表',
+            }
+        ]
+    },
+    {
+        key: '/config',
+        label: '配置管理',
+        icon: <ClusterOutlined />,
+        children: [
+            {
+                key: '/config/service_line',
+                label: '业务线列表',
             }
         ]
     },
