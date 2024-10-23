@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-21 16:56:04
+ * @LastEditTime: 2024-10-23 13:34:02
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -59,16 +59,16 @@ export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/
 export const reqGetBlackDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
 
 //项目管理-查询
-export const reqGetItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+export const reqGetItemDatas = (data) => reqApi( BASE + '/items/item/search', data, 'GET')
 
 //项目管理-新增
-export const reqAddItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+export const reqAddItemDatas = (data) => reqApi( BASE + '/items/item/add', data, 'POST')
 
 //项目管理-编辑
-export const reqEditItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+export const reqEditItemDatas = (data) => reqApi( BASE + '/items/item/edit', data, 'POST')
 
 //项目管理-删除
-export const reqDeleteItemDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+export const reqDeleteItemDatas = (data) => reqApi( BASE + '/items/item/delete', data, 'POST')
 
 //配置管理-业务线-查询
 export const reqGetServiceLineDatas = () => reqApi( BASE + '/config/serviceline/search', {}, 'GET')
@@ -78,3 +78,9 @@ export const reqAddServiceLineDatas = (data) => reqApi( BASE + '/config/servicel
 
 //配置管理-业务线-删除
 export const reqDeleteServiceLineDatas = (data) => reqApi( BASE + '/config/serviceline/delete', data, 'POST')
+
+//项目管理-对账列表-查询
+export const reqGetAccountDatas = (data) => reqApi( BASE + '/items/account/search', data, 'GET')
+
+//项目管理-对账列表-新增
+export const reqAddAccountDatas = (data) => reqApi( BASE + '/items/account/add', data, 'POST')

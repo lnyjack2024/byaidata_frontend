@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2024-10-21 15:44:15
+ * @LastEditTime: 2024-10-23 15:12:42
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber } from 'antd'
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Progress, Popconfirm } from 'antd'
 import dayjs from 'dayjs';
 import './item.css'
 import { reqGetItemDatas, reqAddItemDatas, reqEditItemDatas, reqDeleteItemDatas } from '../../api/index'
@@ -16,7 +16,6 @@ const itemLayout = {
   labelCol:{span:7},
   wrapperCol:{span:15} 
 }
-
 const Item = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -24,6 +23,7 @@ const Item = () => {
   const [ id, setId ] = useState(0)
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
+  const [ delay_date_status, setDelayDateStatus ] = useState(true)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
@@ -43,14 +43,16 @@ const Item = () => {
     if(type === 'add'){
       setModalType(0)
       setDisable(false)
+      setDelayDateStatus(true)
+      setId(rowData?rowData.id:'')
     }else{ 
       setModalType(1)
       setDisable(true)
+      setDelayDateStatus(false)
       const cloneData = JSON.parse(JSON.stringify(rowData))
-      cloneData.entry_date = dayjs(cloneData.entry_date)
-      cloneData.become_date = dayjs(cloneData.become_date)
-      cloneData.graduation_time = dayjs(cloneData.graduation_time)
-      cloneData.birthday = dayjs(cloneData.birthday)
+      cloneData.start_date = dayjs(cloneData.start_date)
+      cloneData.delivery_date = dayjs(cloneData.delivery_date)
+      cloneData.delay_date = dayjs(cloneData.delay_date)
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
     }
@@ -62,16 +64,17 @@ const Item = () => {
 
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
-        val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
-        val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
-        val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
-        val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
+        val.start_date    = dayjs(val.start_date).format('YYYY-MM-DD')
+        val.delivery_date = dayjs(val.delivery_date).format('YYYY-MM-DD')
+        val.delay_date    = dayjs(val.delay_date).format('YYYY-MM-DD')
+        val.parent_id     = id
         if(modalType === 0){
           const result = await reqAddItemDatas(val)
           if(result.status === 1){
             reqGetItemDatas()
             setIsModalOpen(false)
             form.resetFields()
+            getTableData()
             message.info('新增成功...')
           }else{
             message.error('新增失败...')
@@ -83,6 +86,7 @@ const Item = () => {
             reqGetItemDatas()
             setIsModalOpen(false)
             form.resetFields()
+            getTableData()
             message.info('编辑成功...')
           }else{
             message.error('编辑失败...')
@@ -123,68 +127,131 @@ const Item = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      key: 'id',
+      fixed: 'left'
     },
     {
       title: '项目名称',
-      dataIndex: 'sex',
+      dataIndex: 'name',
+      key: 'name',
+      fixed: 'left'
+    },
+    {
+      title: '基地',
+      dataIndex: 'base',
     },
     {
       title: '业务线',
-      dataIndex: 'entry_date',
-    },
-    {
-      title: '周期',
-      dataIndex: 'contract_type',
-    },
-    {
-      title: '项目负责人',
       dataIndex: 'service_line',
     },
     {
+      title: '结算类型',
+      dataIndex: 'settlement_type',
+      render:(text,record,index)=>{
+        if(text === 'day'){
+           return '包天'
+        }else if(text === 'month'){
+          return '包月'
+        }else{
+          return '计件'
+        }
+      }
+    },
+    {
+      title: '周期',
+      dataIndex: 'day',
+    },
+    {
+      title: '项目负责人',
+      dataIndex: 'project_leader',
+    },
+    {
       title: '项目进度',
-      dataIndex: 'item',
+      dataIndex: '',
+      render:()=>{
+        return (
+          <Progress percent={70} />
+        )
+      }
+    },
+    {
+      title: '项目状态',
+      dataIndex: '',
     },
     {
       title: '是否交付',
-      dataIndex: 'item_type',
+      dataIndex: '',
+    },
+    {
+      title: '交付日期',
+      dataIndex: 'delivery_date',
+      render:(delivery_date)=>{
+        return (
+          dayjs(delivery_date).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '结算日期',
+      dataIndex: 'delivery_date',
+      render:(delivery_date)=>{
+        return (
+          dayjs(delivery_date).format('YYYY-MM-DD')
+        )
+      }
     },
     {
       title: '结算状态',
-      dataIndex: 'position_level',
+      dataIndex: 'delivery_status',
     },
     {
-      title: '结算时间',
-      dataIndex: 'pasbank_card_detail',
-    },
-    {
-      title: '交付时间',
-      dataIndex: 'is_graduation',
-    },
-    {
-      title: '状态',
-      dataIndex: 'is_overseas_student',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'is_full_time',
+      title: '创建日期',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
+        return (
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
+        )
+      }
     },
     {
       title: '操作',
+      key: 'operation',
+      fixed: 'right',
       render:(rowData)=>{
-        return (
-          <div>
-            <Button onClick={()=> handClink('edit',rowData)}>详情</Button>
-            <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
-            <Popconfirm
-              description='是否删除?'
-              okText='确认'
-              cancelText='取消'
-              onConfirm={ () => handDelete(rowData)}
-            >
-              <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
-            </Popconfirm>
-          </div>
-        )
+        if(rowData.children){
+          return (
+            <div>
+              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('add',rowData)}>新增子项目</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;
+              {/* <Button onClick={()=> handClink('edit',rowData)}>生产报告</Button> */}
+              <Popconfirm
+                description='是否删除?'
+                okText='确认'
+                cancelText='取消'
+                onConfirm={ () => handDelete(rowData)}
+              >
+                <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
+              </Popconfirm>
+            </div>
+          )
+        }else{
+          return (
+            <div>
+              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;
+              {/* <Button onClick={()=> handClink('edit',rowData)}>生产报告</Button> */}
+              <Popconfirm
+                description='是否删除?'
+                okText='确认'
+                cancelText='取消'
+                onConfirm={ () => handDelete(rowData)}
+              >
+                <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
+              </Popconfirm>
+            </div>
+          )
+        }
       }
     }
   ];
@@ -280,88 +347,64 @@ const Item = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="service_line" label="状态" {...itemLayout}>
+              <Form.Item name="status" label="项目状态" {...itemLayout}>
               <Select
-                  placeholder='请输入业务线'
+                  placeholder='请输入项目状态'
                   style={{textAlign:'left'}}
                   options={[
                     {
-                      value: '混元',
-                      label: '混元',
+                      value: '待验收',
+                      label: '待验收',
                     },
                     {
-                      value: '百度',
-                      label: '百度',
+                      value: '未完成',
+                      label: '未完成',
                     },
                     {
-                      value: '字节',
-                      label: '字节',
+                      value: '已完成',
+                      label: '已完成',
                     },
                     {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
+                      value: '已暂停',
+                      label: '已暂停',
                     }
                   ]}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="service_line" label="结算状态" {...itemLayout}>
+              <Form.Item name="delivery_status" label="结算状态" {...itemLayout}>
               <Select
-                  placeholder='请输入业务线'
+                  placeholder='请输入结算状态'
                   style={{textAlign:'left'}}
                   options={[
                     {
-                      value: '混元',
-                      label: '混元',
+                      value: '结算中',
+                      label: '结算中',
                     },
                     {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
+                      value: '结算完成',
+                      label: '结算完成',
                     }
                   ]}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="entry_date" label="交付日期" {...itemLayout}>
+              <Form.Item name="delivery_date" label="交付日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
                   // onChange={onChange} 
-                  style={{width:'280px'}}
+                  style={{width:'250px'}}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="entry_date" label="创建日期" {...itemLayout}>
+              <Form.Item name="create_time" label="创建日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
                   // onChange={onChange} 
-                  style={{width:'280px'}}
+                  style={{width:'250px'}}
                 />
               </Form.Item>
             </Col>
@@ -419,28 +462,28 @@ const Item = () => {
               style={{textAlign:'left'}}
               options={[
                 {
-                  value: '1',
+                  value: '混元',
                   label: '混元',
                 },
                 {
-                  value: '2',
+                  value: '百度',
                   label: '百度',
                 },
                 {
-                  value: '3',
+                  value: '字节',
                   label: '字节',
                 },
                 {
-                  value: '4',
+                  value: '小红书',
                   label: '小红书',
                 },
                 {
-                  value: '5',
+                  value: '文远',
                   label: '文远',
                 },
                 {
-                  value: '6',
-                  label: '众包类(兼职)',
+                  value: '众包类',
+                  label: '众包类',
                 }
               ]}
             />
@@ -508,27 +551,35 @@ const Item = () => {
                 disabled={_disable}
                 options={[
                   {
-                    value: 'day',
+                    value: '包天',
                     label: '包天',
                   },
                   {
-                    value: 'month',
+                    value: '包月',
                     label: '包月',
                   },
                   {
-                    value: 'count',
+                    value: '计件',
                     label: '计件',
                   }
                 ]}
               />
           </Form.Item>
           <Form.Item
+            label='单价'
+            name="price"
+            initialValue={0}
+            rules={[{required:true,message:'请输入单价'}]}
+          >
+            <InputNumber placeholder='请输入单价' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
             label='周期'
             name="day"
-            initialValue=''
+            initialValue={0}
             rules={[{required:true,message:'请输入项目周期'}]}
           >
-            <InputNumber placeholder='请输入项目周期' disabled={_disable} defaultValue={0}/>
+            <InputNumber placeholder='请输入项目周期' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='作业日期'
@@ -551,31 +602,24 @@ const Item = () => {
           <Form.Item
             label='延期日期'
             name="delay_date"
-            rules={[{required:true,message:'请输入延期日期'}]}
+            hidden={delay_date_status}
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='单价'
-            name="price"
-            initialValue=''
-            rules={[{required:true,message:'请输入单价'}]}
-          >
-            <InputNumber placeholder='请输入单价' disabled={_disable} defaultValue={0}/>
-          </Form.Item>
-          <Form.Item
             label='标注员人数'
             name="number_people"
+            initialValue={0}
             rules={[{required:true,message:'请输入标注员人数'}]}
           >
-            <InputNumber placeholder='请输入标注员人数' disabled={_disable} defaultValue={0}/>
+            <InputNumber placeholder='请输入标注员人数'/>
           </Form.Item>
           <Form.Item
             label='标注团队'
             name="team"
             rules={[{required:true,message:'请输入标注团队'}]}
           >
-            <Input placeholder='请输入标注团队' disabled={_disable}/>
+            <Input placeholder='请输入标注团队'/>
           </Form.Item>
           <Form.Item
             label='审核员'
@@ -586,11 +630,11 @@ const Item = () => {
           <Form.Item
             label='结算周期'
             name="settlement_day"
+            initialValue={0}
             rules={[{required:true,message:'请输入结算周期'}]}
           >
-            <InputNumber placeholder='请输入结算周期' disabled={_disable} defaultValue={0}/>
+            <InputNumber placeholder='请输入结算周期'/>
           </Form.Item>
-        
           <Form.Item
             label='加班类型'
             name="overtime_type"
@@ -598,7 +642,6 @@ const Item = () => {
           >
             <Select
                 placeholder='请输入加班类型'
-                disabled={_disable}
                 options={[
                   {
                     value: '1',
