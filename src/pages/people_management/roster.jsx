@@ -2,14 +2,14 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-18 17:03:19
+ * @LastEditTime: 2024-10-24 10:20:07
  */
 
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload } from 'antd'
 import dayjs from 'dayjs';
-import './roster.css'
+import '../common_css/style.css'
 import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
 const { TextArea } = Input;
@@ -388,7 +388,7 @@ const Roster = () => {
   ];
  
   return (
-    <div className='roster'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'

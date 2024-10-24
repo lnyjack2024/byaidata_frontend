@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2024-10-23 15:12:42
+ * @LastEditTime: 2024-10-24 11:06:04
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Progress, Popconfirm } from 'antd'
 import dayjs from 'dayjs';
-import './item.css'
+import '../common_css/style.css'
 import { reqGetItemDatas, reqAddItemDatas, reqEditItemDatas, reqDeleteItemDatas } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -192,13 +192,8 @@ const Item = () => {
       }
     },
     {
-      title: '结算日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
-        return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
-        )
-      }
+      title: '结算周期',
+      dataIndex: 'settlement_day'
     },
     {
       title: '结算状态',
@@ -257,7 +252,7 @@ const Item = () => {
   ];
  
   return (
-    <div className='item'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'

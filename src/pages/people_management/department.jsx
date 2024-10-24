@@ -2,14 +2,13 @@
  * @Description: 部门列表
  * @Author: wangyonghong
  * @Date: 2024-09-29 15:25:05
- * @LastEditTime: 2024-10-14 15:24:34
+ * @LastEditTime: 2024-10-24 10:18:33
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import moment from 'moment';
-import './department.css'
-
+import '../common_css/style.css'
 import { reqGetDepartmentDatas, reqAddUserDatas, reqDeleteDepartmentDatas } from '../../api/index'
 const Department = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -110,7 +109,7 @@ const Department = () => {
   ];
  
   return (
-    <div className='user'>
+    <div className='style'>
       <div className='flex-box'>
         <Button type='primary' onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>
         <Form

@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-10-16 14:21:17
+ * @LastEditTime: 2024-10-24 10:17:31
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
 import { Button, Form, Input, Table, Select, Col, Row } from 'antd'
 import dayjs from 'dayjs';
-import './black.css'
+import '../common_css/style.css'
 import { reqGetBlackDatas } from '../../api/index'
 // const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
@@ -294,7 +294,7 @@ const Black = () => {
   ];
  
   return (
-    <div className='black'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'

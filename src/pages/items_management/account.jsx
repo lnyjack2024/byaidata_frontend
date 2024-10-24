@@ -2,30 +2,59 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-10-23 16:10:25
+ * @LastEditTime: 2024-10-24 18:27:52
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row } from 'antd'
+import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload } from 'antd'
 import dayjs from 'dayjs';
-import './account.css'
-import { reqGetAccountDatas, reqAddAccountDatas, reqGetItemDatas } from '../../api/index'
-// const { RangePicker } = DatePicker;
+import '../common_css/style.css'
+import { reqGetAccountDatas, reqAddAccountDatas, reqGetItemDatas, reqAddAccountDetailDatas, reqGetAccountDetailDatas } from '../../api/index'
+import storageUtils from '../../utils/storageUtils'
+const { RangePicker } = DatePicker;
 const itemLayout = { 
   labelCol:{span:7},
   wrapperCol:{span:15} 
 }
+
+const props = {
+  name: 'file',
+  action: 'http://localhost:3003/items/account/upload',
+  headers: {
+    authorization: 'authorization-text',
+    'token': storageUtils.getToken()
+  },
+  onChange(info) {
+    if (info.file.status === 'done') {
+      if(info.file.response.status === 1){
+        message.success(`文件${info.file.name}导入成功`);
+      }else if(info.file.response.status === 0){
+        message.error(`文件${info.file.name}导入失败`);
+      }else if(info.file.response.status === 3){
+        message.error(info.file.response.msg);
+      }
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name}上传失败`);
+    }
+  },
+};
+
 const Account = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
+  const [ isModalOpen1, setIsModalOpen1 ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ detail_data, setDetailData ] = useState([])
   const [ table_loading, setTableLoading ] = useState(true)
+  const [ id, setId ] = useState(0)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
+  const [ form_detail ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
     getTableData()
+    getAccountDetailData()
   },[])
 
   const getTableData = async () => {
@@ -34,22 +63,25 @@ const Account = () => {
       setTableLoading(false)
   }
 
-  const handClink = (type,rowData) => {
-    setIsModalOpen(!isModalOpen)
-    if(type === 'add'){
-      setModalType(0)
-    }
+  const getAccountDetailData = async () => {
+    const reqData = await reqGetAccountDetailDatas()
+    setDetailData(reqData.data)
   }
 
-  const hangFinish = (e) => {
-
+  const handClink = (type,rowData) => {
+    if(type === 'add'){
+      setIsModalOpen(!isModalOpen)
+      setModalType(0)
+    }else{
+      setId(rowData.id)
+      setIsModalOpen1(!isModalOpen1)
+    }
   }
 
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
         const result = await reqAddAccountDatas(val)
         if(result.status === 1){
-          reqGetAccountDatas()
           setIsModalOpen(false)
           form.resetFields()
           getTableData()
@@ -65,6 +97,27 @@ const Account = () => {
   const handleCancle = () => {
     setIsModalOpen(false)
     form_add.resetFields()
+  }
+
+  const handleOk1 = () => {
+    form_detail.validateFields().then( async (val)=>{
+      val.account_id = id
+      const result = await reqAddAccountDetailDatas(val)
+      if(result.status === 1){
+        form_detail.resetFields()
+        getAccountDetailData()
+        message.info('新增成功...')
+      }else{
+        message.error('新增失败...')
+      }
+   }).catch(()=>{
+     messageApi.error('参数有误...请检查!!!')
+  })
+  }
+
+  const handleCancle1 = () => {
+    setIsModalOpen1(false)
+    form_detail.resetFields()
   }
 
   const handSearch = () => {
@@ -96,19 +149,19 @@ const Account = () => {
   const column = [
     {
       title: '项目ID',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'item_id',
+      key: 'item_id',
       fixed: 'left'
     },
     {
       title: '项目名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'item_name',
+      key: 'item_name',
       fixed: 'left'
     },
     {
       title: '业务线',
-      dataIndex: 'base',
+      dataIndex: 'service_line',
     },
     {
       title: '基地',
@@ -116,90 +169,62 @@ const Account = () => {
     },
     {
       title: '项目负责人',
-      dataIndex: 'service_line',
+      dataIndex: 'project_leader',
     },
-   
+    {
+      title: '结算类型',
+      dataIndex: 'item_settlement_type',
+      render:(text,record,index)=>{
+        if(text === 'day'){
+           return '包天'
+        }else if(text === 'month'){
+          return '包月'
+        }else{
+          return '计件'
+        }
+      }
+    },
+    {
+      title: '结算周期',
+      dataIndex: 'item_settlement_day'
+    },
     {
       title: '项目周期',
-      dataIndex: '',
+      dataIndex: 'item_day',
     },
     {
       title: '作业日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
+      dataIndex: 'item_start_date',
+      render:(item_start_date)=>{
         return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
+          dayjs(item_start_date).format('YYYY-MM-DD')
         )
       }
     },
     {
       title: '交付日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
+      dataIndex: 'item_delivery_date',
+      render:(item_delivery_date)=>{
         return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
+          dayjs(item_delivery_date).format('YYYY-MM-DD')
         )
       }
-    },
-    {
-      title: '结算类型',
-      dataIndex: 'settlement_type',
-      render:(text,record,index)=>{
-        if(text === 'day'){
-           return '包天'
-        }else if(text === 'month'){
-          return '包月'
-        }else{
-          return '计件'
-        }
-      }
-    },
-    {
-      title: '项目周期',
-      dataIndex: '',
     },
     {
       title: '项目状态',
-      dataIndex: '',
+      dataIndex: 'item_status'
     },
     {
       title: '结算状态',
-      dataIndex: 'settlement_type',
-      render:(text,record,index)=>{
-        if(text === 'day'){
-           return '包天'
-        }else if(text === 'month'){
-          return '包月'
-        }else{
-          return '计件'
-        }
-      }
+      dataIndex: 'item_settlement_status'
     },
     {
       title: '回款状态',
-      dataIndex: 'settlement_type',
-      render:(text,record,index)=>{
-        if(text === 'day'){
-           return '包天'
-        }else if(text === 'month'){
-          return '包月'
-        }else{
-          return '计件'
-        }
-      }
+      dataIndex: 'refund_status'
     },
     {
       title: '对账人',
-      dataIndex: 'delivery_status',
-    },
-    {
-      title: '对账周期',
-      dataIndex: 'create_time',
-      render:(create_time)=>{
-        return (
-          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
-        )
-      }
+      dataIndex: 'reconciler'
     },
     {
       title: '操作',
@@ -208,20 +233,67 @@ const Account = () => {
       render:(rowData)=>{
           return (
             <div>
-              <Button onClick={()=> handClink('add',rowData)}>明细</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('detail',rowData)}>对账明细</Button>
             </div>
           )
       }
     }
   ];
+
+  const account_detail_column = [
+    {
+      title: '对账日期',
+      dataIndex: 'account_day',
+      render:(account_day)=>{
+        return (
+          dayjs(account_day).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '对账周期',
+      dataIndex: 'account_period',
+    },
+    {
+      title: '任务包',
+      dataIndex: 'tasks',
+    },
+    {
+      title: '结算比例',
+      dataIndex: 'settlement_scale',
+    },
+    {
+      title: '数量级',
+      dataIndex: 'amount',
+    },
+    {
+      title: '单价',
+      dataIndex: 'price'
+    },
+    {
+      title: '总计',
+      dataIndex: 'sum',
+    },
+    {
+      title: '甲方是否验收',
+      dataIndex: 'is_accept',
+    },
+    {
+      title: '对账人',
+      dataIndex: 'reconciler'
+    },
+    {
+      title: '附件',
+      dataIndex: 'attachment'
+    }
+  ];
  
   return (
-    <div className='account'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'
           layout='inline'
-          onFinish={hangFinish}
         >
           <Row>
             <Col span={6}>
@@ -383,7 +455,7 @@ const Account = () => {
           wrapperCol={{span:10}} 
           style={{marginTop:'50px'}}
         >
-           <Form.Item
+          <Form.Item
             label='项目ID'
             name="id"
             rules={[{required:true,message:'请输入项目ID'}]}
@@ -434,6 +506,12 @@ const Account = () => {
             <Input disabled={true}/>
           </Form.Item>
           <Form.Item
+            label='结算周期'
+            name="settlement_day"
+          >
+            <Input disabled={true}/>
+          </Form.Item>
+          <Form.Item
             label='项目周期'
             name="day"
           >
@@ -452,6 +530,147 @@ const Account = () => {
             <Input disabled={true}/>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        open={isModalOpen1}
+        title={ '对账明细' }
+        onOk={handleOk1}
+        onCancel={handleCancle1}
+        okText='确定'
+        cancelText='取消'
+        maskClosable={false}
+        width={'70%'}
+        footer={null}
+      >
+        <Form
+          form={form_detail}
+          labelCol={{span:3}} 
+          wrapperCol={{span:10}} 
+        >
+          <Form.Item
+            label='对账日期'
+            name="account_day"
+            rules={[{required:true,message:'请输入对账日期'}]}
+          >
+            <DatePicker
+              placeholder={['请选择对账日期']}
+              style={{width:'470px'}}
+            />
+          </Form.Item>
+          <Form.Item
+            label='对账周期'
+            name="account_period"
+            rules={[{required:true,message:'请输入对账周期'}]}
+          >
+             <RangePicker     
+                placeholder={['开始日期', '结束日期']}
+                style={{width:'470px'}}
+             />
+          </Form.Item>
+          <Form.Item
+            label='任务包'
+            name="tasks"
+            rules={[{required:true,message:'请输入任务包'}]}
+          >
+            <Select
+                placeholder='请选择任务包'
+                mode="multiple"
+                allowClear
+                options={[
+                  {
+                    value: 'xxx',
+                    label: 'xxx',
+                  },
+                  {
+                    value: 'yyy',
+                    label: 'yyy',
+                  },
+                  {
+                    value: 'zzz',
+                    label: 'zzz',
+                  },
+                  {
+                    value: 'vvv',
+                    label: 'vvv',
+                  }
+                ]}
+              />
+          </Form.Item>
+          <Form.Item
+            label='结算比例'
+            name="settlement_scale"
+            rules={[{required:true,message:'请输入结算比例'}]}
+          >
+            <Input placeholder='如:0.95'/>
+          </Form.Item>
+          <Form.Item
+            label='数量级'
+            name="amount"
+            rules={[{required:true,message:'请输入数量级'}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label='单价'
+            name="price"
+            rules={[{required:true,message:'请输入单价'}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label='总金额'
+            name="sum"
+            rules={[{required:true,message:'请输入总金额'}]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label='甲方是否验收'
+            name="is_accept"
+            rules={[{required:true,message:'请输入甲方是否验收'}]}
+          >
+            <Select
+                placeholder='请输入甲方是否验收'
+                options={[
+                  {
+                    value: '是',
+                    label: '是',
+                  },
+                  {
+                    value: '否',
+                    label: '否',
+                  }
+                ]}
+              />
+          </Form.Item>
+          <Form.Item
+            label='附件'
+            name="attachment"
+          >
+            <div style={{display:'flex'}}>
+              <div style={{flex:1}}>
+              <Upload  
+                  showUploadList={true} 
+                  {...props}
+                  	
+                >
+                  <Button style={{width:'80px'}} icon={<UploadOutlined />}>导入</Button>
+                  <span style={{color:'red'}}>新增完成之后再导入附件</span>
+                </Upload>
+              </div>
+              <div style={{flex:1}}>
+                <Button style={{width:'80px'}} onClick={ handleOk1 } type='primary' > + 新增 </Button>
+              </div>
+            </div>
+          </Form.Item>
+        </Form>
+        <div style={{ width: '100%', height: '85%', overflow:'auto'}}>
+          <Table 
+            columns={ account_detail_column } 
+            dataSource={ detail_data } 
+            rowKey={ data => data.id }  
+          />
+      </div>
       </Modal>
     </div>
   )

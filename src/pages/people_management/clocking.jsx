@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:55:23
- * @LastEditTime: 2024-10-16 10:16:58
+ * @LastEditTime: 2024-10-24 10:18:02
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
 import { Button, Form, Input, Table, Select, Col, Row } from 'antd'
 // import dayjs from 'dayjs';
-import './clocking.css'
+import '../common_css/style.css'
 import { reqGetClockingDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
 
@@ -182,7 +182,7 @@ const Clocking = () => {
   ];
  
   return (
-    <div className='clocking'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'

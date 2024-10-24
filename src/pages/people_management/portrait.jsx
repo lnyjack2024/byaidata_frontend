@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2024-10-15 17:07:20
+ * @LastEditTime: 2024-10-24 10:19:34
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row } from 'antd'
 import dayjs from 'dayjs';
-import './portrait.css'
+import '../common_css/style.css'
 import { reqGetPortraitDatas, reqAddPortraitDatas, reqEditPortraitDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
 const { TextArea } = Input;
@@ -186,7 +186,7 @@ const Portrait = () => {
   ];
  
   return (
-    <div className='portrait'>
+    <div className='style'>
       <div className='flex-box'>
         <Form form={form}
           className='flex-box-form'
