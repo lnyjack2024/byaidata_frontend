@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2024-10-24 11:06:04
+ * @LastEditTime: 2024-10-25 11:28:35
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -147,15 +147,15 @@ const Item = () => {
     {
       title: '结算类型',
       dataIndex: 'settlement_type',
-      render:(text,record,index)=>{
-        if(text === 'day'){
-           return '包天'
-        }else if(text === 'month'){
-          return '包月'
-        }else{
-          return '计件'
-        }
-      }
+      // render:(text,record,index)=>{
+      //   if(text === 'day'){
+      //      return '包天'
+      //   }else if(text === 'month'){
+      //     return '包月'
+      //   }else{
+      //     return '计件'
+      //   }
+      // }
     },
     {
       title: '周期',

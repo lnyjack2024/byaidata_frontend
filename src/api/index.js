@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-24 18:04:39
+ * @LastEditTime: 2024-10-25 14:15:18
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -86,7 +86,7 @@ export const reqGetAccountDatas = (data) => reqApi( BASE + '/items/account/searc
 export const reqAddAccountDatas = (data) => reqApi( BASE + '/items/account/add', data, 'POST')
 
 //项目管理-对账列表-明细-查询
-export const reqGetAccountDetailDatas = () => reqApi( BASE + '/items/account/detail', {} , 'GET')
+export const reqGetAccountDetailDatas = (data) => reqApi( BASE + '/items/account/detail', data , 'GET')
 
 //项目管理-对账列表-明细-新增
 export const reqAddAccountDetailDatas = (data) => reqApi( BASE + '/items/account/detail_add', data, 'POST')
