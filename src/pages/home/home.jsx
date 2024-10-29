@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-10-15 16:37:36
+ * @LastEditTime: 2024-10-29 16:06:44
  */
 import React,{useState,useEffect} from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -149,10 +149,10 @@ const Home = () => {
     <Layout style={{overflow: 'hidden',maxWidth: '100%',height:'1000px'}}>
         <Sider>
         <div>
-            <header style={{color:'white',display:'flex',alignItems:'center', height:'80px'}}>
-                <img src={logo} alt='logo' style={{width:'50px', height:'50px',margin:'0 15px'}}/>
-                <div>本原智数系统</div>
-                </header>
+            <header style={{color:'white',display:'flex',justifyContent:'flex-start', alignItems:'center', height:'80px'}}>
+                <img src={logo} alt='logo' style={{width:'50px', height:'50px',margin:'0 20px'}}/>
+                <p style={{fontSize:'15px',fontWeight:'bold'}}>上海本原</p>
+            </header>
                 <Menu
                     selectedKeys={[pathname]}
                     // defaultOpenKeys={[pathname]}

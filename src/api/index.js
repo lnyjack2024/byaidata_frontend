@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-25 14:15:18
+ * @LastEditTime: 2024-10-28 17:53:40
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -90,3 +90,15 @@ export const reqGetAccountDetailDatas = (data) => reqApi( BASE + '/items/account
 
 //项目管理-对账列表-明细-新增
 export const reqAddAccountDetailDatas = (data) => reqApi( BASE + '/items/account/detail_add', data, 'POST')
+
+//任务包管理-查询
+export const reqGetTaskDatas = (data) => reqApi( BASE + '/tasks/task/search', data, 'GET')
+
+//任务包管理-新增
+export const reqAddTaskDatas = (data) => reqApi( BASE + '/tasks/task/add', data, 'POST')
+
+//任务包管理-编辑
+export const reqEditTaskDatas = (data) => reqApi( BASE + '/tasks/task/edit', data, 'POST')
+
+//任务包管理-删除
+export const reqDeleteTaskDatas = (data) => reqApi( BASE + '/tasks/task/delete', data, 'POST')

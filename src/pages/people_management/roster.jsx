@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-10-24 10:20:07
+ * @LastEditTime: 2024-10-28 18:11:59
  */
 
 import React, { useEffect, useState } from 'react'
@@ -660,7 +660,7 @@ const Roster = () => {
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={950}
+        width={'70%'}
       >
         <Form
           form={form_add}
