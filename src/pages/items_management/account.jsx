@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-10-25 17:18:04
+ * @LastEditTime: 2024-10-31 17:34:24
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -813,9 +813,8 @@ const Account = () => {
               ]}
             />
           </Form.Item>
-          <Form.Item
-          >
-              <Button style={{width:'100%',marginLeft:'38%'}} onClick={ handleOk1 } type='primary' > + 新增 </Button>
+          <Form.Item>
+            <Button style={{width:'100%',marginLeft:'38%'}} onClick={ handleOk1 } type='primary' > + 新增 </Button>
           </Form.Item>
         </Form>
         <div style={{ width: '100%', height: '85%', overflow:'auto'}}>

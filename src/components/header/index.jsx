@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2024-10-17 16:56:38
+ * @LastEditTime: 2024-10-31 10:57:57
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
@@ -25,7 +25,7 @@ export default function Header() {
       key: '1',
       label: (
         <a target="_blank" rel="noopener noreferrer">
-          个人中心
+          修改密码
         </a>
       ),
     },
@@ -51,7 +51,7 @@ export default function Header() {
     >
       <Avatar style={{ backgroundColor: '#1677FF' }} icon={<UserOutlined />} />
     </Dropdown>
-    <div style={{marginLeft:'10px'}}>欢迎登录... { username }</div>
+    <div style={{marginLeft:'10px'}}>你好 ! { username }  欢迎登录... </div>
   </div>
   )
 }

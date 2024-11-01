@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2024-10-29 14:31:29
+ * @LastEditTime: 2024-11-01 11:42:32
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -13,7 +13,11 @@ import storageUtils from '../../utils/storageUtils'
 import { reqGetTaskDatas,
          reqAddTaskDatas,    
          reqEditTaskDatas, 
-         reqDeleteTaskDatas 
+         reqDeleteTaskDatas,
+         reqGetTaskEffectDetailDatas,
+         reqGetCheckDatas,
+         reqAddCheckDatas,
+         reqGetDetailDatas
        } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -26,14 +30,21 @@ const Task = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ isEffectModalOpen, setIsEffectModalOpen ] = useState(false)
+  const [ isModalDetailOpen, setIsModalDetailOpen ] = useState(false)
+  const [ isModalCheckOpen, setIsModalCheckOpen ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ effect_detail_data, setEffectDetailData ] = useState([])
+  const [ check_data, setCheckDatas ] = useState([])
   const [ id, setId ] = useState(0)
+  const [ task_id, setTaskId ] = useState(0)
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ delay_date_status, setDelayDateStatus ] = useState(true)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_effect ] = Form.useForm();
+  const [ form_detail ] = Form.useForm();
+  const [ form_check ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
@@ -42,8 +53,28 @@ const Task = () => {
 
   const getTableData = async () => {
     const reqData = await reqGetTaskDatas()
-      setData(reqData.data)
-      setTableLoading(false)
+    setData(reqData.data)
+    setTableLoading(false)
+  }
+
+  const reqGetEffectDetailDatas = async (id) => {
+    const reqData = await reqGetTaskEffectDetailDatas(id)
+    setEffectDetailData(reqData.data)
+  }
+
+  const getCheckDatas = async (id) => {
+    const reqData = await reqGetCheckDatas(id)
+    setCheckDatas(reqData.data)
+  }
+
+  const getDetailDatas = async (id) => {
+    const reqData = await reqGetDetailDatas(id)
+    reqData.data[0].recently_push_date = dayjs(reqData.data[0].recently_push_date).format('YYYY-MM-DD HH:mm:ss')
+    reqData.data[0].frist_push_date = dayjs(reqData.data[0].frist_push_date).format('YYYY-MM-DD HH:mm:ss')
+    reqData.data[0].start_date = dayjs(reqData.data[0].start_date).format('YYYY-MM-DD')
+    reqData.data[0].end_date = dayjs(reqData.data[0].end_date).format('YYYY-MM-DD')
+    reqData.data[0].delivery_date = dayjs(reqData.data[0].delivery_date).format('YYYY-MM-DD')
+    form_detail.setFieldsValue(reqData.data[0])
   }
 
   const handClink = (type,rowData) => {
@@ -54,9 +85,11 @@ const Task = () => {
       setDelayDateStatus(true)
       setId(rowData?rowData.id:'')
     }else if(type === 'effect'){
+      setTaskId(rowData.id)
       setIsEffectModalOpen(!isEffectModalOpen)
       form_effect.setFieldsValue(rowData)
-    }else{ 
+      reqGetEffectDetailDatas({id:rowData.id})
+    }else if(type === 'edit'){ 
       setIsModalOpen(!isModalOpen)
       setModalType(1)
       setDisable(true)
@@ -65,11 +98,24 @@ const Task = () => {
       cloneData.start_date = dayjs(cloneData.start_date)
       cloneData.delivery_date = dayjs(cloneData.delivery_date)
       cloneData.end_date = dayjs(cloneData.end_date)
+      cloneData.get_task_date = cloneData.get_task_date ? dayjs(cloneData.get_task_date) : ''
+      cloneData.delay_date = cloneData.delay_date ? dayjs(cloneData.delay_date) : ''
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
+    }else if(type === 'check'){
+      setTaskId(rowData.id)
+      setIsModalCheckOpen(!isModalCheckOpen)
+      getCheckDatas({id:rowData.id})
+    }else{
+      getDetailDatas({id:rowData.id})
+      setIsModalDetailOpen(!isModalDetailOpen)
     }
   }
 
+  const handleDetailCancle = () => {
+    form_detail.resetFields()
+    setIsModalDetailOpen(!isModalDetailOpen)
+  } 
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
         val.start_date    = dayjs(val.start_date).format('YYYY-MM-DD')
@@ -88,11 +134,13 @@ const Task = () => {
           }
         }else{
           val.edit_id = id
+          val.get_task_date = val.get_task_date ? dayjs(val.get_task_date).format('YYYY-MM-DD') : ''
+          val.delay_date = val.delay_date ? dayjs(val.delay_date).format('YYYY-MM-DD') : ''
           const result = await reqEditTaskDatas(val)
           if(result.status === 1){
             reqGetTaskDatas()
             setIsModalOpen(false)
-            form.resetFields()
+            form_add.resetFields()
             getTableData()
             message.info('编辑成功...')
           }else{
@@ -135,52 +183,60 @@ const Task = () => {
       message.error('删除失败...')
     }
   }
+  const handleCheckCancle = () => {
+    setIsModalCheckOpen(false)
+  }
 
-  const handUploadClink = () => {
-
+  const handleCheck = () => {
+    form_check.validateFields().then( async (val)=>{
+        val.task_id = task_id
+        val.date    = dayjs(val.date).format('YYYY-MM-DD')
+        const result = await reqAddCheckDatas(val)
+        if(result.status === 1){
+          form_check.resetFields()
+          getCheckDatas({id:task_id})
+          message.info('新增成功...')
+        }else{
+          message.error('新增失败...')
+        }
+    }).catch(()=>{
+      messageApi.error('参数有误...请检查!!!')
+    }
+    )
   }
 
   const column = [
     {
       title: 'ID',
       dataIndex: 'id',
-      key: 'id',
       fixed: 'left'
     },
     {
       title: '任务包名称',
       dataIndex: 'name',
-      key: 'name',
       fixed: 'left'
     },
     {
       title: '基地',
       dataIndex: 'base',
+      fixed: 'left'
     },
     {
       title: '业务线',
       dataIndex: 'service_line',
+      fixed: 'left'
     },
     {
       title: '所属项目',
-      dataIndex: 'service_line',
+      dataIndex: 'item',
     },
     {
       title: '任务包状态',
-      dataIndex: 'settlement_type',
-      // render:(text,record,index)=>{
-      //   if(text === 'day'){
-      //      return '包天'
-      //   }else if(text === 'month'){
-      //     return '包月'
-      //   }else{
-      //     return '计件'
-      //   }
-      // }
+      dataIndex: 'status',
     },
     {
       title: '任务包数据量',
-      dataIndex: 'day',
+      dataIndex: 'amount',
     },
     {
       title: '任务包周期',
@@ -196,36 +252,36 @@ const Task = () => {
       }
     },
     {
-      title: '是否延期',
-      dataIndex: '',
-    },
-    {
       title: '是否交付',
       dataIndex: '',
     },
     {
       title: '交付要求',
+      dataIndex: 'delivery_requirement',
+    },
+    {
+      title: '结算类型',
+      dataIndex: 'settlement_type',
+    },
+    {
+      title: '是否延期',
       dataIndex: '',
     },
     {
-      title: '结算方式',
-      dataIndex: 'delivery_status',
-    },
-    {
       title: '作业日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
+      dataIndex: 'start_date',
+      render:(start_date)=>{
         return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
+          dayjs(start_date).format('YYYY-MM-DD')
         )
       }
     },
     {
-      title: '结束日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
+      title: '完成日期',
+      dataIndex: 'end_date',
+      render:(end_date)=>{
         return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
+          dayjs(end_date).format('YYYY-MM-DD')
         )
       }
     },
@@ -254,9 +310,10 @@ const Task = () => {
       render:(rowData)=>{
           return (
             <div>
-              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>&nbsp;&nbsp;
               <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
               <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>
               <Popconfirm
                 description='是否删除?'
                 okText='确认'
@@ -274,67 +331,106 @@ const Task = () => {
   const effect_column = [
     {
       title: '日期',
-      dataIndex: 'base',
+      dataIndex: 'date',
+      fixed: 'left'
     },
     {
       title: '姓名',
-      dataIndex: 'service_line',
+      dataIndex: 'worker_name',
+      fixed: 'left'
     },
     {
       title: '工号',
-      dataIndex: 'service_line',
+      dataIndex: 'worker_number',
+      fixed: 'left'
     },
     {
       title: '时段',
-      dataIndex: 'day',
+      dataIndex: 'time_frame',
     },
     {
       title: '标注量',
-      dataIndex: 'day',
+      dataIndex: 'work_amount',
     },
     {
       title: '完成量',
-      dataIndex: '',
+      dataIndex: 'completed_amount',
     },
     {
       title: '正确率',
-      dataIndex: '',
+      dataIndex: 'accuracy',
     },
     {
       title: '错误量',
-      dataIndex: '',
+      dataIndex: 'error_amount',
     },
     {
       title: '质检量',
-      dataIndex: 'delivery_status',
+      dataIndex: 'quality_amount',
     },
     {
       title: '返修量',
-      dataIndex: 'delivery_status',
+      dataIndex: 'rework_amount',
     },
     {
       title: '任务工时',
-      dataIndex: 'delivery_status',
+      dataIndex: 'task_hour',
     },
     {
       title: '非任务工时',
-      dataIndex: 'delivery_status',
+      dataIndex: 'task_no_hour',
     },
     {
-      title: '操作日期',
-      dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
+      title: '操作人',
+      dataIndex: 'user',
+    },
+    {
+      title: '操作时间',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
         return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
         )
       }
     }
   ];
 
-  const attachment = ''
+  const check_column = [
+    {
+      title: '质检日期',
+      dataIndex: 'date',
+      render:(date)=>{
+        return (
+          dayjs(date).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '质检类型',
+      dataIndex: 'check_type',
+    },
+    {
+      title: '质检是否通过',
+      dataIndex: 'is_check',
+    },
+    {
+      title: '质检人',
+      dataIndex: 'user',
+    },
+    {
+      title: '操作时间',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
+        return (
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
+        )
+      }
+    },
+  ];
+
   const props = {
     name: 'file',
-    action: `http://localhost:3003/items/account/detail/upload?id=`,
+    action: `http://localhost:3003/tasks/task/upload?task_id=${task_id}`,
     headers: {
       authorization: 'authorization-text',
       'token': storageUtils.getToken()
@@ -343,6 +439,7 @@ const Task = () => {
       if (info.file.status === 'done') {
         if(info.file.response.status === 1){
           message.success(`文件${info.file.name}导入成功`);
+          reqGetEffectDetailDatas({id:task_id})
         }else if(info.file.response.status === 0){
           message.error(`文件${info.file.name}导入失败`);
         }else if(info.file.response.status === 3){
@@ -353,6 +450,9 @@ const Task = () => {
       }
     },
   };
+  
+  const attachment = ''
+
   return (
     <div className='style'>
       <div className='flex-box'>
@@ -533,7 +633,7 @@ const Task = () => {
           form={form_add}
           labelCol={{span:5}} 
           wrapperCol={{span:10}} 
-          style={{marginTop:'50px'}}
+          style={{marginTop:'20px'}}
         >
            <Form.Item
             label='任务包名称'
@@ -697,7 +797,7 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入标注团队'}]}
           >
-            <Input placeholder='请输入标注团队'/>
+            <Input placeholder='请输入标注团队' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='标注员'
@@ -831,7 +931,7 @@ const Task = () => {
           >
             <DatePicker
               placeholder={['请选择时间']}
-              style={{width:'200px'}}
+              style={{width:'200px'}} disabled={_disable}
               />
           </Form.Item>
           <Form.Item
@@ -860,14 +960,14 @@ const Task = () => {
             name="salary_structure"
             initialValue=''
           >
-            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍'/>
+            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='甲方任务包链接'
             name="attachment"
             hidden={delay_date_status}
           >
-            <Input placeholder='请输入甲方任务包链接'/>
+            <Input placeholder='请输入甲方任务包链接' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='任务包简介'
@@ -927,7 +1027,7 @@ const Task = () => {
                   showUploadList={false} 
                   {...props}
                 >
-                  <Button style={{width:'200px'}} icon={<UploadOutlined />} onClick={()=> handUploadClink()}>导入</Button>
+                  <Button style={{width:'200px'}} icon={<UploadOutlined />}>导入</Button>
               </Upload>
             </div>
             <div style={{marginLeft:'50px'}}>
@@ -944,7 +1044,297 @@ const Task = () => {
         <div style={{ width: '100%', height: '85%', overflow:'auto',marginTop:'10px'}}>
           <Table 
             columns={ effect_column } 
-            dataSource={ data } 
+            dataSource={ effect_detail_data } 
+            rowKey={ data => data.id }  
+            scroll={{x: 'max-content'}}
+          />
+        </div>
+      </Modal>
+      <Modal
+        open={isModalDetailOpen}
+        title={'任务包详情'}
+        onCancel={handleDetailCancle}
+        maskClosable={false}
+        width={'70%'}
+        footer={null}
+      >
+        <Form
+          form={form_detail}
+          labelCol={{span:5}} 
+          wrapperCol={{span:10}} 
+          style={{marginTop:'20px'}}
+        >
+           <Form.Item
+            label='任务包名称'
+            name="name"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='所属项目'
+            name="item"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包状态'
+            name="item"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='业务线'
+            name="service_line"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='基地'
+            name="base"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='项目负责人'
+            name="item_leader"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='业务负责人'
+            name="business_leader"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='项目经理'
+            name="item_manager"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='项目主管'
+            name="item_supervisor"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='小组长'
+            name="group_manager"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='培训师'
+            name="trainer"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='标注团队'
+            name="work_team"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='标注员'
+            name="workers"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='审核员'
+            name="auditor"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包数量'
+            name="amount"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='交付要求'
+            name="delivery_requirement"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='结算类型'
+            name="settlement_type"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='商务单价'
+            name="business_price"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='下方单价'
+            name="price"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包周期'
+            name="day"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='出勤要求'
+            name="attendance_type"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='质检驳回次数'
+            name="quality_rejected_number"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='验收驳回次数'
+            name="acceptance_rejected_number"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='最近提交时间'
+            name="recently_push_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='首次提交时间'
+            name="frist_push_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='作业日期'
+            name="start_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='完成日期'
+            name="end_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='交付日期'
+            name="delivery_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='领取日期'
+            name="get_task_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='延期日期'
+            name="delay_date"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='内部人员薪资结构'
+            name="salary_structure"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='甲方任务包链接'
+            name="attachment"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包简介'
+            name="detail"
+          >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        open={isModalCheckOpen}
+        title={'质检信息'}
+        onCancel={handleCheckCancle}
+        maskClosable={false}
+        width={'50%'}
+        footer={null}
+      >
+        <Form
+          form={form_check}
+          labelCol={{span:5}} 
+          wrapperCol={{span:10}} 
+          style={{marginTop:'20px'}}
+        >
+          <Form.Item
+            label='质检日期'
+            name="date"
+            rules={[{required:true,message:'请输入质检日期'}]}
+          >
+            <DatePicker
+              placeholder={['请输入质检日期']}
+              style={{width:'330px'}}
+            />
+          </Form.Item>
+          <Form.Item
+            label='质检类型'
+            name="check_type"
+            rules={[{required:true,message:'请输入质检类型'}]}
+          >
+            <Select
+                placeholder='请输入质检类型'
+                options={[
+                  {
+                    value: '内部质检',
+                    label: '内部质检',
+                  },
+                  {
+                    value: '业务方质检',
+                    label: '业务方质检',
+                  }
+                ]}
+              />
+          </Form.Item>
+          <Form.Item
+             label='质检是否通过'
+             name="is_check"
+             rules={[{required:true,message:'请输入质检是否通过'}]}
+          >
+            <Select
+              placeholder='请输入质检是否通过'
+              style={{width:'330px'}}
+              options={[
+                {
+                  value: '通过',
+                  label: '通过',
+                },
+                {
+                  value: '不通过',
+                  label: '不通过',
+                }
+              ]}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button style={{width:'200px',marginLeft:'220px'}} onClick={ handleCheck } type='primary' htmlType='submit'> + 新增 </Button>
+          </Form.Item>
+        </Form>
+        <div style={{ width: '100%', height: '85%', overflow:'auto',marginTop:'10px'}}>
+          <Table 
+            columns={ check_column } 
+            dataSource={ check_data } 
             rowKey={ data => data.id }  
             pagination={false}
           />

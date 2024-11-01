@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-28 17:53:40
+ * @LastEditTime: 2024-10-31 17:38:39
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -94,6 +94,9 @@ export const reqAddAccountDetailDatas = (data) => reqApi( BASE + '/items/account
 //任务包管理-查询
 export const reqGetTaskDatas = (data) => reqApi( BASE + '/tasks/task/search', data, 'GET')
 
+//任务包管理-人效明细-查询
+export const reqGetTaskEffectDetailDatas = (data) => reqApi( BASE + '/tasks/task/effect_detail', data, 'GET')
+
 //任务包管理-新增
 export const reqAddTaskDatas = (data) => reqApi( BASE + '/tasks/task/add', data, 'POST')
 
@@ -102,3 +105,12 @@ export const reqEditTaskDatas = (data) => reqApi( BASE + '/tasks/task/edit', dat
 
 //任务包管理-删除
 export const reqDeleteTaskDatas = (data) => reqApi( BASE + '/tasks/task/delete', data, 'POST')
+
+//任务包管理-详情
+export const reqGetDetailDatas = (data) => reqApi( BASE + '/tasks/task/detail', data, 'GET')
+
+//任务包管理-质检-详情
+export const reqGetCheckDatas = (data) => reqApi( BASE + '/tasks/task/check', data, 'GET')
+
+//任务包管理-质检-新增
+export const reqAddCheckDatas = (data) => reqApi( BASE + '/tasks/task/check_add', data, 'POST')
