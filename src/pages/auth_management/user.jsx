@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-10-09 15:14:05
+ * @LastEditTime: 2024-11-01 14:32:35
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
@@ -297,6 +297,18 @@ const User = () => {
                 {
                   value: '管理者-1',
                   label: '管理者',
+                },
+                {
+                  value: '财务总监-15',
+                  label: '财务总监',
+                },
+                {
+                  value: '财务经理或主管-16',
+                  label: '财务经理或主管',
+                },
+                {
+                  value: '财务专员-17',
+                  label: '财务专员',
                 },
                 {
                   value: '运营负责人-2',
