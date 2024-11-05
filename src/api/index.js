@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-10-31 17:38:39
+ * @LastEditTime: 2024-11-04 16:25:37
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -114,3 +114,6 @@ export const reqGetCheckDatas = (data) => reqApi( BASE + '/tasks/task/check', da
 
 //任务包管理-质检-新增
 export const reqAddCheckDatas = (data) => reqApi( BASE + '/tasks/task/check_add', data, 'POST')
+
+//财务管理-结算列表-查询
+export const reqGetSettleDatas = (data) => reqApi( BASE + '/finance/settle/search', data, 'GET')

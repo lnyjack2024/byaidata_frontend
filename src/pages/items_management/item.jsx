@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2024-10-25 11:28:35
+ * @LastEditTime: 2024-11-05 15:11:04
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -145,25 +145,29 @@ const Item = () => {
       dataIndex: 'service_line',
     },
     {
-      title: '结算类型',
-      dataIndex: 'settlement_type',
-      // render:(text,record,index)=>{
-      //   if(text === 'day'){
-      //      return '包天'
-      //   }else if(text === 'month'){
-      //     return '包月'
-      //   }else{
-      //     return '计件'
-      //   }
-      // }
-    },
-    {
-      title: '周期',
+      title: '项目周期',
       dataIndex: 'day',
     },
     {
       title: '项目负责人',
-      dataIndex: 'project_leader',
+      dataIndex: 'item_leader',
+    },
+    {
+      title: '标注团队',
+      dataIndex: 'work_team',
+    },
+    {
+      title: '标注员人数',
+      dataIndex: 'number_workers',
+    },
+    {
+      title: '作业日期',
+      dataIndex: 'start_date',
+      render:(start_date)=>{
+        return (
+          dayjs(start_date).format('YYYY-MM-DD')
+        )
+      }
     },
     {
       title: '项目进度',
@@ -176,11 +180,11 @@ const Item = () => {
     },
     {
       title: '项目状态',
-      dataIndex: '',
+      dataIndex: 'status',
     },
     {
-      title: '是否交付',
-      dataIndex: '',
+      title: '交付状态',
+      dataIndex: 'delivery_status',
     },
     {
       title: '交付日期',
@@ -192,12 +196,16 @@ const Item = () => {
       }
     },
     {
+      title: '结算类型',
+      dataIndex: 'settlement_type',
+    },
+    {
       title: '结算周期',
       dataIndex: 'settlement_day'
     },
     {
       title: '结算状态',
-      dataIndex: 'delivery_status',
+      dataIndex: 'settlement_status',
     },
     {
       title: '创建日期',
@@ -374,6 +382,10 @@ const Item = () => {
                   style={{textAlign:'left'}}
                   options={[
                     {
+                      value: '未开始',
+                      label: '未开始',
+                    },
+                    {
                       value: '结算中',
                       label: '结算中',
                     },
@@ -398,7 +410,6 @@ const Item = () => {
               <Form.Item name="create_time" label="创建日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
-                  // onChange={onChange} 
                   style={{width:'250px'}}
                 />
               </Form.Item>
@@ -486,7 +497,6 @@ const Item = () => {
           <Form.Item
             label='基地'
             name="base"
-            initialValue=''
             rules={[{required:true,message:'请输入基地'}]}
           >
               <Select
@@ -537,29 +547,27 @@ const Item = () => {
             <Input placeholder='请输入项目负责人' disabled={_disable}/>
           </Form.Item>
           <Form.Item
-            label='结算类型'
-            name="settlement_type"
-            rules={[{required:true,message:'请输入结算类型'}]}
+            label='标注团队'
+            name="team"
+            rules={[{required:true,message:'请输入标注团队'}]}
           >
-            <Select
-                placeholder='请输入结算类型'
-                disabled={_disable}
-                options={[
-                  {
-                    value: '包天',
-                    label: '包天',
-                  },
-                  {
-                    value: '包月',
-                    label: '包月',
-                  },
-                  {
-                    value: '计件',
-                    label: '计件',
-                  }
-                ]}
-              />
+            <Input placeholder='请输入标注团队'/>
           </Form.Item>
+          <Form.Item
+            label='标注员人数'
+            name="number_people"
+            initialValue={0}
+            rules={[{required:true,message:'请输入标注员人数'}]}
+          >
+            <InputNumber placeholder='请输入标注员人数'/>
+          </Form.Item>
+          <Form.Item
+            label='审核员'
+            name="auditor"
+          >
+            <Input placeholder='请输入审核员'/>
+          </Form.Item>
+        
           <Form.Item
             label='单价'
             name="price"
@@ -602,25 +610,28 @@ const Item = () => {
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='标注员人数'
-            name="number_people"
-            initialValue={0}
-            rules={[{required:true,message:'请输入标注员人数'}]}
+            label='结算类型'
+            name="settlement_type"
+            rules={[{required:true,message:'请输入结算类型'}]}
           >
-            <InputNumber placeholder='请输入标注员人数'/>
-          </Form.Item>
-          <Form.Item
-            label='标注团队'
-            name="team"
-            rules={[{required:true,message:'请输入标注团队'}]}
-          >
-            <Input placeholder='请输入标注团队'/>
-          </Form.Item>
-          <Form.Item
-            label='审核员'
-            name="auditor"
-          >
-            <Input placeholder='请输入审核员'/>
+            <Select
+                placeholder='请输入结算类型'
+                disabled={_disable}
+                options={[
+                  {
+                    value: '包天',
+                    label: '包天',
+                  },
+                  {
+                    value: '包月',
+                    label: '包月',
+                  },
+                  {
+                    value: '计件',
+                    label: '计件',
+                  }
+                ]}
+              />
           </Form.Item>
           <Form.Item
             label='结算周期'

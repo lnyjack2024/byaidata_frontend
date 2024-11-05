@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-10-31 17:34:24
+ * @LastEditTime: 2024-11-05 13:49:45
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -28,6 +28,7 @@ const Account = () => {
   const [ id, setId ] = useState(0)
   const [ account_detail_id, setAccountDetailId ] = useState(0)
   const [ item_settlement_type, setItemSettlementType ] = useState('')
+  const [ item_detail, setItemDetail ] = useState({})
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_detail ] = Form.useForm();
@@ -57,6 +58,7 @@ const Account = () => {
       setId(rowData.id)
       setItemSettlementType(rowData.item_settlement_type)
       getAccountDetailData({id:rowData.id})
+      setItemDetail(rowData)
       if(rowData.item_settlement_type === '计件'){
         setIsModalOpen1(!isModalOpen1)
       }else{
@@ -70,7 +72,7 @@ const Account = () => {
         const result = await reqAddAccountDatas(val)
         if(result.status === 1){
           setIsModalOpen(false)
-          form.resetFields()
+          form_add.resetFields()
           getTableData()
           message.info('新增成功...')
         }else{
@@ -90,6 +92,7 @@ const Account = () => {
     form_detail.validateFields().then( async (val)=>{
       val.account_id = id
       val.item_settlement_type = item_settlement_type
+      val.items = item_detail
       const result = await reqAddAccountDetailDatas(val)
       if(result.status === 1){
         form_detail.resetFields()
@@ -112,6 +115,7 @@ const Account = () => {
     form_detail2.validateFields().then( async (val)=>{
       val.account_id = id
       val.item_settlement_type = item_settlement_type
+      val.items = item_detail
       const result = await reqAddAccountDetailDatas(val)
       if(result.status === 1){
         form_detail.resetFields()
@@ -142,7 +146,7 @@ const Account = () => {
     form_add.validateFields().then( async (val)=>{
       const reqData = await reqGetItemDatas(val)
       if(reqData.data.length === 0){
-        messageApi.error('请确认ID是否存在...')
+        messageApi.error('请确认项目ID')
         return;
       }
       const cloneData = JSON.parse(JSON.stringify(reqData.data))
@@ -183,20 +187,11 @@ const Account = () => {
     },
     {
       title: '项目负责人',
-      dataIndex: 'project_leader',
+      dataIndex: 'item_leader',
     },
     {
       title: '结算类型',
       dataIndex: 'item_settlement_type',
-      // render:(text,record,index)=>{
-      //   if(text === 'day'){
-      //      return '包天'
-      //   }else if(text === 'month'){
-      //     return '包月'
-      //   }else{
-      //     return '计件'
-      //   }
-      // }
     },
     {
       title: '结算周期',
@@ -659,7 +654,7 @@ const Account = () => {
           </Form.Item>
           <Form.Item
             label='项目负责人'
-            name="project_leader"
+            name="item_leader"
           >
             <Input disabled={true}/>
           </Form.Item>
@@ -672,6 +667,12 @@ const Account = () => {
           <Form.Item
             label='结算类型'
             name="settlement_type"
+          >
+            <Input disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='结算状态'
+            name="settlement_status"
           >
             <Input disabled={true}/>
           </Form.Item>
@@ -703,7 +704,7 @@ const Account = () => {
       </Modal>
       <Modal
         open={isModalOpen1}
-        title={ '对账明细-计件' }
+        title={ '' }
         onOk={handleOk1}
         onCancel={handleCancle1}
         okText='确定'
@@ -716,6 +717,7 @@ const Account = () => {
           form={form_detail}
           labelCol={{span:3}} 
           wrapperCol={{span:8}} 
+          style={{marginTop:'30px'}}
         >
           <Form.Item
             label='对账日期'
@@ -724,7 +726,6 @@ const Account = () => {
           >
             <DatePicker
               placeholder={['请选择对账日期']}
-              style={{width:'60%'}}
             />
           </Form.Item>
           <Form.Item
@@ -734,7 +735,6 @@ const Account = () => {
           >
              <RangePicker     
                 placeholder={['开始日期', '结束日期']}
-                style={{width:'60%'}}
              />
           </Form.Item>
           <Form.Item
@@ -829,7 +829,7 @@ const Account = () => {
       </Modal>
       <Modal
         open={isModalOpen2}
-        title={ '对账明细-包天/月' }
+        title={ '' }
         onOk={handleOk2}
         onCancel={handleCancle2}
         okText='确定'
@@ -842,6 +842,7 @@ const Account = () => {
           form={form_detail2}
           labelCol={{span:3}} 
           wrapperCol={{span:8}} 
+          style={{marginTop:'30px'}}
         >
           <Form.Item
             label='对账日期'
