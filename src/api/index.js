@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-04 16:25:37
+ * @LastEditTime: 2024-11-06 15:40:27
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -117,3 +117,18 @@ export const reqAddCheckDatas = (data) => reqApi( BASE + '/tasks/task/check_add'
 
 //财务管理-结算列表-查询
 export const reqGetSettleDatas = (data) => reqApi( BASE + '/finance/settle/search', data, 'GET')
+
+//财务管理-结算列表-结算状态
+export const reqEditSettleDatas = (data) => reqApi( BASE + '/finance/settle/edit', data, 'POST')
+
+//财务管理-结算列表-回款状态
+export const reqEditSettleStatus = (data) => reqApi( BASE + '/finance/settle/status', data, 'POST')
+
+//财务管理-结算列表-开票明细
+export const reqEditSettleInvoice = (data) => reqApi( BASE + '/finance/settle/invoice', data, 'POST')
+
+//财务管理-开票明细-查询
+export const reqGetInvoiceDetailDatas = (data) => reqApi( BASE + '/finance/settle/invoice_search', data, 'GET')
+
+//财务管理-开票明细-删除
+export const reqDeleteInvoiceDatas = (data) => reqApi( BASE + '/finance/settle/delete', data, 'POST')
