@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-11-01 14:37:42
+ * @LastEditTime: 2024-11-06 17:47:51
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -22,6 +22,7 @@ import { AccountBookOutlined,
 const { Header, Sider, Content } = Layout;
 
 const Home = () => {
+  const navigate = useNavigate()
   const role = storageUtils.getRole()
   let items = []
   if(role === 7){
@@ -306,9 +307,7 @@ const Home = () => {
       }
     ]
   }else{
-
   }
-  const navigate = useNavigate();
   const { pathname } = useLocation(); // 获取当前url
 
   const onClickData = (e) => {

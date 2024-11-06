@@ -2,14 +2,15 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2024-10-31 10:57:57
+ * @LastEditTime: 2024-11-06 18:16:42
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown } from 'antd';
+import { Avatar, Dropdown, Button } from 'antd';
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
+import { LoginOutlined} from '@ant-design/icons'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export default function Header() {
     storageUtils.removeRole('role')
     // memoryUtils.user = {}
     navigate('/login')
+    window.location.reload(); // 强制刷新
   }
   
   const items = [
@@ -29,14 +31,14 @@ export default function Header() {
         </a>
       ),
     },
-    {
-      key: '2',
-      label: (
-        <a onClick={()=> logout()} target="_blank" rel="noopener noreferrer">
-          退出
-        </a>
-      )
-    }
+    // {
+    //   key: '2',
+    //   label: (
+    //     <a onClick={()=> logout()} target="_blank" rel="noopener noreferrer">
+    //       退出
+    //     </a>
+    //   )
+    // }
   ]
 
   const username = memoryUtils.user
@@ -46,13 +48,20 @@ export default function Header() {
  
   return (
     <div style={{ height:'70px', color:'white',display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
-    <Dropdown
-      menu={{items}}
-    >
-      <Avatar style={{ backgroundColor: '#1677FF' }} icon={<UserOutlined />} />
-    </Dropdown>
-    <div style={{marginLeft:'10px'}}>你好 ! { username }  欢迎登录... </div>
-  </div>
+      <Dropdown
+        menu={{items}}
+      >
+        <Avatar style={{ backgroundColor: '#1677FF' }} icon={<UserOutlined />} />
+      </Dropdown>
+      <div style={{marginLeft:'10px',fontWeight:'bold'}}>
+        你好... { username } !
+      </div>
+      <div style={{marginLeft:'20px',paddingTop:'5px'}}>
+        <Button type='primary' danger style={{borderRadius:'20px'}} onClick={()=> logout()}>
+          <LoginOutlined /> 退出
+        </Button>
+      </div>
+    </div>
   )
 }
 
