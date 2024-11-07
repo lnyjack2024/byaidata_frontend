@@ -2,16 +2,10 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-06 15:40:27
+ * @LastEditTime: 2024-11-07 14:39:11
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
-
-//请求handsontable测试数据
-export const reqHandsontableDatas = () => reqApi( BASE + '/test', {}, 'GET')
-
-//更新handsontable测试数据
-export const reqHandsontableDatasUpdate = (data) => reqApi( BASE + '/test/update', data, 'POST')
 
 //登录
 export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
@@ -51,6 +45,9 @@ export const reqEditPortraitDatas = (data) => reqApi( BASE + '/person/portrait/e
 
 //人员管理-人员考勤
 export const reqGetClockingDatas = (data) => reqApi( BASE + '/person/clocking/search', data, 'GET')
+
+//人员管理-人员考勤-新增
+export const reqAddClockingDatas = (data) => reqApi( BASE + '/person/clocking/add', data, 'POST')
 
 //人员管理-人员花名册-离职
 export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/search', data, 'GET')
