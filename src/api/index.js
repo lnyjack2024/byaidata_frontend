@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-07 14:39:11
+ * @LastEditTime: 2024-11-08 14:34:08
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -13,7 +13,7 @@ export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
 //权限管理-操作员列表-查询
 export const reqGetUserDatas = () => reqApi( BASE + '/user/search', {}, 'GET')
 
-//新增
+//权限管理-操作员列表-新增
 export const reqAddUserDatas = (data) => reqApi( BASE + '/user/add', data, 'POST')
 
 //权限管理-角色列表-查询
@@ -28,19 +28,19 @@ export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/depart
 //人员管理-人员花名册-查询
 export const reqGetRosterDatas = (data) => reqApi( BASE + '/person/roster/search', data, 'GET')
 
-//新增
+//人员管理-人员花名册-新增
 export const reqAddRosterDatas = (data) => reqApi( BASE + '/person/roster/add', data, 'POST')
 
-//编辑
+//人员管理-人员花名册-编辑
 export const reqEditRosterDatas = (data) => reqApi( BASE + '/person/roster/edit', data, 'POST')
 
 //人员管理-人员画像-查询
 export const reqGetPortraitDatas = (data) => reqApi( BASE + '/person/portrait/search', data, 'GET')
 
-//新增
+//人员管理-人员画像-新增
 export const reqAddPortraitDatas = (data) => reqApi( BASE + '/person/portrait/add', data, 'POST')
 
-//编辑
+//人员管理-人员画像-编辑
 export const reqEditPortraitDatas = (data) => reqApi( BASE + '/person/portrait/edit', data, 'POST')
 
 //人员管理-人员考勤
@@ -48,6 +48,12 @@ export const reqGetClockingDatas = (data) => reqApi( BASE + '/person/clocking/se
 
 //人员管理-人员考勤-新增
 export const reqAddClockingDatas = (data) => reqApi( BASE + '/person/clocking/add', data, 'POST')
+
+//人员管理-人员考勤-编辑
+export const reqEditClockingDatas = (data) => reqApi( BASE + '/person/clocking/edit', data, 'POST')
+
+//人员管理-人员考勤-删除
+export const reqDeleteClockingDatas = (data) => reqApi( BASE + '/person/clocking/delete', data, 'POST')
 
 //人员管理-人员花名册-离职
 export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/search', data, 'GET')
