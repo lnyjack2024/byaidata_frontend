@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-08 14:34:08
+ * @LastEditTime: 2024-11-11 13:12:31
  */
 import reqApi from "./requestApi";
 const BASE = 'http://localhost:3003'
@@ -11,16 +11,22 @@ const BASE = 'http://localhost:3003'
 export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
 
 //权限管理-操作员列表-查询
-export const reqGetUserDatas = () => reqApi( BASE + '/user/search', {}, 'GET')
+export const reqGetUserDatas = (data) => reqApi( BASE + '/user/search', data, 'GET')
 
 //权限管理-操作员列表-新增
 export const reqAddUserDatas = (data) => reqApi( BASE + '/user/add', data, 'POST')
+
+//权限管理-操作员列表-删除
+export const reqDeleteUserDatas = (data) => reqApi( BASE + '/user/delete', data, 'POST')
 
 //权限管理-角色列表-查询
 export const reqGetRoleDatas = () => reqApi( BASE + '/role/search', {}, 'GET')
 
 //人员管理-部门列表
 export const reqGetDepartmentDatas = (e) => reqApi( BASE + '/person/department', e, 'GET')
+
+//人员管理-部门列表-新增
+export const reqAddDepartmentDatas = (data) => reqApi( BASE + '/person/department/add', data, 'POST')
 
 //部门列表-删除
 export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/department/delete', data, 'POST')
@@ -33,6 +39,9 @@ export const reqAddRosterDatas = (data) => reqApi( BASE + '/person/roster/add', 
 
 //人员管理-人员花名册-编辑
 export const reqEditRosterDatas = (data) => reqApi( BASE + '/person/roster/edit', data, 'POST')
+
+//人员管理-人员花名册-删除
+export const reqDeleteRosterDatas = (data) => reqApi( BASE + '/person/roster/delete', data, 'POST')
 
 //人员管理-人员画像-查询
 export const reqGetPortraitDatas = (data) => reqApi( BASE + '/person/portrait/search', data, 'GET')

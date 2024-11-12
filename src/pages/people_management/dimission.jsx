@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:50:24
- * @LastEditTime: 2024-10-24 10:19:09
+ * @LastEditTime: 2024-11-12 11:13:46
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
@@ -43,13 +43,11 @@ const Dimission = () => {
     form.resetFields()
   }
   
-  // const onChange = (date, dateString) => {
-  // };
-
   const column = [
     {
       title: '姓名',
       dataIndex: 'name',
+      fixed: 'left'
     },
     {
       title: '性别',
@@ -247,50 +245,59 @@ const Dimission = () => {
       title: '离职日期',
       dataIndex: 'dimission_date',
       render:(dimission_date)=>{
-        if(dimission_date){
+        if(dimission_date === null){
+          return <></>
+        }else{
           return (
             dayjs(dimission_date).format('YYYY-MM-DD')
           )
-        }else{
-          return <></>
         }
       }
     },
     {
       title: '离职类型',
       dataIndex: 'dimission_type',
+      render:(dimission_type)=>{
+        if(dimission_type === '1'){
+          return (
+            <>主动离职</>
+          )
+        }else if(dimission_type === '2'){
+          return (
+            <>单方解除</>
+          )
+        }else if(dimission_type === '3'){
+          return (
+            <>协商解除</>
+          )
+        }else if(dimission_type === '4'){
+          return (
+            <>合同到期</>
+          )
+        }else if(dimission_type === '5'){
+          return (
+            <>严重违反公司规定损害公司利益</>
+          )
+        }else if(dimission_type === '6'){
+          return (
+            <span>影响团队氛围人际关系恶劣</span>
+          )
+        }
+      }
     },
     {
       title: '离职原因',
       dataIndex: 'dimission_reason',
     },
-    // {
-    //   title: '创建时间',
-    //   dataIndex: 'create_time',
-    //   render:(create_time)=>{
-    //     return (
-    //       dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
-    //     )
-    //   }
-    // },
-    // {
-    //   title: '操作',
-    //   render:(rowData)=>{
-    //     return (
-    //       <div>
-    //         <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
-    //         <Popconfirm
-    //           description='是否删除?'
-    //           okText='确认'
-    //           cancelText='取消'
-    //           onConfirm={ () => handDelete(rowData)}
-    //         >
-    //           <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
-    //         </Popconfirm>
-    //       </div>
-    //     )
-    //   }
-    // }
+    {
+      title: '创建时间',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
+        return (
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
+        )
+      }
+    },
   ];
  
   return (

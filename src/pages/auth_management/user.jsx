@@ -1,35 +1,33 @@
 /*
- * @Description: 
+ * @Description: 操作员列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-11-01 14:32:35
+ * @LastEditTime: 2024-11-11 10:07:23
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, Select, message } from 'antd'
 import moment from 'moment';
 import './user.css'
+import { reqGetUserDatas, reqAddUserDatas, reqDeleteUserDatas } from '../../api/index'
 
-import { reqGetUserDatas, reqAddUserDatas } from '../../api/index'
 const User = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ table_loading, setTableLoading ] = useState(true)
   const [ form ] = Form.useForm();
+  const [ form_ ] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     getTableData()
-    // const fetchData = async () => {
-    //   const reqData = await reqGetUserDatas()
-    //   setData(reqData.data)
-    //   };
-    // fetchData();
   },[])
 
   const getTableData = async () => {
     const reqData = await reqGetUserDatas()
       setData(reqData.data)
+      setTableLoading(false)
   }
 
   const handClink = (type,rowData) => {
@@ -40,12 +38,25 @@ const User = () => {
       setModalType(1)
     }
   }
-  const handDelete = () => {
 
+  const handDelete = async (e) => {
+    const result = await reqDeleteUserDatas(e)
+    if(result.status === 1){
+      getTableData()
+      message.info('删除成功...')
+    }else{
+      message.error('删除失败...')
+    }
   }
-  const hangFinish = (e) => {
-    console.log(e)
+
+  const handSearch = () => {
+    form_.validateFields().then( async (val)=>{
+      const reqData = await reqGetUserDatas(val)
+      setData(reqData.data)
+      setTableLoading(false)
+    })
   }
+
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
     if(val.base === undefined){
@@ -63,7 +74,6 @@ const User = () => {
     }else{
       message.error('新增失败...')
     }
-    console.log(result)
     }).catch(()=>{
       messageApi.error('参数有误...请检查!!!')
     })
@@ -103,20 +113,20 @@ const User = () => {
         )
       }
     },
-    {
-      title: '更新时间',
-      dataIndex: 'update_time', render:(update_time)=>{
-        return (
-          moment(update_time).format('YYYY-MM-DD HH:mm:ss')
-        )
-      }
-    },
+    // {
+    //   title: '更新时间',
+    //   dataIndex: 'update_time', render:(update_time)=>{
+    //     return (
+    //       moment(update_time).format('YYYY-MM-DD HH:mm:ss')
+    //     )
+    //   }
+    // },
     {
       title: '操作',
       render:(rowData)=>{
         return (
           <div>
-            <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
+            {/* <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> */}
             <Popconfirm
               // title='提示'
               description='是否删除?'
@@ -137,18 +147,25 @@ const User = () => {
       <div className='flex-box'>
         <Button type='primary' onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>
         <Form
+          form={form_}
           layout='inline'
-          onFinish={hangFinish}
         >
-          <Form.Item name="keyword">
-            <Input placeholder='请输入操作员'/>
+          <Form.Item name="name">
+            <Input placeholder='请输入姓名'/>
           </Form.Item>
-          <Form.Item name="keyword">
-            <Button type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+          <Form.Item>
+            <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
           </Form.Item>
         </Form>
       </div>
-      <Table columns={ column } dataSource={ data } rowKey={ data => data.id }/>
+      <div style={{ width: '100%', height: '85%', overflow:'auto'}}>
+        <Table 
+          columns={ column } 
+          dataSource={ data } 
+          rowKey={ data => data.id }
+          loading={table_loading}
+        />
+      </div>
       {contextHolder}
       <Modal
         open={isModalOpen}
@@ -159,14 +176,13 @@ const User = () => {
         cancelText='取消'
         centered={true}
         maskClosable={false}
-        width={700}
+        width={'50%'}
       >
         <Form
           form={form}
           labelCol={{span:3}} 
-          wrapperCol={{span:15}} 
-          labelAlign='left'
-          style={{marginTop:'30px'}}
+          wrapperCol={{span:10}} 
+          style={{marginTop:'40px',marginBottom:'40px'}}
         >
           <Form.Item
             label='账号'

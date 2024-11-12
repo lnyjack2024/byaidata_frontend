@@ -2,13 +2,14 @@
  * @Description: 部门列表
  * @Author: wangyonghong
  * @Date: 2024-09-29 15:25:05
- * @LastEditTime: 2024-10-25 09:26:44
+ * @LastEditTime: 2024-11-11 10:35:59
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import moment from 'moment';
-import { reqGetDepartmentDatas, reqAddUserDatas, reqDeleteDepartmentDatas } from '../../api/index'
+import { reqGetDepartmentDatas, reqAddDepartmentDatas, reqDeleteDepartmentDatas } from '../../api/index'
+
 const Department = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -49,13 +50,7 @@ const Department = () => {
   
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
-    if(val.base === undefined){
-      val.base = ''
-    }
-    if(val.department === undefined){
-      val.department = ''
-    }
-    const result = await reqAddUserDatas(val)
+    const result = await reqAddDepartmentDatas(val)
     if(result.status === 1){
       getTableData()
       setIsModalOpen(false)
@@ -68,6 +63,7 @@ const Department = () => {
       messageApi.error('参数有误...请检查!!!')
     })
   }
+
   const handleCancle = () => {
     setIsModalOpen(false)
     form.resetFields()
@@ -118,7 +114,7 @@ const Department = () => {
           <Form.Item name="keyword">
             <Input placeholder='请输入部门名称'/>
           </Form.Item>
-          <Form.Item name="keyword">
+          <Form.Item>
             <Button type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
           </Form.Item>
         </Form>
@@ -145,7 +141,7 @@ const Department = () => {
         >
           <Form.Item
             label='部门名称'
-            name="account"
+            name="name"
             rules={[{required:true,message:'请输入部门名称'}]}
           >
             <Input placeholder='请输入部门名称' />
