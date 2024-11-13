@@ -2,12 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2024-11-01 11:42:32
+ * @LastEditTime: 2024-11-13 09:59:31
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Progress, Popconfirm, Divider, Upload } from 'antd'
 import dayjs from 'dayjs';
+import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
 import storageUtils from '../../utils/storageUtils'
 import { reqGetTaskDatas,
@@ -430,7 +431,7 @@ const Task = () => {
 
   const props = {
     name: 'file',
-    action: `http://localhost:3003/tasks/task/upload?task_id=${task_id}`,
+    action: `${BASE}/tasks/task/upload?task_id=${task_id}`,
     headers: {
       authorization: 'authorization-text',
       'token': storageUtils.getToken()

@@ -2,12 +2,13 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-11-05 13:49:45
+ * @LastEditTime: 2024-11-13 09:59:02
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload } from 'antd'
 import dayjs from 'dayjs';
+import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
 import { reqGetAccountDatas, reqAddAccountDatas, reqGetItemDatas, reqAddAccountDetailDatas, reqGetAccountDetailDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
@@ -433,7 +434,7 @@ const Account = () => {
 
   const props = {
     name: 'file',
-    action: `http://localhost:3003/items/account/detail/upload?id=${account_detail_id}`,
+    action: `${BASE}/items/account/detail/upload?id=${account_detail_id}`,
     headers: {
       authorization: 'authorization-text',
       'token': storageUtils.getToken()

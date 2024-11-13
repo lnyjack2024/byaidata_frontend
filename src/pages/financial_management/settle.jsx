@@ -2,13 +2,14 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:38:35
- * @LastEditTime: 2024-11-06 15:43:58
+ * @LastEditTime: 2024-11-13 09:59:39
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, Col, Row, DatePicker, message, Upload, Popconfirm } from 'antd'
 import dayjs from 'dayjs';
 import storageUtils from '../../utils/storageUtils'
+import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
 import { reqGetSettleDatas, reqEditSettleDatas, reqEditSettleStatus, reqEditSettleInvoice, reqGetInvoiceDetailDatas, reqDeleteInvoiceDatas } from '../../api/index'
 const { RangePicker } = DatePicker;
@@ -339,7 +340,7 @@ const Settle = () => {
 
   const props = {
     name: 'file',
-    action: `http://localhost:3003/finance/settle/invoice_upload?id=${detail_id}`,
+    action: `${BASE}/finance/settle/invoice_upload?id=${detail_id}`,
     headers: {
       authorization: 'authorization-text',
       'token': storageUtils.getToken()

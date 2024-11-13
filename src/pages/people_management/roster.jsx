@@ -2,13 +2,14 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-11-12 11:21:25
+ * @LastEditTime: 2024-11-13 09:59:15
  */
 
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload, Popconfirm } from 'antd'
 import dayjs from 'dayjs';
+import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
 import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas, reqGetDepartmentDatas, reqGetRoleDatas, reqGetServiceLineDatas, reqDeleteRosterDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
@@ -116,7 +117,7 @@ const Roster = () => {
 
   const props = {
     name: 'file',
-    action: 'http://localhost:3003/person/roster/upload',
+    action: `${BASE}/person/roster/upload`,
     headers: {
       authorization: 'authorization-text',
       'token': storageUtils.getToken()

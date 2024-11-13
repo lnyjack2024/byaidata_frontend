@@ -2,10 +2,10 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-11 13:12:31
+ * @LastEditTime: 2024-11-13 09:55:45
  */
 import reqApi from "./requestApi";
-const BASE = 'http://localhost:3003'
+import { BASE } from '../utils/networkUrl'
 
 //登录
 export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
