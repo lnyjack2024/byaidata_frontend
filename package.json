@@ -12,6 +12,7 @@
     "dayjs": "^1.11.13",
     "g": "^2.0.1",
     "handsontable": "^14.5.0",
+    "http-proxy-middleware": "^3.0.3",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "moment": "^2.30.1",
