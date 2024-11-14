@@ -2,7 +2,7 @@
  * @Description: 配置代理
  * @Author: wangyonghong
  * @Date: 2024-11-13 13:58:29
- * @LastEditTime: 2024-11-13 14:33:05
+ * @LastEditTime: 2024-11-14 16:32:05
  */
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
