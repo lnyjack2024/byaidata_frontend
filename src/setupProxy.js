@@ -2,16 +2,15 @@
  * @Description: 配置代理
  * @Author: wangyonghong
  * @Date: 2024-11-13 13:58:29
- * @LastEditTime: 2024-11-14 16:27:27
+ * @LastEditTime: 2024-11-14 16:35:20
  */
 const { createProxyMiddleware } = require('http-proxy-middleware');
-import { BASE } from '../utils/networkUrl'
 
 module.exports = function (app) {
     app.use(
       '/api', // 匹配请求前缀为 /api 的请求
       createProxyMiddleware({
-        target: BASE, // 目标服务器地址
+        target: 'http://47.116.221.126:3004', // 目标服务器地址
         changeOrigin: true, // 将请求头中的 Origin 设置为目标 URL
         pathRewrite: {
           '^/api': '', // 去除路径中的 /api 前缀
