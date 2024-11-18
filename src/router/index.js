@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2024-10-21 16:08:58
+ * @LastEditTime: 2024-11-18 13:15:34
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home from '../pages/home/home'
@@ -23,6 +23,7 @@ import Performance_zj from '../pages/performance_management/performance_zj'
 import User from '../pages/auth_management/user'
 import Role from '../pages/auth_management/role'
 import ServiceLine from '../pages/auth_management/service_line'
+import Logs from '../pages/auth_management/logs'
 
 const routes = [
     {
@@ -137,6 +138,15 @@ const routes = [
                     }
                 ]
             },
+            {
+                path:'logs',
+                children:[
+                    {
+                        path:'log',
+                        Component:Logs,
+                    }
+                ]
+            }
         ]
     }
 ]
