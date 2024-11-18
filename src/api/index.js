@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-14 16:55:03
+ * @LastEditTime: 2024-11-18 14:21:47
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -144,3 +144,6 @@ export const reqGetInvoiceDetailDatas = (data) => reqApi( BASE + '/finance/settl
 
 //财务管理-开票明细-删除
 export const reqDeleteInvoiceDatas = (data) => reqApi( BASE + '/finance/settle/delete', data, 'POST')
+
+//日志管理-查询
+export const reqGetLogsDatas = (data) => reqApi( BASE + '/config/logs/log', data, 'GET')

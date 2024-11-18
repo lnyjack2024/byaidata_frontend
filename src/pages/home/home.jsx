@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-11-06 17:47:51
+ * @LastEditTime: 2024-11-18 11:30:14
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -17,7 +17,8 @@ import { AccountBookOutlined,
          AppstoreAddOutlined,
          CalendarOutlined,
          SettingOutlined,
-         ClusterOutlined 
+         ClusterOutlined,
+         FileTextOutlined
        } from '@ant-design/icons';
 const { Header, Sider, Content } = Layout;
 
@@ -25,6 +26,7 @@ const Home = () => {
   const navigate = useNavigate()
   const role = storageUtils.getRole()
   let items = []
+  //7:开发人员 1：管理者 15:财务部 5:人事部 3:运营部门
   if(role === 7){
     items = [
       {
@@ -141,6 +143,17 @@ const Home = () => {
               }
           ]
       },
+      {
+        key: '/logs',
+        icon: <FileTextOutlined />,
+        label: '日志管理',
+        children: [
+            {
+                key: '/logs/log',
+                label: '日志列表',
+            }
+        ]
+    },
     ]
   }else if(role === 1){
     items = [
