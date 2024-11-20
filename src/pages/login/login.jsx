@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-11-11 18:45:14
+ * @LastEditTime: 2024-11-20 16:07:21
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { Button, Form, Input, message } from 'antd';
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
 import { reqLogin } from '../../api/index'
-
+import logo from '../../assets/images/chrome.png'
 export default function Login() {
     const navigate = useNavigate();
     const [ height, setHeight ] = useState(0);
@@ -39,12 +39,12 @@ export default function Login() {
     return (
         <div style={{backgroundColor:'#2e7fff'}}>
           <div style={{height:height,display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{backgroundColor:'#fff',width:'700px',height:'400px',borderRadius:'10px'}}>
+            <div style={{backgroundColor:'#fff',width:'700px',height:'400px',borderRadius:'10px',border: '1px solid #ccc',boxShadow:'0 2px 10px #ccc'}}>
               <div style={{height:'400px', display:'flex',alignItems:'center',justifyContent:'center'}}>
                 <Form 
                   onFinish={onFinish} 
                 >
-                  <div style={{fontSize:'30px',fontWeight:'bold',marginBottom:'20px'}}>上海本原智数管理系统</div>
+                  <div style={{fontSize:'30px',fontWeight:'bold',marginBottom:'20px',color:'#808080'}}>上海本原智数管理系统</div>
                   <Form.Item
                     name="username"
                     rules={[
@@ -72,6 +72,12 @@ export default function Login() {
                       登录
                     </Button>
                   </Form.Item>
+                  <div style={{color:'#ccc'}}>
+                    <span style={{verticalAlign:'middle'}}>请点击下载谷歌浏览器：</span>
+                    <a href='https://www.google.com/chrome/' target="_blank" rel="noopener noreferrer">
+                      <img src={logo} alt='logo' style={{width:'25px', height:'25px',verticalAlign:'middle'}}/>
+                    </a>
+                  </div>
                 </Form>
               </div>
             </div>
