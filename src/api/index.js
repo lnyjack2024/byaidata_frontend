@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-18 14:21:47
+ * @LastEditTime: 2024-11-20 10:13:54
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -22,13 +22,13 @@ export const reqDeleteUserDatas = (data) => reqApi( BASE + '/user/delete', data,
 //权限管理-角色列表-查询
 export const reqGetRoleDatas = () => reqApi( BASE + '/role/search', {}, 'GET')
 
-//人员管理-部门列表
+//人员管理-部门列表-查询
 export const reqGetDepartmentDatas = (e) => reqApi( BASE + '/person/department', e, 'GET')
 
 //人员管理-部门列表-新增
 export const reqAddDepartmentDatas = (data) => reqApi( BASE + '/person/department/add', data, 'POST')
 
-//部门列表-删除
+//人员管理-部门列表-删除
 export const reqDeleteDepartmentDatas = (data) => reqApi( BASE + '/person/department/delete', data, 'POST')
 
 //人员管理-人员花名册-查询
@@ -52,7 +52,7 @@ export const reqAddPortraitDatas = (data) => reqApi( BASE + '/person/portrait/ad
 //人员管理-人员画像-编辑
 export const reqEditPortraitDatas = (data) => reqApi( BASE + '/person/portrait/edit', data, 'POST')
 
-//人员管理-人员考勤
+//人员管理-人员考勤-查询
 export const reqGetClockingDatas = (data) => reqApi( BASE + '/person/clocking/search', data, 'GET')
 
 //人员管理-人员考勤-新增
@@ -69,6 +69,12 @@ export const reqGetDimissionDatas = (data) => reqApi( BASE + '/person/dimission/
 
 //人员管理-人员花名册-黑名单
 export const reqGetBlackDatas = (data) => reqApi( BASE + '/person/black/search', data, 'GET')
+
+//人员管理-培训师列表-查询
+export const reqGetTrainerDatas = (data) => reqApi( BASE + '/person/trainer/search', data, 'GET')
+
+//人员管理-培训师列表-新增
+export const reqAddTrainerDatas = (data) => reqApi( BASE + '/person/trainer/add', data, 'POST')
 
 //项目管理-查询
 export const reqGetItemDatas = (data) => reqApi( BASE + '/items/item/search', data, 'GET')
@@ -147,3 +153,4 @@ export const reqDeleteInvoiceDatas = (data) => reqApi( BASE + '/finance/settle/d
 
 //日志管理-查询
 export const reqGetLogsDatas = (data) => reqApi( BASE + '/config/logs/log', data, 'GET')
+
