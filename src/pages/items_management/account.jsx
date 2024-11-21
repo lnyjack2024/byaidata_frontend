@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-11-13 09:59:02
+ * @LastEditTime: 2024-11-21 17:38:10
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -301,7 +301,7 @@ const Account = () => {
         return (
           <div style={{ margin: '10px 0' }}>
             <a 
-              href={'http://localhost:3003' + attachment} 
+              href={ BASE + attachment} 
               download={'附件'} 
               style={{ textDecoration: 'none', color: '#007bff' }}
             >
@@ -404,7 +404,7 @@ const Account = () => {
         return (
           <div style={{ margin: '10px 0' }}>
             <a 
-              href={'http://localhost:3003' + attachment} 
+              href={ BASE + attachment} 
               download={'附件'} 
               style={{ textDecoration: 'none', color: '#007bff' }}
             >
