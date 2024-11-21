@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2024-11-13 09:59:31
+ * @LastEditTime: 2024-11-21 17:41:23
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -1033,7 +1033,7 @@ const Task = () => {
             </div>
             <div style={{marginLeft:'50px'}}>
               <a 
-                  href={'http://localhost:3003' + attachment} 
+                  href={ BASE + attachment} 
                   download={'附件'} 
                   style={{ color: '#007bff' }}
                 >
