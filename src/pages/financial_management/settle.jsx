@@ -1,8 +1,8 @@
 /*
- * @Description: 
+ * @Description: 结算列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:38:35
- * @LastEditTime: 2024-11-21 17:35:20
+ * @LastEditTime: 2024-12-02 14:20:14
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -11,9 +11,15 @@ import dayjs from 'dayjs';
 import storageUtils from '../../utils/storageUtils'
 import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
-import { reqGetSettleDatas, reqEditSettleDatas, reqEditSettleStatus, reqEditSettleInvoice, reqGetInvoiceDetailDatas, reqDeleteInvoiceDatas } from '../../api/index'
+import { reqGetSettleDatas, 
+         reqEditSettleDatas, 
+         reqEditSettleStatus, 
+         reqEditSettleInvoice, 
+         reqGetInvoiceDetailDatas, 
+         reqDeleteInvoiceDatas, reqGetServiceLineDatas } from '../../api/index'
 const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:7},wrapperCol:{span:15} }
+const { Option } = Select;
 
 const Settle = () => {
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -28,6 +34,7 @@ const Settle = () => {
   const [ table_loading,   setTableLoading  ] = useState(true)
   const [ id, setId ] = useState(0)
   const [ detail_id, setDetailId ] = useState(0)
+  const [ service_lineData, setServiceLineDataData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_detail ] = Form.useForm();
   const [ form_refund_status ] = Form.useForm();
@@ -36,12 +43,18 @@ const Settle = () => {
 
   useEffect(() => {
     getTableData()
+    getServiceLineData()
   },[])
 
   const getTableData = async () => {
     const reqData = await reqGetSettleDatas()
       setData(reqData.data)
       setTableLoading(false)
+  }
+
+  const getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas()
+    setServiceLineDataData(reqData.data)
   }
 
   const handClink = async (type,rowData) => {
@@ -131,7 +144,7 @@ const Settle = () => {
       setIsModalOpen(!isModalOpen)
       form_detail.resetFields()
       getTableData()
-      message.info('success...')
+      message.info('操作成功...')
     }else{
       message.error('操作失败...')
     }
@@ -215,21 +228,21 @@ const Settle = () => {
     {
       title: '结算状态',
       dataIndex: 'settlement_status',
-      render:(settlement_status)=>{
-        if(settlement_status === '未开始'){
-          return (
-            <Button style={{backgroundColor: '#FF4D4F',color: 'white'}}>{settlement_status}</Button>
-          )
-        }else if(settlement_status === '结算中'){
-          return (
-            <Button style={{backgroundColor: '#1677FF',color: 'white'}}>{settlement_status}</Button>
-          )
-        }else{
-          return (
-            <Button style={{backgroundColor: '#000000',color: 'white'}}>{settlement_status}</Button>
-          )
-        }
-      }
+      // render:(settlement_status)=>{
+      //   if(settlement_status === '未开始'){
+      //     return (
+      //       <Button style={{backgroundColor: '#FF4D4F',color: 'white'}}>{settlement_status}</Button>
+      //     )
+      //   }else if(settlement_status === '结算中'){
+      //     return (
+      //       <Button style={{backgroundColor: '#1677FF',color: 'white'}}>{settlement_status}</Button>
+      //     )
+      //   }else{
+      //     return (
+      //       <Button style={{backgroundColor: '#000000',color: 'white'}}>{settlement_status}</Button>
+      //     )
+      //   }
+      // }
     },
     {
       title: '开票状态',
@@ -264,8 +277,8 @@ const Settle = () => {
         return (
           <div>
             <Button onClick={()=> handClink('detail',rowData)}>详情</Button>&nbsp;&nbsp;
-            <Button onClick={()=> handClink('invoice',rowData)}>开票明细</Button>&nbsp;&nbsp;
-            <Button onClick={()=> handClink('refund_status',rowData)}>回款状态</Button>
+            <Button onClick={()=> handClink('invoice',rowData)}>开票操作</Button>&nbsp;&nbsp;
+            <Button onClick={()=> handClink('refund_status',rowData)}>回款操作</Button>
           </div>
         )
       }
@@ -376,36 +389,19 @@ const Settle = () => {
             </Col>
             <Col span={6}>
               <Form.Item name="service_line" label="业务线" {...itemLayout}>
-              <Select
-                  placeholder='请输入业务线'
+                <Select
+                  placeholder="请输入业务线"
                   style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-                />
+                  allowClear={true}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -484,7 +480,7 @@ const Settle = () => {
             </Col>
             <Col span={6}>
               <Form.Item >
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;&nbsp;
+              <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
                 <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>

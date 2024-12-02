@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2024-11-06 18:30:23
+ * @LastEditTime: 2024-12-02 14:35:45
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
@@ -57,7 +57,7 @@ export default function Header() {
         你好... { username } !
       </div>
       <div style={{marginLeft:'20px',paddingTop:'5px'}}>
-        <Button type='primary' danger style={{borderRadius:'20px',fontWeight:'bold'}} onClick={()=> logout()}>
+        <Button type='primary' danger style={{borderRadius:'20px',fontWeight:'bold',backgroundColor:'#008080'}} onClick={()=> logout()}>
           <LoginOutlined /> 退出
         </Button>
       </div>

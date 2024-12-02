@@ -2,15 +2,14 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-10-21 16:07:49
- * @LastEditTime: 2024-12-02 14:22:09
+ * @LastEditTime: 2024-12-02 14:23:39
  */
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import './service_line.css'
-
-import { reqGetServiceLineDatas, reqAddServiceLineDatas, reqDeleteServiceLineDatas } from '../../api/index'
+import { reqGetSettlementTypeDatas, reqAddSettlementTypeDatas, reqDeleteSettlementTypeDatas } from '../../api/index'
 const ServiceLine = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -23,7 +22,7 @@ const ServiceLine = () => {
   },[])
 
   const getTableData = async () => {
-    const reqData = await reqGetServiceLineDatas()
+    const reqData = await reqGetSettlementTypeDatas()
       setData(reqData.data)
   }
 
@@ -36,7 +35,7 @@ const ServiceLine = () => {
     }
   }
   const handDelete = async (e) => {
-    const result = await reqDeleteServiceLineDatas(e)
+    const result = await reqDeleteSettlementTypeDatas(e)
     if(result.status === 1){
       getTableData()
       message.info('删除成功...')
@@ -47,7 +46,7 @@ const ServiceLine = () => {
 
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
-    const result = await reqAddServiceLineDatas(val)
+    const result = await reqAddSettlementTypeDatas(val)
     if(result.status === 1){
       setIsModalOpen(false)
       form.resetFields()
@@ -67,7 +66,7 @@ const ServiceLine = () => {
 
   const column = [
     {
-      title: '业务线',
+      title: '结算类型',
       dataIndex: 'name',
     },
     {
@@ -128,11 +127,11 @@ const ServiceLine = () => {
           style={{marginTop:'30px'}}
         >
           <Form.Item
-            label='业务线'
+            label='结算类型'
             name="name"
-            rules={[{required:true,message:'请输入业务线'}]}
+            rules={[{required:true,message:'请输入结算类型'}]}
           >
-            <Input placeholder='请输入业务线' />
+            <Input placeholder='请输入结算类型' />
           </Form.Item>
         </Form>
       </Modal>
