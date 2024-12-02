@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-11-18 13:13:51
- * @LastEditTime: 2024-11-18 15:36:28
+ * @LastEditTime: 2024-12-02 15:08:40
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
@@ -58,14 +58,16 @@ const Logs = () => {
       {
         title: '请求URL',
         dataIndex: 'url',
-      },
-      {
-        title: '请求数据',
-        dataIndex: 'date',
+        fixed: 'left'
       },
       {
         title: '操作人',
         dataIndex: 'user',
+        fixed: 'left'
+      },
+      {
+        title: '请求数据',
+        dataIndex: 'date',
       },
       {
         title: '操作时间',
@@ -91,22 +93,6 @@ const Logs = () => {
                     <Input placeholder='请输入请求URL' />
                 </Form.Item>
               </Col>
-              {/* <Col span={8}>
-                <Form.Item name="date" label="操作时间" {...itemLayout}>
-                  <RangePicker
-                    presets={[
-                        {
-                        label: <span aria-label="现在 ~ 今天最晚">现在 ~ 今天最晚</span>,
-                        value: () => [dayjs(), dayjs().endOf('day')],
-                        },
-                        ...rangePresets,
-                    ]}
-                    showTime
-                    format="YYYY-MM-DD HH:mm:ss"
-                    style={{width:'350px'}}
-                />
-                </Form.Item>
-              </Col> */}
               <Col span={6}>
                 <Form.Item  >
                   <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
@@ -116,12 +102,13 @@ const Logs = () => {
             </Row>
           </Form>
         </div>
-        <div style={{ width: '100%', height: '90%', overflow:'auto' }}>
+        <div style={{ width: '100%', height: '80%', overflow:'auto' }}>
           <Table 
             columns={ column } 
             dataSource={ data } 
             rowKey={ data => data.id }  
             loading={table_loading}
+            scroll={{x: 'max-content'}}
           />
         </div>
       </div>

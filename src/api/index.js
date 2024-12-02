@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-11-20 10:13:54
+ * @LastEditTime: 2024-12-02 13:48:28
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -52,6 +52,9 @@ export const reqAddPortraitDatas = (data) => reqApi( BASE + '/person/portrait/ad
 //人员管理-人员画像-编辑
 export const reqEditPortraitDatas = (data) => reqApi( BASE + '/person/portrait/edit', data, 'POST')
 
+//人员管理-人员画像-删除
+export const reqDeletePortraitDatas = (data) => reqApi( BASE + '/person/portrait/delete', data, 'POST')
+
 //人员管理-人员考勤-查询
 export const reqGetClockingDatas = (data) => reqApi( BASE + '/person/clocking/search', data, 'GET')
 
@@ -76,8 +79,14 @@ export const reqGetTrainerDatas = (data) => reqApi( BASE + '/person/trainer/sear
 //人员管理-培训师列表-新增
 export const reqAddTrainerDatas = (data) => reqApi( BASE + '/person/trainer/add', data, 'POST')
 
+//人员管理-培训师列表-删除
+export const reqDeleteTrainerDatas = (data) => reqApi( BASE + '/person/trainer/delete', data, 'POST')
+
 //项目管理-查询
 export const reqGetItemDatas = (data) => reqApi( BASE + '/items/item/search', data, 'GET')
+
+//项目管理-查询
+export const reqGetItemsDatas = (data) => reqApi( BASE + '/items/item/search_', data, 'GET')
 
 //项目管理-新增
 export const reqAddItemDatas = (data) => reqApi( BASE + '/items/item/add', data, 'POST')
@@ -97,6 +106,42 @@ export const reqAddServiceLineDatas = (data) => reqApi( BASE + '/config/servicel
 //配置管理-业务线-删除
 export const reqDeleteServiceLineDatas = (data) => reqApi( BASE + '/config/serviceline/delete', data, 'POST')
 
+//配置管理-基地-查询
+export const reqGetBaseDatas = () => reqApi( BASE + '/config/base/search', {}, 'GET')
+
+//配置管理-基地-新增
+export const reqAddBaseDatas = (data) => reqApi( BASE + '/config/base/add', data, 'POST')
+
+//配置管理-基地-删除
+export const reqDeleteBaseDatas = (data) => reqApi( BASE + '/config/base/delete', data, 'POST')
+
+//配置管理-结算类型-查询
+export const reqGetSettlementTypeDatas = () => reqApi( BASE + '/config/settlement_type/search', {}, 'GET')
+
+//配置管理-结算类型-新增
+export const reqAddSettlementTypeDatas = (data) => reqApi( BASE + '/config/settlement_type/add', data, 'POST')
+
+//配置管理-结算类型-删除
+export const reqDeleteSettlementTypeDatas = (data) => reqApi( BASE + '/config/settlement_type/delete', data, 'POST')
+
+//配置管理-加班类型-查询
+export const reqGetOvertimeTypeDatas = () => reqApi( BASE + '/config/overtime_type/search', {}, 'GET')
+
+//配置管理-加班类型-新增
+export const reqAddOvertimeTypeDatas = (data) => reqApi( BASE + '/config/overtime_type/add', data, 'POST')
+
+//配置管理-加班类型-删除
+export const reqDeleteOvertimeTypeDatas = (data) => reqApi( BASE + '/config/overtime_type/delete', data, 'POST')
+
+//配置管理-交付要求-查询
+export const reqGetDeliveryRequirementDatas = () => reqApi( BASE + '/config/delivery_requirement/search', {}, 'GET')
+
+//配置管理-交付要求-新增
+export const reqAddDeliveryRequirementDatas = (data) => reqApi( BASE + '/config/delivery_requirement/add', data, 'POST')
+
+//配置管理-交付要求-删除
+export const reqDeleteDeliveryRequirementDatas = (data) => reqApi( BASE + '/config/delivery_requirement/delete', data, 'POST')
+
 //项目管理-对账列表-查询
 export const reqGetAccountDatas = (data) => reqApi( BASE + '/items/account/search', data, 'GET')
 
@@ -111,6 +156,9 @@ export const reqAddAccountDetailDatas = (data) => reqApi( BASE + '/items/account
 
 //任务包管理-查询
 export const reqGetTaskDatas = (data) => reqApi( BASE + '/tasks/task/search', data, 'GET')
+
+//任务包管理-查询
+export const _reqGetTaskDatas = (data) => reqApi( BASE + '/tasks/task/search_', data, 'GET')
 
 //任务包管理-人效明细-查询
 export const reqGetTaskEffectDetailDatas = (data) => reqApi( BASE + '/tasks/task/effect_detail', data, 'GET')
@@ -132,6 +180,9 @@ export const reqGetCheckDatas = (data) => reqApi( BASE + '/tasks/task/check', da
 
 //任务包管理-质检-新增
 export const reqAddCheckDatas = (data) => reqApi( BASE + '/tasks/task/check_add', data, 'POST')
+
+//任务包进度
+// export const reqTaskProgressDatas = (data) => reqApi( BASE + '/tasks/task/progress', data, 'GET')
 
 //财务管理-结算列表-查询
 export const reqGetSettleDatas = (data) => reqApi( BASE + '/finance/settle/search', data, 'GET')

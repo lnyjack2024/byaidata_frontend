@@ -2,10 +2,10 @@
  * @Description: 操作员列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-11-11 10:07:23
+ * @LastEditTime: 2024-12-02 14:56:39
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, Select, message } from 'antd'
 import moment from 'moment';
 import './user.css'
@@ -145,7 +145,7 @@ const User = () => {
   return (
     <div className='user'>
       <div className='flex-box'>
-        <Button type='primary' onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>
+        <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white',marginLeft:'1%'}}> 新增 </Button>
         <Form
           form={form_}
           layout='inline'
@@ -311,72 +311,80 @@ const User = () => {
               // onChange={handleChange}
               options={[
                 {
-                  value: '管理者-1',
-                  label: '管理者',
+                  value: '管理层-1',
+                  label: '管理层',
                 },
                 {
-                  value: '财务总监-15',
+                  value: '财务总监-2',
                   label: '财务总监',
                 },
                 {
-                  value: '财务经理或主管-16',
-                  label: '财务经理或主管',
+                  value: '财务经理-3',
+                  label: '财务经理',
                 },
                 {
-                  value: '财务专员-17',
+                  value: '财务专员-4',
                   label: '财务专员',
                 },
                 {
-                  value: '运营负责人-2',
+                  value: '运营负责人-5',
                   label: '运营负责人',
                 },
                 {
-                  value: '运营人员-3',
+                  value: '运营人员-6',
                   label: '运营人员',
                 },
                 {
-                  value: '人力总监-4',
-                  label: '人力总监',
+                  value: '人力资源总监-7',
+                  label: '人力资源总监',
                 },
                 {
-                  value: '人力经理或主管-5',
-                  label: '人力经理或主管',
+                  value: '人事经理或主管-8',
+                  label: '人事经理或主管',
                 },
                 {
-                  value: '产品经理-6',
-                  label: '产品经理',
+                  value: '人事专员-9',
+                  label: '人事专员',
                 },
                 {
-                  value: '开发人员-7',
+                  value: '开发负责人-10',
+                  label: '开发负责人',
+                },
+                {
+                  value: '开发人员-11',
                   label: '开发人员',
                 },
                 {
-                  value: '业务负责人-8',
+                  value: '产品经理-12',
+                  label: '产品经理',
+                },
+                {
+                  value: '业务负责人-13',
                   label: '业务负责人',
                 },
                 {
-                  value: '项目负责人-9',
-                  label: '项目负责人',
-                },
-                {
-                  value: '项目经理-10',
+                  value: '项目经理-14',
                   label: '项目经理',
                 },
                 {
-                  value: '项目主管-11',
+                  value: '项目主管-15',
                   label: '项目主管',
                 },
                 {
-                  value: '培训师-12',
-                  label: '培训师',
-                },
-                {
-                  value: '小组长-13',
+                  value: '小组长-16',
                   label: '小组长',
                 },
                 {
-                  value: '骨干-14',
+                  value: '培训师-17',
+                  label: '培训师',
+                },
+                {
+                  value: '骨干-18',
                   label: '骨干',
+                },
+                {
+                  value: '标注员-19',
+                  label: '标注员',
                 }
               ]}
             />

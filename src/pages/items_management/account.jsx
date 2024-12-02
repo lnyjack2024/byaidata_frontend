@@ -2,21 +2,27 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-11-21 17:38:10
+ * @LastEditTime: 2024-12-02 14:18:43
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload } from 'antd'
+import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload, InputNumber } from 'antd'
 import dayjs from 'dayjs';
 import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
-import { reqGetAccountDatas, reqAddAccountDatas, reqGetItemDatas, reqAddAccountDetailDatas, reqGetAccountDetailDatas } from '../../api/index'
+import { reqGetAccountDatas, 
+         reqAddAccountDatas, 
+         reqGetItemDatas, 
+         reqAddAccountDetailDatas, 
+         reqGetAccountDetailDatas,
+         reqGetBaseDatas, _reqGetTaskDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
 const { RangePicker } = DatePicker;
 const itemLayout = { 
   labelCol:{span:7},
   wrapperCol:{span:15} 
 }
+const { Option } = Select;
 
 const Account = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -30,6 +36,8 @@ const Account = () => {
   const [ account_detail_id, setAccountDetailId ] = useState(0)
   const [ item_settlement_type, setItemSettlementType ] = useState('')
   const [ item_detail, setItemDetail ] = useState({})
+  const [ baseData, setBaseData ] = useState([])
+  const [ taskData, setTaskData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_detail ] = Form.useForm();
@@ -38,6 +46,7 @@ const Account = () => {
 
   useEffect(() => {
     getTableData()
+    getBaseData()
   },[])
 
   const getTableData = async () => {
@@ -46,11 +55,16 @@ const Account = () => {
       setTableLoading(false)
   }
 
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
+
   const getAccountDetailData = async (e) => {
     const reqData = await reqGetAccountDetailDatas(e)
     setDetailData(reqData.data)
   }
-
+  
   const handClink = async (type,rowData) => {
     if(type === 'add'){
       setIsModalOpen(!isModalOpen)
@@ -60,6 +74,8 @@ const Account = () => {
       setItemSettlementType(rowData.item_settlement_type)
       getAccountDetailData({id:rowData.id})
       setItemDetail(rowData)
+      const reqData = await _reqGetTaskDatas({item_name:rowData.item_name})
+      setTaskData(reqData.data)
       if(rowData.item_settlement_type === '计件'){
         setIsModalOpen1(!isModalOpen1)
       }else{
@@ -454,6 +470,7 @@ const Account = () => {
       }
     },
   };
+
   return (
     <div className='style'>
       <div className='flex-box'>
@@ -469,44 +486,19 @@ const Account = () => {
             </Col>
             <Col span={6}>
               <Form.Item name="base" label="基地" {...itemLayout}>
-                <Select
+              <Select
                   placeholder='请输入基地'
                   style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '郑州',
-                      label: '郑州',
-                    },
-                    {
-                      value: '成都',
-                      label: '成都',
-                    },
-                    {
-                      value: '长沙',
-                      label: '长沙',
-                    },
-                    {
-                      value: '商丘',
-                      label: '商丘',
-                    },
-                    {
-                      value: '太原',
-                      label: '太原',
-                    },
-                    {
-                      value: '邯郸',
-                      label: '邯郸',
-                    },
-                    {
-                      value: '宿迁',
-                      label: '宿迁',
-                    },
-                    {
-                      value: '濮阳',
-                      label: '濮阳',
-                    }
-                  ]}
-                />
+                  allowClear={true}
+                >
+                {
+                  baseData?.map((option)=>(
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+                }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -514,6 +506,7 @@ const Account = () => {
               <Select
                   placeholder='请输入项目状态'
                   style={{textAlign:'left'}}
+                  allowClear={true}
                   options={[
                     {
                       value: '待验收',
@@ -550,6 +543,7 @@ const Account = () => {
               <Select
                   placeholder='请输入结算状态'
                   style={{textAlign:'left'}}
+                  allowClear={true}
                   options={[
                     {
                       value: '结算中',
@@ -568,6 +562,7 @@ const Account = () => {
               <Select
                   placeholder='请输入回款状态'
                   style={{textAlign:'left'}}
+                  allowClear={true}
                   options={[
                     {
                       value: '未回款',
@@ -586,10 +581,10 @@ const Account = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item >
-                <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;&nbsp;
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;&nbsp;
-                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+              <Form.Item  >
+                <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white',marginLeft:'1%'}}> 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
+                <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
           </Row>
@@ -705,13 +700,13 @@ const Account = () => {
       </Modal>
       <Modal
         open={isModalOpen1}
-        title={ '' }
+        title={ '对账明细' }
         onOk={handleOk1}
         onCancel={handleCancle1}
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'70%'}
+        width={'85%'}
         footer={null}
       >
         <Form
@@ -727,6 +722,7 @@ const Account = () => {
           >
             <DatePicker
               placeholder={['请选择对账日期']}
+              style={{width:'300px'}}
             />
           </Form.Item>
           <Form.Item
@@ -736,6 +732,7 @@ const Account = () => {
           >
              <RangePicker     
                 placeholder={['开始日期', '结束日期']}
+                style={{width:'300px'}}
              />
           </Form.Item>
           <Form.Item
@@ -744,56 +741,51 @@ const Account = () => {
             rules={[{required:true,message:'请输入任务包'}]}
           >
             <Select
-                placeholder='请选择任务包'
+                placeholder='请输入任务包'
+                style={{textAlign:'left'}}
+                allowClear={true}
                 mode="multiple"
-                allowClear
-                options={[
-                  {
-                    value: 'xxx',
-                    label: 'xxx',
-                  },
-                  {
-                    value: 'yyy',
-                    label: 'yyy',
-                  },
-                  {
-                    value: 'zzz',
-                    label: 'zzz',
-                  },
-                  {
-                    value: 'vvv',
-                    label: 'vvv',
-                  }
-                ]}
-              />
+              >
+              {
+                taskData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+           </Select>
           </Form.Item>
           <Form.Item
             label='结算比例'
             name="settlement_scale"
             rules={[{required:true,message:'请输入结算比例'}]}
+            initialValue={0}
           >
-            <Input placeholder='如:0.95'/>
+            <InputNumber max={1} min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='数量级'
             name="amount"
             rules={[{required:true,message:'请输入数量级'}]}
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='单价'
             name="price"
             rules={[{required:true,message:'请输入单价'}]}
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='总金额'
             name="sum"
             rules={[{required:true,message:'请输入总金额'}]}
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='甲方是否验收'
@@ -802,6 +794,7 @@ const Account = () => {
           >
             <Select
               placeholder='请输入甲方是否验收'
+              style={{width:'300px'}}
               options={[
                 {
                   value: '是',
@@ -830,13 +823,13 @@ const Account = () => {
       </Modal>
       <Modal
         open={isModalOpen2}
-        title={ '' }
+        title={ '对账明细' }
         onOk={handleOk2}
         onCancel={handleCancle2}
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'70%'}
+        width={'85%'}
         footer={null}
       >
         <Form
@@ -870,93 +863,94 @@ const Account = () => {
             name="tasks"
             rules={[{required:true,message:'请输入任务包'}]}
           >
-            <Select
-                placeholder='请选择任务包'
+           <Select
+                placeholder='请输入任务包'
+                style={{textAlign:'left'}}
+                allowClear={true}
                 mode="multiple"
-                allowClear
-                options={[
-                  {
-                    value: 'xxx',
-                    label: 'xxx',
-                  },
-                  {
-                    value: 'yyy',
-                    label: 'yyy',
-                  },
-                  {
-                    value: 'zzz',
-                    label: 'zzz',
-                  },
-                  {
-                    value: 'vvv',
-                    label: 'vvv',
-                  }
-                ]}
-              />
+              >
+              {
+                taskData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+           </Select>
           </Form.Item>
           <Form.Item
             label='结算比例'
             name="settlement_scale"
+            initialValue={0}
             rules={[{required:true,message:'请输入结算比例'}]}
           >
-            <Input placeholder='如:0.95'/>
+            <InputNumber max={1} min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='正常工时'
             name="normal_hour"
-            rules={[{required:true,message:'请输入数量级'}]}
+            initialValue={0}
+            rules={[{required:true,message:'请输入正常工时'}]}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='工作日加班工时'
             name="normal_overtime_hour"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='周六日加班工时'
             name="week_overtime_hour"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='法定节假日加班工时'
             name="holidays_overtime_hour"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='1.5倍工时'
             name="times_overtime_hour15"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='2倍工时'
             name="times_overtime_hour2"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='3倍工时'
             name="times_overtime_hour3"
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='单价'
             name="price"
             rules={[{required:true,message:'请输入单价'}]}
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='总金额'
             name="sum"
             rules={[{required:true,message:'请输入总金额'}]}
+            initialValue={0}
           >
-            <Input />
+            <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='甲方是否验收'

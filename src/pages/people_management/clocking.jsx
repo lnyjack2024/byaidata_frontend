@@ -2,18 +2,19 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:55:23
- * @LastEditTime: 2024-11-08 15:27:41
+ * @LastEditTime: 2024-12-02 14:15:46
  */
 import React, { useRef, useEffect, useState } from 'react'
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Table, Select, Col, Row, Tabs, DatePicker, message } from 'antd'
 import dayjs from 'dayjs';
 import { HotTable } from "@handsontable/react";
 import { addClassesToRows } from "../handsontable/hooksCallbacks.ts";
 import 'handsontable/dist/handsontable.full.min.css';
 import '../common_css/style.css'
-import { reqGetClockingDatas, reqAddClockingDatas, reqEditClockingDatas, reqDeleteClockingDatas } from '../../api/index'
+import { reqGetClockingDatas, reqAddClockingDatas, reqEditClockingDatas, reqDeleteClockingDatas, reqGetBaseDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:4},wrapperCol:{span:15} }
+const { Option } = Select;
 
 const Clocking = () => {
   const hotRef = useRef(null);
@@ -21,12 +22,19 @@ const Clocking = () => {
   const [ data, setData ] = useState([])
   const [ table_loading, setTableLoading ] = useState(true)
   const [ height, setHeight ] = useState(0);
+  const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   
   useEffect(() => {
     getTableData();
+    getBaseData()
     setHeight(window.innerHeight * 0.7); //动态设置表格高度为屏幕的高度（例如：80%）
   },[])
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
 
   const getTableData = async () => {
     const reqData = await reqGetClockingDatas()
@@ -291,8 +299,9 @@ const Clocking = () => {
       children: 
         <div>
           <div style={{marginLeft:'5px', marginTop:'0px',marginBottom:'10px',display:'flex',alignItems:'center',justifyContent:'flex-start'}}>
-            <Button type="primary" onClick={saveClickCallback}>
-              + 新增
+            <Button type="primary" icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}
+            onClick={saveClickCallback}>
+              新增
             </Button>
           </div>
           <HotTable
@@ -424,48 +433,19 @@ const Clocking = () => {
                 {...itemLayout}
                 rules={[{required:true}]}
               >
-                <Select
-                  placeholder='请输入基地'
-                  style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '上海',
-                      label: '上海',
-                    },
-                    {
-                      value: '郑州',
-                      label: '郑州',
-                    },
-                    {
-                      value: '成都',
-                      label: '成都',
-                    },
-                    {
-                      value: '长沙',
-                      label: '长沙',
-                    },
-                    {
-                      value: '商丘',
-                      label: '商丘',
-                    },
-                    {
-                      value: '太原',
-                      label: '太原',
-                    },
-                    {
-                      value: '邯郸',
-                      label: '邯郸',
-                    },
-                    {
-                      value: '宿迁',
-                      label: '宿迁',
-                    },
-                    {
-                      value: '濮阳',
-                      label: '濮阳',
-                    }
-                  ]}
-                />
+               <Select
+                    placeholder='请输入基地'
+                    style={{textAlign:'left',width:'250px'}}
+                    allowClear={true}
+                  >
+                  {
+                    baseData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>

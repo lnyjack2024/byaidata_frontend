@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2024-11-18 13:15:34
+ * @LastEditTime: 2024-11-27 09:49:02
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home from '../pages/home/home'
@@ -19,10 +19,14 @@ import Item from '../pages/items_management/item'
 import Account from '../pages/items_management/account'
 import Task from '../pages/task_package_management/task'
 import Settle from '../pages/financial_management/settle'
-import Performance_zj from '../pages/performance_management/performance_zj'
+import Performance_xhs from '../pages/performance_management/performance_xhs'
 import User from '../pages/auth_management/user'
 import Role from '../pages/auth_management/role'
 import ServiceLine from '../pages/auth_management/service_line'
+import Base from '../pages/auth_management/base'
+import SettlementType from '../pages/auth_management/settlement_type'
+import OvertimeType from '../pages/auth_management/overtime_type'
+import DeliveryRequirement from '../pages/auth_management/delivery_requirement'
 import Logs from '../pages/auth_management/logs'
 
 const routes = [
@@ -111,8 +115,8 @@ const routes = [
                 path:'performances',
                 children:[
                     {
-                        path:'performance_zj',
-                        Component:Performance_zj,
+                        path:'Performance_xhs',
+                        Component:Performance_xhs,
                     }
                 ]
             },
@@ -122,6 +126,22 @@ const routes = [
                     {
                         path:'service_line',
                         Component:ServiceLine,
+                    },
+                    {
+                        path:'base',
+                        Component:Base,
+                    },
+                    {
+                        path:'settlement_type',
+                        Component:SettlementType,
+                    },
+                    {
+                        path:'overtime_type',
+                        Component:OvertimeType,
+                    },
+                    {
+                        path:'delivery_requirement',
+                        Component:DeliveryRequirement,
                     }
                 ]
             },

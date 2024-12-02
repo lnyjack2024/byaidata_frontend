@@ -1,12 +1,12 @@
 /*
- * @Description: 
+ * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2024-11-21 17:41:23
+ * @LastEditTime: 2024-12-02 14:19:44
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Progress, Popconfirm, Divider, Upload } from 'antd'
+import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Popconfirm, Divider, Upload } from 'antd'
 import dayjs from 'dayjs';
 import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
@@ -18,7 +18,11 @@ import { reqGetTaskDatas,
          reqGetTaskEffectDetailDatas,
          reqGetCheckDatas,
          reqAddCheckDatas,
-         reqGetDetailDatas
+         reqGetDetailDatas,
+         reqGetBaseDatas, 
+         reqGetServiceLineDatas,
+         reqGetSettlementTypeDatas,
+         reqGetDeliveryRequirementDatas,reqGetItemsDatas
        } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -26,6 +30,7 @@ const itemLayout = {
   labelCol:{span:7},
   wrapperCol:{span:15} 
 }
+const { Option } = Select;
 
 const Task = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -41,6 +46,12 @@ const Task = () => {
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ delay_date_status, setDelayDateStatus ] = useState(true)
+  const [ baseData, setBaseData ] = useState([])
+  const [ service_lineData, setServiceLineDataData ] = useState([])
+  const [ settlement_type, setSettlementTypeData ] = useState([])
+  const [ delivery_requirement, setDeliveryRequirementData ] = useState([])
+  const [ itemData, setItemData ] = useState([])
+  // const [ num, setNum ] = useState(0)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_effect ] = Form.useForm();
@@ -50,6 +61,11 @@ const Task = () => {
 
   useEffect(() => {
     getTableData()
+    getBaseData()
+    getServiceLineData()
+    getSettlementTypeData()
+    getDeliveryRequirementData()
+    // getTaskProgressData()
   },[])
 
   const getTableData = async () => {
@@ -57,6 +73,31 @@ const Task = () => {
     setData(reqData.data)
     setTableLoading(false)
   }
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
+
+  const getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas()
+    setServiceLineDataData(reqData.data)
+  }
+
+  const getSettlementTypeData = async () => {
+    const reqData = await reqGetSettlementTypeDatas()
+    setSettlementTypeData(reqData.data)
+  }
+
+  const getDeliveryRequirementData = async () => {
+    const reqData = await reqGetDeliveryRequirementDatas()
+    setDeliveryRequirementData(reqData.data)
+  }
+
+  // const getTaskProgressData = async () => {
+  //   const reqData = await reqTaskProgressDatas()
+  //   setNum(reqData.data)
+  // }
 
   const reqGetEffectDetailDatas = async (id) => {
     const reqData = await reqGetTaskEffectDetailDatas(id)
@@ -70,8 +111,8 @@ const Task = () => {
 
   const getDetailDatas = async (id) => {
     const reqData = await reqGetDetailDatas(id)
-    reqData.data[0].recently_push_date = dayjs(reqData.data[0].recently_push_date).format('YYYY-MM-DD HH:mm:ss')
-    reqData.data[0].frist_push_date = dayjs(reqData.data[0].frist_push_date).format('YYYY-MM-DD HH:mm:ss')
+    reqData.data[0].recently_push_date = reqData.data[0].recently_push_date === '' ? '' : dayjs(reqData.data[0].recently_push_date).format('YYYY-MM-DD HH:mm:ss')
+    reqData.data[0].frist_push_date = reqData.data[0].frist_push_date === '' ? '' : dayjs(reqData.data[0].frist_push_date).format('YYYY-MM-DD HH:mm:ss')
     reqData.data[0].start_date = dayjs(reqData.data[0].start_date).format('YYYY-MM-DD')
     reqData.data[0].end_date = dayjs(reqData.data[0].end_date).format('YYYY-MM-DD')
     reqData.data[0].delivery_date = dayjs(reqData.data[0].delivery_date).format('YYYY-MM-DD')
@@ -117,6 +158,7 @@ const Task = () => {
     form_detail.resetFields()
     setIsModalDetailOpen(!isModalDetailOpen)
   } 
+
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
         val.start_date    = dayjs(val.start_date).format('YYYY-MM-DD')
@@ -125,9 +167,8 @@ const Task = () => {
         if(modalType === 0){
           const result = await reqAddTaskDatas(val)
           if(result.status === 1){
-            reqGetTaskDatas()
             setIsModalOpen(false)
-            form.resetFields()
+            form_add.resetFields()
             getTableData()
             message.info('新增成功...')
           }else{
@@ -139,7 +180,6 @@ const Task = () => {
           val.delay_date = val.delay_date ? dayjs(val.delay_date).format('YYYY-MM-DD') : ''
           const result = await reqEditTaskDatas(val)
           if(result.status === 1){
-            reqGetTaskDatas()
             setIsModalOpen(false)
             form_add.resetFields()
             getTableData()
@@ -179,11 +219,12 @@ const Task = () => {
     const result = await reqDeleteTaskDatas(e)
     if(result.status === 1){
       getTableData()
-      message.info('删除成功...')
+      message.info('已暂停...')
     }else{
-      message.error('删除失败...')
+      message.error('暂停失败...')
     }
   }
+
   const handleCheckCancle = () => {
     setIsModalCheckOpen(false)
   }
@@ -204,6 +245,11 @@ const Task = () => {
       messageApi.error('参数有误...请检查!!!')
     }
     )
+  }
+
+  const serviceLineHandle = async (e) => {
+    const reqData = await reqGetItemsDatas({name:e})
+    setItemData(reqData.data)
   }
 
   const column = [
@@ -243,18 +289,18 @@ const Task = () => {
       title: '任务包周期',
       dataIndex: 'day',
     },
-    {
-      title: '任务包进度',
-      dataIndex: '',
-      render:()=>{
-        return (
-          <Progress percent={70} />
-        )
-      }
-    },
+    // {
+    //   title: '任务包进度',
+    //   dataIndex: '',
+    //   render:()=>{
+    //     return (
+    //       <Progress percent={num} />
+    //     )
+    //   }
+    // },
     {
       title: '是否交付',
-      dataIndex: '',
+      dataIndex: 'is_delivery',
     },
     {
       title: '交付要求',
@@ -264,10 +310,10 @@ const Task = () => {
       title: '结算类型',
       dataIndex: 'settlement_type',
     },
-    {
-      title: '是否延期',
-      dataIndex: '',
-    },
+    // {
+    //   title: '是否延期',
+    //   dataIndex: '',
+    // },
     {
       title: '作业日期',
       dataIndex: 'start_date',
@@ -316,12 +362,12 @@ const Task = () => {
               <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
               <Button onClick={()=> handClink('detail',rowData)}>详情</Button>
               <Popconfirm
-                description='是否删除?'
+                description='是否暂停?'
                 okText='确认'
                 cancelText='取消'
                 onConfirm={ () => handDelete(rowData)}
               >
-                <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
+                {rowData.status === '已暂停' ? '' : <Button type='primary' danger style={{marginLeft:'15px'}}>暂停</Button>}
               </Popconfirm>
             </div>
           )
@@ -452,7 +498,7 @@ const Task = () => {
     },
   };
   
-  const attachment = ''
+  const attachment = '/excel/dome.xlsx'
 
   return (
     <div className='style'>
@@ -477,75 +523,33 @@ const Task = () => {
                 <Select
                   placeholder='请输入基地'
                   style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '郑州',
-                      label: '郑州',
-                    },
-                    {
-                      value: '成都',
-                      label: '成都',
-                    },
-                    {
-                      value: '长沙',
-                      label: '长沙',
-                    },
-                    {
-                      value: '商丘',
-                      label: '商丘',
-                    },
-                    {
-                      value: '太原',
-                      label: '太原',
-                    },
-                    {
-                      value: '邯郸',
-                      label: '邯郸',
-                    },
-                    {
-                      value: '宿迁',
-                      label: '宿迁',
-                    },
-                    {
-                      value: '濮阳',
-                      label: '濮阳',
-                    }
-                  ]}
-                />
+                  allowClear={true}
+                >
+                {
+                  baseData?.map((option)=>(
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+                }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item name="service_line" label="业务线" {...itemLayout}>
               <Select
-                  placeholder='请输入业务线'
+                  placeholder="请输入业务线"
                   style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-                />
+                  allowClear={true}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -553,11 +557,8 @@ const Task = () => {
               <Select
                   placeholder='请输入任务包状态'
                   style={{textAlign:'left'}}
+                  allowClear={true}
                   options={[
-                    {
-                      value: '待验收',
-                      label: '待验收',
-                    },
                     {
                       value: '未完成',
                       label: '未完成',
@@ -566,6 +567,10 @@ const Task = () => {
                       value: '已完成',
                       label: '已完成',
                     },
+                    // {
+                    //   value: '待验收',
+                    //   label: '待验收',
+                    // },
                     {
                       value: '已暂停',
                       label: '已暂停',
@@ -579,6 +584,7 @@ const Task = () => {
               <Select
                   placeholder='请输入是否交付'
                   style={{textAlign:'left'}}
+                  allowClear={true}
                   options={[
                     {
                       value: '是',
@@ -601,10 +607,10 @@ const Task = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item >
-                <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;&nbsp;
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;&nbsp;
-                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+              <Form.Item  >
+                <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
+                <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
           </Row>
@@ -644,106 +650,65 @@ const Task = () => {
             <Input placeholder='请输入任务包名称' disabled={_disable}/>
           </Form.Item>
           <Form.Item
-            label='所属项目'
-            name="item"
-            rules={[{required:true,message:'所属项目'}]}
-          >
-            <Select
-              placeholder='请输入所属项目'
-              disabled={_disable}
-              style={{textAlign:'left'}}
-              options={[
-                {
-                  value: 'xxx',
-                  label: 'xxx',
-                },
-                {
-                  value: 'vvv',
-                  label: 'vvv',
-                }
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
             label='业务线'
             name="service_line"
             rules={[{required:true,message:'请输入业务线'}]}
           >
-           <Select
-              placeholder='请输入业务线'
-              disabled={_disable}
-              style={{textAlign:'left'}}
-              options={[
+            <Select
+                placeholder="请输入业务线"
+                style={{textAlign:'left'}}
+                allowClear={true}
+                disabled={_disable}
+                onChange={(e) => serviceLineHandle(e)}
+              >
                 {
-                  value: '混元',
-                  label: '混元',
-                },
-                {
-                  value: '百度',
-                  label: '百度',
-                },
-                {
-                  value: '字节',
-                  label: '字节',
-                },
-                {
-                  value: '小红书',
-                  label: '小红书',
-                },
-                {
-                  value: '文远',
-                  label: '文远',
-                },
-                {
-                  value: '众包类',
-                  label: '众包类',
+                  service_lineData?.map((option)=>(
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
                 }
-              ]}
-            />
+            </Select>
           </Form.Item>
           <Form.Item
             label='基地'
             name="base"
             rules={[{required:true,message:'请输入基地'}]}
           >
-              <Select
+            <Select
                 placeholder='请输入基地'
+                style={{textAlign:'left'}}
+                allowClear={true}
                 disabled={_disable}
-                options={[
-                  {
-                    value: '郑州',
-                    label: '郑州',
-                  },
-                  {
-                    value: '成都',
-                    label: '成都',
-                  },
-                  {
-                    value: '长沙',
-                    label: '长沙',
-                  },
-                  {
-                    value: '商丘',
-                    label: '商丘',
-                  },
-                  {
-                    value: '太原',
-                    label: '太原',
-                  },
-                  {
-                    value: '邯郸',
-                    label: '邯郸',
-                  },
-                  {
-                    value: '宿迁',
-                    label: '宿迁',
-                  },
-                  {
-                    value: '濮阳',
-                    label: '濮阳',
-                  }
-                ]}
-            />
+              >
+              {
+                baseData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label='所属项目'
+            name="item"
+            rules={[{required:true,message:'所属项目'}]}
+          >
+           <Select
+                placeholder='请输入所属项目'
+                style={{textAlign:'left'}}
+                allowClear={true}
+                disabled={_disable}
+              >
+              {
+                itemData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+           </Select>
           </Form.Item>
           <Form.Item
             label='项目负责人'
@@ -806,12 +771,13 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入标注员'}]}
           >
-            <Input placeholder='请输入标注员'/>
+            <TextArea placeholder='请输入标注员 如:李华、小明...' rows={4} />
           </Form.Item>
           <Form.Item
             label='审核员'
             name="auditor"
             initialValue=''
+            rules={[{required:true,message:'请输入审核员'}]}
           >
             <Input placeholder='请输入审核员' disabled={_disable}/>
           </Form.Item>
@@ -821,27 +787,27 @@ const Task = () => {
             initialValue={0}
             rules={[{required:true,message:'请输入任务包数量'}]}
           >
-            <InputNumber placeholder='请输入任务包数量' disabled={_disable}/>
+            <InputNumber placeholder='请输入任务包数量' disabled={_disable} min={0}/>
           </Form.Item>
           <Form.Item
             label='交付要求'
             name="delivery_requirement"
             rules={[{required:true,message:'请输入交付要求'}]}
           >
-            <Select
-                placeholder='请输入交付要求'
-                disabled={_disable}
-                options={[
-                  {
-                    value: '正确率',
-                    label: '正确率',
-                  },
-                  {
-                    value: 'xxx',
-                    label: 'xxx',
-                  }
-                ]}
-              />
+              <Select
+              placeholder="请输入交付要求"
+              style={{textAlign:'left'}}
+              allowClear={true}
+              disabled={_disable}
+            >
+              {
+                delivery_requirement?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='结算类型'
@@ -849,23 +815,19 @@ const Task = () => {
             rules={[{required:true,message:'请输入结算类型'}]}
           >
             <Select
-                placeholder='请输入结算类型'
-                disabled={_disable}
-                options={[
-                  {
-                    value: '包天',
-                    label: '包天',
-                  },
-                  {
-                    value: '包月',
-                    label: '包月',
-                  },
-                  {
-                    value: '计件',
-                    label: '计件',
-                  }
-                ]}
-              />
+              placeholder="请输入结算类型"
+              style={{textAlign:'left'}}
+              allowClear={true}
+              disabled={_disable}
+            >
+              {
+                settlement_type?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='商务单价'
@@ -873,7 +835,7 @@ const Task = () => {
             initialValue={0}
             rules={[{required:true,message:'请输入商务单价'}]}
           >
-            <InputNumber placeholder='请输入商务单价' disabled={_disable}/>
+            <InputNumber placeholder='请输入商务单价' disabled={_disable} min={0}/>
           </Form.Item>
           <Form.Item
             label='下方单价'
@@ -881,7 +843,7 @@ const Task = () => {
             initialValue={0}
             rules={[{required:true,message:'请输入下方单价'}]}
           >
-            <InputNumber placeholder='请输入下方单价' disabled={_disable}/>
+            <InputNumber placeholder='请输入下方单价' disabled={_disable} min={0}/>
           </Form.Item>
           <Form.Item
             label='任务包周期'
@@ -889,7 +851,7 @@ const Task = () => {
             initialValue={0}
             rules={[{required:true,message:'请输入任务包周期'}]}
           >
-            <InputNumber placeholder='请输入任务包周期' disabled={_disable}/>
+            <InputNumber placeholder='请输入任务包周期' disabled={_disable} min={0}/>
           </Form.Item>
           <Form.Item
             label='出勤要求'
@@ -942,6 +904,21 @@ const Task = () => {
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
           </Form.Item>
+         
+          <Form.Item
+            label='内部人员薪资结构'
+            name="salary_structure"
+            initialValue=''
+          >
+            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包简介'
+            name="detail"
+            initialValue=''
+          >
+            <TextArea placeholder='请输入任务包简介' rows={4} />
+          </Form.Item>
           <Form.Item
             label='领取日期'
             name="get_task_date"
@@ -957,25 +934,22 @@ const Task = () => {
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='内部人员薪资结构'
-            name="salary_structure"
-            initialValue=''
-          >
-            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍' disabled={_disable}/>
-          </Form.Item>
-          <Form.Item
-            label='甲方任务包链接'
-            name="attachment"
+            label='是否完成交付'
+            name="is_delivery"
             hidden={delay_date_status}
           >
-            <Input placeholder='请输入甲方任务包链接' disabled={_disable}/>
-          </Form.Item>
-          <Form.Item
-            label='任务包简介'
-            name="detail"
-            initialValue=''
-          >
-            <TextArea placeholder='请输入任务包简介' rows={4} />
+              <Select
+                options={[
+                  {
+                    value: '否',
+                    label: '否',
+                  },
+                  {
+                    value: '是',
+                    label: '是',
+                  }
+                ]}
+              />
           </Form.Item>
         </Form>
       </Modal>
@@ -986,7 +960,7 @@ const Task = () => {
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'70%'}
+        width={'85%'}
         footer={null}
       >
         <Form
@@ -1251,12 +1225,12 @@ const Task = () => {
           >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label='甲方任务包链接'
             name="attachment"
           >
             <Input variant="borderless" disabled={true}/>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label='任务包简介'
             name="detail"

@@ -2,15 +2,15 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:57:12
- * @LastEditTime: 2024-11-20 13:43:35
+ * @LastEditTime: 2024-12-02 10:53:53
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
+import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker, Upload, Divider } from 'antd'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import storageUtils from '../../utils/storageUtils'
-import { reqGetTrainerDatas, reqAddTrainerDatas } from '../../api/index'
+import { reqGetTrainerDatas, reqAddTrainerDatas, reqDeleteTrainerDatas } from '../../api/index'
 import { BASE } from '../../utils/networkUrl'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:16} }
 
@@ -91,7 +91,14 @@ const Trainer = () => {
     form.resetFields()
   }
   
-  const handDelete = () => {
+  const handDelete = async (e) => {
+    const result = await reqDeleteTrainerDatas(e)
+    if(result.status === 1){
+      getTableData()
+      message.info('删除成功...')
+    }else{
+      message.error('删除失败...')
+    }
   }
 
   const handleDetailCancle = () => {
@@ -218,7 +225,7 @@ const Trainer = () => {
       render:(rowData)=>{
         return (
           <div>
-            <Button onClick={()=> handClink('edit',rowData)}>详情</Button>
+            <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
             <Popconfirm
               description='是否删除?'
               okText='确认'
@@ -252,10 +259,10 @@ const Trainer = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item  >
-                <Button onClick={() => handClink('add')} > + 新增 </Button>&nbsp;
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
-                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+            <Form.Item  >
+                <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
+                <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
           </Row>
@@ -266,7 +273,6 @@ const Trainer = () => {
           columns={ column } 
           dataSource={ data } 
           rowKey={ data => data.id }  
-          scroll={{x: 'max-content'}}
           loading={table_loading}
         />
       </div>
