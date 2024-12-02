@@ -2,16 +2,19 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2024-10-24 10:19:34
+ * @LastEditTime: 2024-12-02 14:06:45
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row } from 'antd'
+import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker,InputNumber } from 'antd'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
-import { reqGetPortraitDatas, reqAddPortraitDatas, reqEditPortraitDatas } from '../../api/index'
-const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
+import { reqGetPortraitDatas, 
+         reqAddPortraitDatas, 
+         reqEditPortraitDatas,reqGetServiceLineDatas,reqDeletePortraitDatas } from '../../api/index'
+const itemLayout = { labelCol:{span:5},wrapperCol:{span:18} }
 const { TextArea } = Input;
+const { Option } = Select;
 
 const Portrait = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -19,12 +22,19 @@ const Portrait = () => {
   const [ data, setData ] = useState([])
   const [ id, setId ] = useState(0)
   const [ table_loading, setTableLoading ] = useState(true)
+  const [ service_lineData, setServiceLineData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
   useEffect(() => {
     getTableData()
+    getServiceLineData() //获取业务线数据
   },[])
+
+  const getServiceLineData = async () => {
+    const reqServiceLineData = await reqGetServiceLineDatas()
+    setServiceLineData(reqServiceLineData.data)
+  }
 
   const getTableData = async () => {
     const reqData = await reqGetPortraitDatas()
@@ -39,31 +49,21 @@ const Portrait = () => {
     }else{ 
       setModalType(1)
       const cloneData = JSON.parse(JSON.stringify(rowData))
-      cloneData.entry_date = dayjs(cloneData.entry_date)
-      cloneData.become_date = dayjs(cloneData.become_date)
-      cloneData.graduation_time = dayjs(cloneData.graduation_time)
-      cloneData.birthday = dayjs(cloneData.birthday)
+      cloneData.inter_time = dayjs(cloneData.inter_time)
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
     }
   }
 
-  const hangFinish = (e) => {
-
-  }
-
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
-     val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
-     val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
-     val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
-     val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
+     val.inter_time = dayjs(val.inter_time).format('YYYY-MM-DD')
      if(modalType === 0){
       const result = await reqAddPortraitDatas(val)
       if(result.status === 1){
         getTableData()
         setIsModalOpen(false)
-        form.resetFields()
+        form_add.resetFields()
         message.info('新增成功...')
       }else{
         message.error('新增失败...')
@@ -74,7 +74,7 @@ const Portrait = () => {
       if(result.status === 1){
         getTableData()
         setIsModalOpen(false)
-        form.resetFields()
+        form_add.resetFields()
         message.info('编辑成功...')
       }else{
         message.error('编辑失败...')
@@ -91,6 +91,7 @@ const Portrait = () => {
     setIsModalOpen(false)
     form_add.resetFields()
   }
+
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
       const reqData = await reqGetPortraitDatas(val)
@@ -103,14 +104,26 @@ const Portrait = () => {
     form.resetFields()
   }
   
+  const handDelete = async (e) => {
+    const result = await reqDeletePortraitDatas(e)
+    if(result.status === 1){
+      getTableData()
+      message.info('删除成功...')
+    }else{
+      message.error('删除失败...')
+    }
+  }
+
   const column = [
     {
       title: '业务线',
       dataIndex: 'service_line',
+      fixed: 'left'
     },
     {
       title: '项目',
       dataIndex: 'item',
+      fixed: 'left'
     },
     {
       title: '性别',
@@ -157,6 +170,31 @@ const Portrait = () => {
       dataIndex: 'characters',
     },
     {
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
+      title: '操作人',
+      dataIndex: 'user',
+    },
+    {
+      title: '指派人事负责人',
+      dataIndex: 'personnel',
+    },
+    {
+      title: '招聘人数',
+      dataIndex: 'number',
+    },
+    {
+      title: '到岗时间',
+      dataIndex: 'inter_time',
+      render:(inter_time)=>{
+        return (
+          dayjs(inter_time).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
       title: '创建时间',
       dataIndex: 'create_time',
       render:(create_time)=>{
@@ -167,18 +205,19 @@ const Portrait = () => {
     },
     {
       title: '操作',
+      fixed: 'right',
       render:(rowData)=>{
         return (
           <div>
             <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
-            {/* <Popconfirm
+            <Popconfirm
               description='是否删除?'
               okText='确认'
               cancelText='取消'
               onConfirm={ () => handDelete(rowData)}
             >
               <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
-            </Popconfirm> */}
+            </Popconfirm>
           </div>
         )
       }
@@ -191,41 +230,23 @@ const Portrait = () => {
         <Form form={form}
           className='flex-box-form'
           layout='inline'
-          onFinish={hangFinish}
         >
           <Row style={{ width:'100%' }}>
             <Col span={6}>
               <Form.Item name="name" label="业务线" {...itemLayout}>
-                <Select
-                  placeholder='请输入业务线'
-                  style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-                />
+              <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left',width:'250px'}}
+                  allowClear={true}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
            
@@ -236,9 +257,9 @@ const Portrait = () => {
             </Col>
             <Col span={6}>
               <Form.Item  >
-                <Button onClick={() => handClink('add')} > + 新增 </Button>&nbsp;
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
-                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+                <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
+                <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
           </Row>
@@ -256,13 +277,13 @@ const Portrait = () => {
       {contextHolder}
       <Modal
         open={isModalOpen}
-        title={ modalType ? '编辑' : ''}
+        title={ modalType ? '编辑' : '新增'}
         onOk={handleOk}
         onCancel={handleCancle}
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={950}
+        width={'70%'}
       >
         <Form
           form={form_add}
@@ -273,38 +294,21 @@ const Portrait = () => {
             <Form.Item
             label='业务线'
             name="service_line"
-            initialValue=''
             rules={[{required:true,message:'请输入业务线'}]}
           >
-              <Select
-                  placeholder='请输入业务线'
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-                />
+            <Select
+                placeholder="请输入业务线"
+                style={{textAlign:'left'}}
+                allowClear={true}
+              >
+                {
+                  service_lineData?.map((option)=>(
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+                }
+            </Select>
           </Form.Item>
           <Form.Item
             label='项目'
@@ -313,6 +317,14 @@ const Portrait = () => {
             rules={[{required:true,message:'请输入项目'}]}
           >
             <Input placeholder='请输入项目' />
+          </Form.Item>
+          <Form.Item
+            label='业务负责人'
+            name="business_leader"
+            initialValue=''
+            rules={[{required:true,message:'请输入业务负责人'}]}
+          >
+            <Input placeholder='请输入业务负责人' />
           </Form.Item>
           <Form.Item
             label='性别'
@@ -329,6 +341,10 @@ const Portrait = () => {
                   {
                     value: '女',
                     label: '女',
+                  },
+                  {
+                    value: '无限制',
+                    label: '无限制',
                   }
                 ]}
             />
@@ -357,23 +373,23 @@ const Portrait = () => {
                 placeholder='请输入最高学历'
                 options={[
                   {
-                    value: '1',
+                    value: '博士',
                     label: '博士',
                   },
                   {
-                    value: '2',
+                    value: '硕士',
                     label: '硕士',
                   },
                   {
-                    value: '3',
+                    value: '本科',
                     label: '本科',
                   },
                   {
-                    value: '4',
+                    value: '专科',
                     label: '专科',
                   },
                   {
-                    value: '5',
+                    value: '其他',
                     label: '其他',
                   }
                 ]}
@@ -434,6 +450,29 @@ const Portrait = () => {
             rules={[{required:true,message:'请输入性格特点'}]}
           >
             <Input placeholder='请输入性格特点' />
+          </Form.Item>
+          <Form.Item
+            label='指派人事负责人'
+            name="personnel"
+            initialValue=''
+            rules={[{required:true,message:'请输入指派人事负责人'}]}
+          >
+            <Input placeholder='请输入指派人事负责人' />
+          </Form.Item>
+          <Form.Item
+            label='招聘人数'
+            name="number"
+            initialValue={0}
+            rules={[{required:true,message:'请输入招聘人数'}]}
+          >
+            <InputNumber placeholder='请输入招聘人数' min={0}/>
+          </Form.Item>
+          <Form.Item
+            label='到岗时间'
+            name="inter_time"
+            rules={[{required:true,message:'请输入到岗时间'}]}
+          >
+            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
         </Form>
       </Modal>

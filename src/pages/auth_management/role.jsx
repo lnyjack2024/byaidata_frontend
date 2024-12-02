@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:43
- * @LastEditTime: 2024-11-18 13:16:25
+ * @LastEditTime: 2024-12-02 14:51:34
  */
 import React, { useEffect, useState } from 'react'
 import { Table } from 'antd'
@@ -11,6 +11,10 @@ import './role.css'
 import { reqGetRoleDatas } from '../../api/index'
 
 const column = [
+  {
+    title: '角色ID',
+    dataIndex: 'role_id',
+  },
   {
     title: '角色名',
     dataIndex: 'name',

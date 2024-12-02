@@ -2,10 +2,10 @@
  * @Description: 部门列表
  * @Author: wangyonghong
  * @Date: 2024-09-29 15:25:05
- * @LastEditTime: 2024-11-11 10:35:59
+ * @LastEditTime: 2024-11-28 10:40:58
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import moment from 'moment';
 import { reqGetDepartmentDatas, reqAddDepartmentDatas, reqDeleteDepartmentDatas } from '../../api/index'
@@ -106,7 +106,7 @@ const Department = () => {
   return (
     <div style={{width:'100%',height:'100%'}}>
       <div style={{display:'flex',width:'100%',height:'10%',justifyContent:'space-between',alignItems:'center'}}>
-        <Button type='primary' onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>
+        <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{marginLeft:'1%',backgroundColor: "#000000",color:'white'}}> 新增 </Button>
         <Form
           layout='inline'
           onFinish={hangFinish}

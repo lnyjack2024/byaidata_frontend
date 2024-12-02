@@ -2,15 +2,17 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-10-21 16:07:49
- * @LastEditTime: 2024-12-02 14:22:09
+ * @LastEditTime: 2024-12-02 14:25:04
  */
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import './service_line.css'
+import { reqGetDeliveryRequirementDatas, 
+         reqAddDeliveryRequirementDatas, 
+         reqDeleteDeliveryRequirementDatas } from '../../api/index'
 
-import { reqGetServiceLineDatas, reqAddServiceLineDatas, reqDeleteServiceLineDatas } from '../../api/index'
 const ServiceLine = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -23,10 +25,10 @@ const ServiceLine = () => {
   },[])
 
   const getTableData = async () => {
-    const reqData = await reqGetServiceLineDatas()
+    const reqData = await reqGetDeliveryRequirementDatas()
       setData(reqData.data)
   }
-
+  
   const handClink = (type,rowData) => {
     setIsModalOpen(!isModalOpen)
     if(type === 'add'){
@@ -36,7 +38,7 @@ const ServiceLine = () => {
     }
   }
   const handDelete = async (e) => {
-    const result = await reqDeleteServiceLineDatas(e)
+    const result = await reqDeleteDeliveryRequirementDatas(e)
     if(result.status === 1){
       getTableData()
       message.info('删除成功...')
@@ -47,7 +49,7 @@ const ServiceLine = () => {
 
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
-    const result = await reqAddServiceLineDatas(val)
+    const result = await reqAddDeliveryRequirementDatas(val)
     if(result.status === 1){
       setIsModalOpen(false)
       form.resetFields()
@@ -67,7 +69,7 @@ const ServiceLine = () => {
 
   const column = [
     {
-      title: '业务线',
+      title: '交付要求',
       dataIndex: 'name',
     },
     {
@@ -128,11 +130,11 @@ const ServiceLine = () => {
           style={{marginTop:'30px'}}
         >
           <Form.Item
-            label='业务线'
+            label='交付要求'
             name="name"
-            rules={[{required:true,message:'请输入业务线'}]}
+            rules={[{required:true,message:'请输入交付要求'}]}
           >
-            <Input placeholder='请输入业务线' />
+            <Input placeholder='请输入交付要求' />
           </Form.Item>
         </Form>
       </Modal>

@@ -2,19 +2,27 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-11-13 09:59:15
+ * @LastEditTime: 2024-12-02 10:12:28
  */
 
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Upload, Popconfirm } from 'antd'
+// import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
+import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber } from 'antd'
 import dayjs from 'dayjs';
-import { BASE } from '../../utils/networkUrl'
+// import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
-import { reqGetRosterDatas, reqAddRosterDatas, reqEditRosterDatas, reqGetDepartmentDatas, reqGetRoleDatas, reqGetServiceLineDatas, reqDeleteRosterDatas } from '../../api/index'
-import storageUtils from '../../utils/storageUtils'
+import { reqGetRosterDatas, 
+         reqAddRosterDatas, 
+         reqEditRosterDatas, 
+         reqGetDepartmentDatas, 
+         reqGetRoleDatas, 
+         reqGetServiceLineDatas, 
+         reqDeleteRosterDatas,
+         reqGetBaseDatas, reqGetPortraitDatas } from '../../api/index'
+// import storageUtils from '../../utils/storageUtils'
 const { TextArea } = Input;
-const itemLayout = { labelCol:{span:5},wrapperCol:{span:15} }
+const itemLayout = { labelCol:{span:6},wrapperCol:{span:18} }
 const { Option } = Select;
 
 const Roster = () => {
@@ -23,11 +31,14 @@ const Roster = () => {
   const [ data, setData ] = useState([])
   const [ id, setId ] = useState(0)
   const [ dimission_status, setDimissionStatus ] = useState(true)
+  const [ _status, setDStatus ] = useState(true)
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ departmentData, setDepartmentData ] = useState([])
   const [ roleData, setRoleData ] = useState([])
   const [ service_lineData, setServiceLineData ] = useState([])
+  const [ service_item_lineData, setServiceItemLineData ] = useState([])
+  const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
@@ -37,6 +48,8 @@ const Roster = () => {
     getDepartmentData() //获取部门数据
     getRoleData() //获取角色数据
     getServiceLineData() //获取业务线数据
+    getBaseData()
+    getPortraitData()
   },[])
 
   const getDepartmentData = async () => {
@@ -52,6 +65,16 @@ const Roster = () => {
   const getServiceLineData = async () => {
     const reqServiceLineData = await reqGetServiceLineDatas()
     setServiceLineData(reqServiceLineData.data)
+  }
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
+
+  const getPortraitData = async () => {
+    const reqData = await reqGetPortraitDatas()
+    setServiceItemLineData(reqData.data)
   }
 
   const getTableData = async () => {
@@ -75,7 +98,7 @@ const Roster = () => {
       cloneData.become_date = dayjs(cloneData.become_date)
       cloneData.graduation_time = dayjs(cloneData.graduation_time)
       cloneData.birthday = dayjs(cloneData.birthday)
-      cloneData.dimission_date = dayjs(cloneData.dimission_date)
+      cloneData.dimission_date = cloneData.dimission_date ? dayjs(cloneData.dimission_date) : ''
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
     }
@@ -83,65 +106,69 @@ const Roster = () => {
 
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
+      if(modalType === 0){
         val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
         val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
         val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
         val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
-        if(modalType === 0){
-          const result = await reqAddRosterDatas(val)
-          if(result.status === 1){
-            getTableData()
-            setIsModalOpen(false)
-            form_add.resetFields()
-            message.info('新增成功...')
-          }else{
-            message.error('新增失败...')
-          }
+        const result = await reqAddRosterDatas(val)
+        if(result.status === 1){
+          getTableData()
+          setIsModalOpen(false)
+          form_add.resetFields()
+          message.info('新增成功...')
         }else{
-          val.edit_id = id
-          const result = await reqEditRosterDatas(val)
-          if(result.status === 1){
-            getTableData()
-            setIsModalOpen(false)
-            form_add.resetFields()
-            message.info('编辑成功...')
-          }else{
-            message.error('编辑失败...')
-          }
+          message.error('新增失败...')
         }
+      }else{
+        console.log(555,val.dimission_date)
+        if(val.dimission_date === '' || val.dimission_date === null){
+            return;
+        }
+        val.dimission_date = val.dimission_date ? dayjs(val.dimission_date).format('YYYY-MM-DD') : ''
+        val.edit_id = id
+        const result = await reqEditRosterDatas(val)
+        if(result.status === 1){
+          getTableData()
+          setIsModalOpen(false)
+          form_add.resetFields()
+          message.info('编辑成功...')
+        }else{
+          message.error('编辑失败...')
+        }
+      }
      }).catch((e)=>{
-      console.log(e)
        messageApi.error('参数有误...请检查!!!')
     })
   }
 
-  const props = {
-    name: 'file',
-    action: `${BASE}/person/roster/upload`,
-    headers: {
-      authorization: 'authorization-text',
-      'token': storageUtils.getToken()
-    },
-    onChange(info) {
-      setTableLoading(true)
-      if (info.file.status === 'done') {
-        if(info.file.response.status === 1){
-          message.success(`文件${info.file.name}导入成功`);
-          getTableData()
-          setTableLoading(false)
-        }else if(info.file.response.status === 0){
-          message.error(`文件${info.file.name}导入失败`);
-          setTableLoading(false)
-        }else if(info.file.response.status === 3){
-          message.error(info.file.response.msg);
-          setTableLoading(false)
-        }
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name}上传失败`);
-        setTableLoading(false)
-      }
-    },
-  };
+  // const props = {
+  //   name: 'file',
+  //   action: `${BASE}/person/roster/upload`,
+  //   headers: {
+  //     authorization: 'authorization-text',
+  //     'token': storageUtils.getToken()
+  //   },
+  //   onChange(info) {
+  //     setTableLoading(true)
+  //     if (info.file.status === 'done') {
+  //       if(info.file.response.status === 1){
+  //         message.success(`文件${info.file.name}导入成功`);
+  //         getTableData()
+  //         setTableLoading(false)
+  //       }else if(info.file.response.status === 0){
+  //         message.error(`文件${info.file.name}导入失败`);
+  //         setTableLoading(false)
+  //       }else if(info.file.response.status === 3){
+  //         message.error(info.file.response.msg);
+  //         setTableLoading(false)
+  //       }
+  //     } else if (info.file.status === 'error') {
+  //       message.error(`${info.file.name}上传失败`);
+  //       setTableLoading(false)
+  //     }
+  //   },
+  // };
 
   const handleCancle = () => {
     setIsModalOpen(false)
@@ -170,6 +197,14 @@ const Roster = () => {
     }
   }
   
+  const recruitmentTypeHandle = (e) => {
+    if(e === '1'){
+      setDStatus(false)
+    }else{
+      setDStatus(true)
+    }
+  }
+
   const column = [
     {
       title: '姓名',
@@ -227,10 +262,6 @@ const Roster = () => {
       dataIndex: 'item',
     },
     {
-      title: '项目类型',
-      dataIndex: 'item_type',
-    },
-    {
       title: '职级',
       dataIndex: 'position_level',
     },
@@ -272,7 +303,7 @@ const Roster = () => {
       dataIndex: 'politics_status',
     },
     {
-      title: '名族',
+      title: '籍贯',
       dataIndex: 'family_name',
     },
     {
@@ -460,162 +491,31 @@ const Roster = () => {
           <Row>
             <Col span={6}>
               <Form.Item name="name" label="姓名" {...itemLayout}>
-                <Input placeholder='请输入姓名'/>
+                <Input placeholder='请输入姓名' style={{width:'250px'}}/>
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="base" label="基地" {...itemLayout}>
+              <Form.Item name="role" label="职位角色" {...itemLayout}>
                 <Select
-                  placeholder='请输入基地'
-                  style={{textAlign:'left'}}
+                  placeholder='请输入职位角色'
+                  style={{textAlign:'left',width:'250px'}}
+                  allowClear={true}
                   options={[
                     {
-                      value: '上海',
-                      label: '上海',
+                      value: '管理层',
+                      label: '管理层',
                     },
                     {
-                      value: '郑州',
-                      label: '郑州',
+                      value: '财务总监',
+                      label: '财务总监',
                     },
                     {
-                      value: '成都',
-                      label: '成都',
+                      value: '财务经理',
+                      label: '财务经理',
                     },
                     {
-                      value: '长沙',
-                      label: '长沙',
-                    },
-                    {
-                      value: '商丘',
-                      label: '商丘',
-                    },
-                    {
-                      value: '太原',
-                      label: '太原',
-                    },
-                    {
-                      value: '邯郸',
-                      label: '邯郸',
-                    },
-                    {
-                      value: '宿迁',
-                      label: '宿迁',
-                    },
-                    {
-                      value: '濮阳',
-                      label: '濮阳',
-                    }
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="department" label="部门" {...itemLayout}>
-                <Select
-                  style={{textAlign:'left'}}
-                  placeholder='请输入部门'
-                  options={[
-                    {
-                      value: '总经办',
-                      label: '总经办',
-                    },
-                    {
-                      value: '财务部',
-                      label: '财务部',
-                    },
-                    {
-                      value: '技术部',
-                      label: '技术部',
-                    },
-                    {
-                      value: '法务部',
-                      label: '法务部',
-                    },
-                    {
-                      value: '行政人事部',
-                      label: '行政人事部',
-                    },
-                    {
-                      value: '政府合作部',
-                      label: '政府合作部',
-                    },
-                    {
-                      value: '商务拓展部',
-                      label: '商务拓展部',
-                    },
-                    {
-                      value: '运营分析部',
-                      label: '运营分析部',
-                    },
-                    {
-                      value: '业务管理中心',
-                      label: '业务管理中心',
-                    }
-                  ]}
-            />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="service_line" label="业务线" {...itemLayout}>
-              <Select
-                  placeholder='请输入业务线'
-                  style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="contract_type" label="合同类型" {...itemLayout}>
-                <Select
-                  placeholder='请输入合同类型'
-                  style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '劳动合同',
-                      label: '劳动合同',
-                    },
-                    {
-                      value: '实习合同',
-                      label: '实习合同',
-                    }
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="role" label="角色" {...itemLayout}>
-                <Select
-                  placeholder='请输入角色'
-                  style={{textAlign:'left'}}
-                  options={[
-                    {
-                      value: '管理者',
-                      label: '管理者',
+                      value: '财务专员',
+                      label: '财务专员',
                     },
                     {
                       value: '运营负责人',
@@ -626,28 +526,32 @@ const Roster = () => {
                       label: '运营人员',
                     },
                     {
-                      value: '人力总监',
-                      label: '人力总监',
+                      value: '人力资源总监',
+                      label: '人力资源总监',
                     },
                     {
-                      value: '人力经理或主管',
-                      label: '人力经理或主管',
+                      value: '人事经理或主管',
+                      label: '人事经理或主管',
                     },
                     {
-                      value: '产品经理',
-                      label: '产品经理',
+                      value: '人事专员',
+                      label: '人事专员',
+                    },
+                    {
+                      value: '开发负责人',
+                      label: '开发负责人',
                     },
                     {
                       value: '开发人员',
                       label: '开发人员',
                     },
                     {
-                      value: '业务负责人',
-                      label: '业务负责人',
+                      value: '产品经理',
+                      label: '产品经理',
                     },
                     {
-                      value: '项目负责人',
-                      label: '项目负责人',
+                      value: '业务负责人',
+                      label: '业务负责人',
                     },
                     {
                       value: '项目经理',
@@ -658,12 +562,12 @@ const Roster = () => {
                       label: '项目主管',
                     },
                     {
-                      value: '培训师',
-                      label: '培训师',
-                    },
-                    {
                       value: '小组长',
                       label: '小组长',
+                    },
+                    {
+                      value: '培训师',
+                      label: '培训师',
                     },
                     {
                       value: '骨干',
@@ -677,11 +581,63 @@ const Roster = () => {
             />
               </Form.Item>
             </Col>
-            {/* <Col span={6}>
+            <Col span={6}>
+              <Form.Item name="department" label="部门" {...itemLayout}>
+                <Select
+                    placeholder='请输入部门'
+                    style={{textAlign:'left',width:'250px'}}
+                    allowClear={true}
+                  >
+                  {
+                    departmentData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="base" label="基地" {...itemLayout}>
+                <Select
+                    placeholder='请输入基地'
+                    style={{textAlign:'left',width:'250px'}}
+                    allowClear={true}
+                  >
+                  {
+                    baseData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                  </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
+              <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left',width:'250px'}}
+                  allowClear={true}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
               <Form.Item name="is_dimission" label="是否离职" {...itemLayout}>
                 <Select
                   placeholder='请输入是否离职'
-                  style={{textAlign:'left'}}
+                  style={{textAlign:'left',width:'250px'}}
+                  allowClear={true}
                   options={[
                     {
                       value: '是',
@@ -692,9 +648,9 @@ const Roster = () => {
                       label: '否',
                     }
                   ]}
-            />
+                />
               </Form.Item>
-            </Col> */}
+            </Col> 
             {/* <Col span={6}>
               <Form.Item name="entry_date" label="入职日期" {...itemLayout}>
                 <RangePicker     
@@ -704,7 +660,7 @@ const Roster = () => {
                 />
               </Form.Item>
             </Col> */}
-            <Col span={2}>
+            {/* <Col span={2}>
               <Form.Item  >
                 <Upload  
                   showUploadList={false} 
@@ -713,15 +669,14 @@ const Roster = () => {
                   <Button icon={<UploadOutlined />}>导入</Button>
                 </Upload>
               </Form.Item>
-            </Col>
-            <Col span={5} >
+            </Col> */}
+            <Col span={8} >
               <Form.Item  >
-                <Button onClick={() => handClink('add')} style={{marginLeft:'1%'}}> + 新增 </Button>&nbsp;&nbsp;
-                <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;&nbsp;
-                <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
+                <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
+                <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
+                <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
             </Col>
-           
           </Row>
         </Form>
       </div>
@@ -781,7 +736,8 @@ const Roster = () => {
           <Form.Item
             label='部门'
             name="department"
-            initialValue=''
+            // initialValue=''
+            rules={[{required:true,message:'请输入部门'}]}
           >
             <Select
               placeholder='请输入部门'
@@ -799,57 +755,33 @@ const Roster = () => {
           <Form.Item
             label='基地'
             name="base"
-            initialValue=''
-          >
-              <Select
-                placeholder='请输入基地'
-                options={[
-                  {
-                    value: '上海',
-                    label: '上海',
-                  },
-                  {
-                    value: '郑州',
-                    label: '郑州',
-                  },
-                  {
-                    value: '成都',
-                    label: '成都',
-                  },
-                  {
-                    value: '长沙',
-                    label: '长沙',
-                  },
-                  {
-                    value: '商丘',
-                    label: '商丘',
-                  },
-                  {
-                    value: '太原',
-                    label: '太原',
-                  },
-                  {
-                    value: '邯郸',
-                    label: '邯郸',
-                  },
-                  {
-                    value: '宿迁',
-                    label: '宿迁',
-                  },
-                  {
-                    value: '濮阳',
-                    label: '濮阳',
-                  }
-                ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label='角色'
-            name="role"
-            initialValue=''
+            // initialValue=''
+            rules={[{required:true,message:'请输入基地'}]}
           >
             <Select
-              placeholder='请输入角色'
+              placeholder='请输入基地'
+              style={{textAlign:'left'}}
+              allowClear={true}
+              disabled={_disable}
+            >
+              {
+                baseData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label='职位角色'
+            name="role"
+            // initialValue=''
+            rules={[{required:true,message:'请输入基地'}]}
+          >
+            <Select
+              placeholder='请输入职位角色'
+              disabled={_disable}
             > 
              {
                 roleData.map((option)=>(
@@ -865,7 +797,7 @@ const Roster = () => {
             name="immediate_superior"
             initialValue=''
           >
-            <Input placeholder='请输入直属上级' />
+            <Input placeholder='请输入直属上级' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='入职日期'
@@ -904,49 +836,6 @@ const Roster = () => {
                 }
               ]}
             />      
-          </Form.Item>
-          <Form.Item
-            label='业务线'
-            name="service_line"
-            initialValue=''
-          >
-            <Select
-              placeholder="请输入业务线"
-            >
-              {
-                service_lineData.map((option)=>(
-                  <Option key={option.id} value={option.name}>
-                    {option.name}
-                  </Option>
-                ))
-              }
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label='项目名称'
-            name="item"
-            initialValue=''
-          >
-            <Input placeholder='请输入项目名称' />
-          </Form.Item>
-          <Form.Item
-            label='项目类型'
-            name="item_type"
-            initialValue=''
-          >
-              <Select
-                  placeholder='请输入项目类型'
-                  options={[
-                    {
-                      value: '计时',
-                      label: '计时',
-                    },
-                    {
-                      value: '计件',
-                      label: '计件',
-                    }
-                  ]}
-                />
           </Form.Item>
           <Form.Item
             label='职级'
@@ -988,6 +877,7 @@ const Roster = () => {
             label='是否签约发薪平台'
             name="is_payment"
             initialValue='是'
+            rules={[{required:true}]}
           >
              <Select
                 placeholder='请输入是否签约发薪平台'
@@ -1008,6 +898,7 @@ const Roster = () => {
             label='是否购买雇主责任'
             name="is_employer"
             initialValue='是'
+            rules={[{required:true}]}
           >
             <Select
                 placeholder='请输入是否购买雇主责任'
@@ -1055,9 +946,10 @@ const Roster = () => {
           <Form.Item
             label='年龄'
             name="age"
+            initialValue={0}
             rules={[{required:true,message:'请输入年龄'}]}
           >
-            <Input placeholder='请输入年龄' disabled={_disable}/>
+            <InputNumber placeholder='请输入年龄' min={0} disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='身份证'
@@ -1065,13 +957,6 @@ const Roster = () => {
             rules={[{required:true,message:'请输入身份证'}]}
           >
             <Input placeholder='请输入身份证' disabled={_disable}/>
-          </Form.Item>
-          <Form.Item
-            label='身份证有效期'
-            name="id_card_time"
-            rules={[{required:true,message:'请输入身份证有效期'}]}
-          >
-            <Input placeholder='请输入身份证有效期' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='政治面貌'
@@ -1102,13 +987,12 @@ const Roster = () => {
               />
           </Form.Item>
           <Form.Item
-            label='名族'
+            label='籍贯'
             name="family_name"
-            rules={[{required:true,message:'请输入名族'}]}
+            rules={[{required:true,message:'请输入籍贯'}]}
             initialValue='汉族'
           >
             <Select
-                placeholder='请输入名族'
                 disabled={_disable}
                 options={[
                   {
@@ -1394,21 +1278,61 @@ const Roster = () => {
               />
           </Form.Item>
           <Form.Item
+            label='招聘人员类型'
+            name="recruitment_type"
+            initialValue={'2'}
+            rules={[{required:true,message:'请输入招聘类型'}]}
+          >
+            <Select
+                placeholder='请输入招聘人员类型'
+                onChange={(e) => recruitmentTypeHandle(e)}
+                disabled={_disable}
+                options={[
+                  {
+                    value: '1',
+                    label: '画像人员',
+                  },
+                  {
+                    value: '2',
+                    label: '非画像人员',
+                  }
+                ]}
+              />
+          </Form.Item>
+          <Form.Item
+            label='业务线-项目'
+            name="service_line_item"
+            initialValue=''
+            hidden={_status}
+          >
+            <Select
+              placeholder="请输入业务线"
+            >
+              {
+                service_item_lineData?.map((option)=>(
+                  <Option key={option.id} value={option.item + '-' + option.service_line}>
+                    {option.service_line + '-' + option.item} 
+                  </Option>
+                ))
+              }
+            </Select>
+          </Form.Item>
+          <Form.Item
             label='离职日期'
             name="dimission_date"
             hidden={dimission_status}
-            initialValue=''
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
             label='离职类型'
             name="dimission_type"
+            initialValue={'1'}
             hidden={dimission_status}
-            initialValue=''
           >
             <Select
                 placeholder='请输入离职类型'
+                allowClear={true}
                 options={[
                   {
                     value: '1',
@@ -1441,7 +1365,6 @@ const Roster = () => {
             label='离职原因'
             name="dimission_reason"
             hidden={dimission_status}
-            initialValue=''
           >
             <TextArea placeholder='请输入离职原因' rows={4} />
           </Form.Item>
