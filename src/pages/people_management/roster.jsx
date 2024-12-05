@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-02 10:12:28
+ * @LastEditTime: 2024-12-05 14:20:11
  */
 
 import React, { useEffect, useState } from 'react'
@@ -107,10 +107,10 @@ const Roster = () => {
   const handleOk = () => {
     form_add.validateFields().then( async (val)=>{
       if(modalType === 0){
-        val.entry_date = dayjs(val.entry_date).format('YYYY-MM-DD')
-        val.become_date = dayjs(val.become_date).format('YYYY-MM-DD')
+        val.entry_date      = dayjs(val.entry_date).format('YYYY-MM-DD')
+        val.become_date     = dayjs(val.become_date).format('YYYY-MM-DD')
         val.graduation_time = dayjs(val.graduation_time).format('YYYY-MM-DD')
-        val.birthday = dayjs(val.birthday).format('YYYY-MM-DD')
+        val.birthday        = dayjs(val.birthday).format('YYYY-MM-DD')
         const result = await reqAddRosterDatas(val)
         if(result.status === 1){
           getTableData()
@@ -121,7 +121,6 @@ const Roster = () => {
           message.error('新增失败...')
         }
       }else{
-        console.log(555,val.dimission_date)
         if(val.dimission_date === '' || val.dimission_date === null){
             return;
         }
@@ -205,6 +204,12 @@ const Roster = () => {
     }
   }
 
+  // 正则表达式
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 邮箱正则
+  const idCardRegex = /^[1-9]\d{5}(18|19|20|21|22)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[0-9Xx]$/; // 中国大陆身份证号正则
+  const bankCardRegex = /^\d{16,19}$/; // 银行卡号正则（一般为 16-19 位数字）
+  const phoneNumberRegex = /^1[3-9]\d{9}$/; //手机号
+  
   const column = [
     {
       title: '姓名',
@@ -698,7 +703,7 @@ const Roster = () => {
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'70%'}
+        width={'75%'}
       >
         <Form
           form={form_add}
@@ -736,7 +741,6 @@ const Roster = () => {
           <Form.Item
             label='部门'
             name="department"
-            // initialValue=''
             rules={[{required:true,message:'请输入部门'}]}
           >
             <Select
@@ -755,7 +759,6 @@ const Roster = () => {
           <Form.Item
             label='基地'
             name="base"
-            // initialValue=''
             rules={[{required:true,message:'请输入基地'}]}
           >
             <Select
@@ -776,7 +779,6 @@ const Roster = () => {
           <Form.Item
             label='职位角色'
             name="role"
-            // initialValue=''
             rules={[{required:true,message:'请输入基地'}]}
           >
             <Select
@@ -954,7 +956,10 @@ const Roster = () => {
           <Form.Item
             label='身份证'
             name="id_card"
-            rules={[{required:true,message:'请输入身份证'}]}
+            rules={[
+              { required: true, message: "请输入身份证号！" },
+              { pattern: idCardRegex, message: "请输入有效的身份证号！" },
+            ]}
           >
             <Input placeholder='请输入身份证' disabled={_disable}/>
           </Form.Item>
@@ -1029,14 +1034,23 @@ const Roster = () => {
           <Form.Item
             label='手机号码'
             name="number"
-            rules={[{required:true,message:'请输入手机号码'}]}
+            rules={[
+              { required: true, message: '请输入手机号！' },
+              {
+                pattern: phoneNumberRegex,
+                message: '请输入有效的手机号！',
+              },
+            ]}
           >
             <Input placeholder='请输入手机号码' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='邮箱'
             name="email"
-            rules={[{required:true,message:'请输入邮箱'}]}
+            rules={[
+              { required: true, message: "请输入邮箱！" },
+              { pattern: emailRegex, message: "请输入有效的邮箱地址！" },
+            ]}
           >
             <Input placeholder='请输入邮箱' disabled={_disable}/>
           </Form.Item>
@@ -1071,14 +1085,23 @@ const Roster = () => {
           <Form.Item
             label='紧急联系人手机号'
             name="emergency_contact_number"
-            rules={[{required:true,message:'请输入紧急联系人手机号'}]}
+            rules={[
+              { required: true, message: '请输入紧急联系人手机号' },
+              {
+                pattern: phoneNumberRegex,
+                message: '请输入有效的手机号！',
+              },
+            ]}
           >
             <Input placeholder='请输入紧急联系人手机号' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='银行卡卡号'
             name="bank_card"
-            rules={[{required:true,message:'请输入银行卡卡号'}]}
+            rules={[
+              { required: true, message: "请输入银行卡号！" },
+              { pattern: bankCardRegex, message: "请输入有效的银行卡号！" },
+            ]}
           >
             <Input placeholder='请输入银行卡卡号' disabled={_disable}/>
           </Form.Item>
