@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-11-13 09:51:20
- * @LastEditTime: 2024-11-15 16:11:32
+ * @LastEditTime: 2024-12-03 13:07:06
  */
 
 //开发环境
-export const BASE = 'http://localhost:3003'
+export const BASE = 'http://localhost:3004'
 
 // //测试环境
 // export const BASE = 'http://47.116.221.126:3004'
