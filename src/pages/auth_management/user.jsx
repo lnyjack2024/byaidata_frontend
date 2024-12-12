@@ -2,7 +2,7 @@
  * @Description: 操作员列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-12-02 14:56:39
+ * @LastEditTime: 2024-12-12 17:03:56
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
@@ -176,7 +176,7 @@ const User = () => {
         cancelText='取消'
         centered={true}
         maskClosable={false}
-        width={'50%'}
+        width={'60%'}
       >
         <Form
           form={form}
@@ -319,71 +319,71 @@ const User = () => {
                   label: '财务总监',
                 },
                 {
-                  value: '财务经理-3',
+                  value: '财务经理-2',
                   label: '财务经理',
                 },
                 {
-                  value: '财务专员-4',
+                  value: '财务专员-2',
                   label: '财务专员',
                 },
                 {
-                  value: '运营负责人-5',
+                  value: '运营负责人-3',
                   label: '运营负责人',
                 },
                 {
-                  value: '运营人员-6',
+                  value: '运营人员-3',
                   label: '运营人员',
                 },
                 {
-                  value: '人力资源总监-7',
+                  value: '人力资源总监-4',
                   label: '人力资源总监',
                 },
                 {
-                  value: '人事经理或主管-8',
+                  value: '人事经理或主管-4',
                   label: '人事经理或主管',
                 },
                 {
-                  value: '人事专员-9',
+                  value: '人事专员-4',
                   label: '人事专员',
                 },
                 {
-                  value: '开发负责人-10',
+                  value: '开发负责人-5',
                   label: '开发负责人',
                 },
                 {
-                  value: '开发人员-11',
+                  value: '开发人员-6',
                   label: '开发人员',
                 },
                 {
-                  value: '产品经理-12',
+                  value: '产品经理-6',
                   label: '产品经理',
                 },
                 {
-                  value: '业务负责人-13',
+                  value: '业务负责人-7',
                   label: '业务负责人',
                 },
                 {
-                  value: '项目经理-14',
+                  value: '项目经理-7',
                   label: '项目经理',
                 },
                 {
-                  value: '项目主管-15',
+                  value: '项目主管-7',
                   label: '项目主管',
                 },
                 {
-                  value: '小组长-16',
+                  value: '小组长-8',
                   label: '小组长',
                 },
                 {
-                  value: '培训师-17',
+                  value: '培训师-9',
                   label: '培训师',
                 },
                 {
-                  value: '骨干-18',
+                  value: '骨干-10',
                   label: '骨干',
                 },
                 {
-                  value: '标注员-19',
+                  value: '标注员-10',
                   label: '标注员',
                 }
               ]}

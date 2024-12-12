@@ -2,12 +2,12 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2024-11-27 09:49:02
+ * @LastEditTime: 2024-12-08 10:53:34
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home from '../pages/home/home'
 import Login from '../pages/login/login'
-import Page from '../pages/page/page'
+import Page from '../pages/page/index'
 import Department from '../pages/people_management/department'
 import Roster from '../pages/people_management/roster'
 import Portrait from '../pages/people_management/portrait'
