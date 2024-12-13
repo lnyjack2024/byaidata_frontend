@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-12-02 10:39:26
+ * @LastEditTime: 2024-12-06 15:43:16
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -156,10 +156,10 @@ const Black = () => {
       title: '身份证',
       dataIndex: 'id_card',
     },
-    {
-      title: '身份证有效期',
-      dataIndex: 'id_card_time',
-    },
+    // {
+    //   title: '身份证有效期',
+    //   dataIndex: 'id_card_time',
+    // },
     {
       title: '政治面貌',
       dataIndex: 'politics_status',

@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-05 14:20:11
+ * @LastEditTime: 2024-12-06 15:42:34
  */
 
 import React, { useEffect, useState } from 'react'
@@ -299,10 +299,10 @@ const Roster = () => {
       title: '身份证',
       dataIndex: 'id_card',
     },
-    {
-      title: '身份证有效期',
-      dataIndex: 'id_card_time',
-    },
+    // {
+    //   title: '身份证有效期',
+    //   dataIndex: 'id_card_time',
+    // },
     {
       title: '政治面貌',
       dataIndex: 'politics_status',

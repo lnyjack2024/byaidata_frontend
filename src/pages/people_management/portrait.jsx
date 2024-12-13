@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2024-12-02 14:06:45
+ * @LastEditTime: 2024-12-12 15:44:28
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker,InputNumber } from 'antd'
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker, InputNumber, Slider } from 'antd'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import { reqGetPortraitDatas, 
@@ -23,6 +23,7 @@ const Portrait = () => {
   const [ id, setId ] = useState(0)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ service_lineData, setServiceLineData ] = useState([])
+  const [ ageRange, setAgeRange ] = useState([20, 30]); // 默认区间为18-40岁
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
@@ -49,8 +50,10 @@ const Portrait = () => {
     }else{ 
       setModalType(1)
       const cloneData = JSON.parse(JSON.stringify(rowData))
+      cloneData.age = (cloneData.age).split(",").map(Number)
       cloneData.inter_time = dayjs(cloneData.inter_time)
       setId(cloneData.id)
+      setAgeRange(cloneData.age)
       form_add.setFieldsValue(cloneData)
     }
   }
@@ -114,6 +117,10 @@ const Portrait = () => {
     }
   }
 
+  const onChange1 = (value) => {
+    setAgeRange(value);
+  }
+
   const column = [
     {
       title: '业务线',
@@ -132,6 +139,11 @@ const Portrait = () => {
     {
       title: '年龄',
       dataIndex: 'age',
+      render:(age)=>{
+        return (
+          <>{age.split(',')[0] + ' ~ ' + age.split(',')[1]}</>
+        )
+      }
     },
     {
       title: '专业',
@@ -283,7 +295,7 @@ const Portrait = () => {
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'70%'}
+        width={'75%'}
       >
         <Form
           form={form_add}
@@ -350,13 +362,26 @@ const Portrait = () => {
             />
           </Form.Item>
           <Form.Item
-            label='年龄'
+            label='年龄区段'
             name="age"
-            initialValue=''
+            initialValue={ageRange}
             rules={[{required:true,message:'请输入年龄'}]}
           >
-            <Input placeholder='请输入年龄' />
+            <Slider
+              range
+              min={0}
+              max={50}
+              onChange={onChange1}
+              marks={{
+                0: "0岁",
+                20: "20岁",
+                30: "30岁",
+                50: "50岁",
+              }}
+            />
           </Form.Item>
+          <p style={{marginLeft:'20%'}}>当前选择区间: {ageRange[0]} 岁 - {ageRange[1]} 岁</p>
+<br/>
           <Form.Item
             label='专业'
             name="specialty"

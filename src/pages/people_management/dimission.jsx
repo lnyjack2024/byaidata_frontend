@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:50:24
- * @LastEditTime: 2024-12-02 10:39:44
+ * @LastEditTime: 2024-12-06 15:42:52
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -157,10 +157,10 @@ const Dimission = () => {
       title: '身份证',
       dataIndex: 'id_card',
     },
-    {
-      title: '身份证有效期',
-      dataIndex: 'id_card_time',
-    },
+    // {
+    //   title: '身份证有效期',
+    //   dataIndex: 'id_card_time',
+    // },
     {
       title: '政治面貌',
       dataIndex: 'politics_status',
