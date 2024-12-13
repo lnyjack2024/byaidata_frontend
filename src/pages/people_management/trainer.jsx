@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:57:12
- * @LastEditTime: 2024-12-02 10:53:53
+ * @LastEditTime: 2024-12-12 15:57:11
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -10,9 +10,15 @@ import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfir
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import storageUtils from '../../utils/storageUtils'
-import { reqGetTrainerDatas, reqAddTrainerDatas, reqDeleteTrainerDatas } from '../../api/index'
+import { reqGetTrainerDatas, 
+         reqAddTrainerDatas, 
+         reqDeleteTrainerDatas,
+         reqGetServiceLineDatas, 
+         reqGetBaseDatas,
+       } from '../../api/index'
 import { BASE } from '../../utils/networkUrl'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:16} }
+const { Option } = Select;
 
 const Trainer = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -25,6 +31,8 @@ const Trainer = () => {
   const [ check_url, setCheckUrl ] = useState(null)
   const [ id, setId ] = useState(0)
   const [ type, setType ] = useState(0)
+  const [ service_lineData, setServiceLineData ] = useState([])
+  const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ _form ] = Form.useForm();
@@ -32,7 +40,19 @@ const Trainer = () => {
   
   useEffect(() => {
     getTableData()
+    getServiceLineData() //获取业务线数据
+    getBaseData()
   },[])
+
+  const getServiceLineData = async () => {
+    const reqServiceLineData = await reqGetServiceLineDatas()
+    setServiceLineData(reqServiceLineData.data)
+  }
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
 
   const getTableData = async () => {
     const reqData = await reqGetTrainerDatas()
@@ -157,7 +177,7 @@ const Trainer = () => {
       render:(document_url)=>{
         return (
           <div style={{ margin: '10px 0' }}>
-            <a 
+            <a target="_blank" rel="noopener noreferrer"
               href={ BASE + document_url} 
               download={'规则文档'} 
               style={{ textDecoration: 'none', color: '#007bff' }}
@@ -174,7 +194,7 @@ const Trainer = () => {
       render:(answer_url)=>{
         return (
           <div style={{ margin: '10px 0' }}>
-            <a 
+            <a target="_blank" rel="noopener noreferrer"
               href={ BASE + answer_url} 
               download={'过程答疑'} 
               style={{ textDecoration: 'none', color: '#007bff' }}
@@ -191,7 +211,7 @@ const Trainer = () => {
       render:(check_url)=>{
         return (
           <div style={{ margin: '10px 0' }}>
-            <a 
+            <a target="_blank" rel="noopener noreferrer"
               href={ BASE + check_url} 
               download={'抽检明细'} 
               style={{ textDecoration: 'none', color: '#007bff' }}
@@ -298,82 +318,38 @@ const Trainer = () => {
               name="base"
               rules={[{required:true,message:'请输入基地'}]}
             >
-              <Select
+            <Select
                 placeholder='请输入基地'
-                options={[
-                  {
-                    value: '上海',
-                    label: '上海',
-                  },
-                  {
-                    value: '郑州',
-                    label: '郑州',
-                  },
-                  {
-                    value: '成都',
-                    label: '成都',
-                  },
-                  {
-                    value: '长沙',
-                    label: '长沙',
-                  },
-                  {
-                    value: '商丘',
-                    label: '商丘',
-                  },
-                  {
-                    value: '太原',
-                    label: '太原',
-                  },
-                  {
-                    value: '邯郸',
-                    label: '邯郸',
-                  },
-                  {
-                    value: '宿迁',
-                    label: '宿迁',
-                  },
-                  {
-                    value: '濮阳',
-                    label: '濮阳',
-                  }
-                ]}
-              />
+                style={{textAlign:'left',width:'250px'}}
+                allowClear={true}
+              >
+              {
+                baseData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='业务线'
             name="service_line"
             rules={[{required:true,message:'请输入业务线'}]}
           >
-              <Select
-                  placeholder='请输入业务线'
-                  options={[
-                    {
-                      value: '混元',
-                      label: '混元',
-                    },
-                    {
-                      value: '百度',
-                      label: '百度',
-                    },
-                    {
-                      value: '字节',
-                      label: '字节',
-                    },
-                    {
-                      value: '小红书',
-                      label: '小红书',
-                    },
-                    {
-                      value: '文远',
-                      label: '文远',
-                    },
-                    {
-                      value: '众包类',
-                      label: '众包类',
-                    }
-                  ]}
-              />
+            <Select
+              placeholder="请输入业务线"
+              style={{textAlign:'left',width:'250px'}}
+              allowClear={true}
+            >
+              {
+                service_lineData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='项目名称'

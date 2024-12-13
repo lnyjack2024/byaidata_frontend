@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-11-20 16:07:21
+ * @LastEditTime: 2024-12-07 14:13:37
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -30,9 +30,9 @@ export default function Login() {
             storageUtils.saveUser(username)
             storageUtils.saveRole(role_id)
             storageUtils.saveToken(response.token)
-            navigate('/')
+            navigate('/')   
         }else{
-          message.error('账户密码错误...')
+          message.error(response.msg)
         }
     }
    

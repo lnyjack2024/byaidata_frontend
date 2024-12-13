@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-12-02 14:18:43
+ * @LastEditTime: 2024-12-13 14:42:48
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -195,6 +195,10 @@ const Account = () => {
       fixed: 'left'
     },
     {
+      title: '项目状态',
+      dataIndex: 'item_status'
+    },
+    {
       title: '业务线',
       dataIndex: 'service_line',
     },
@@ -211,12 +215,12 @@ const Account = () => {
       dataIndex: 'item_settlement_type',
     },
     {
-      title: '结算周期',
-      dataIndex: 'item_settlement_day'
+      title: '项目周期(天)',
+      dataIndex: 'item_day',
     },
     {
-      title: '项目周期',
-      dataIndex: 'item_day',
+      title: '结算周期(天)',
+      dataIndex: 'item_settlement_day'
     },
     {
       title: '作业日期',
@@ -236,18 +240,10 @@ const Account = () => {
         )
       }
     },
-    {
-      title: '项目状态',
-      dataIndex: 'item_status'
-    },
-    {
-      title: '结算状态',
-      dataIndex: 'item_settlement_status'
-    },
-    {
-      title: '回款状态',
-      dataIndex: 'refund_status'
-    },
+    // {
+    //   title: '结算状态',
+    //   dataIndex: 'item_settlement_status'
+    // },
     {
       title: '对账人',
       dataIndex: 'reconciler'
@@ -259,7 +255,7 @@ const Account = () => {
       render:(rowData)=>{
           return (
             <div>
-              <Button onClick={()=> handClink('detail',rowData)}>对账明细</Button>
+              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>
             </div>
           )
       }
@@ -283,6 +279,16 @@ const Account = () => {
       fixed: 'left'
     },
     {
+      title: '结算状态',
+      dataIndex: 'settlement_status',
+      fixed: 'left'
+    },
+    {
+      title: '回款状态',
+      dataIndex: 'refund_status',
+      fixed: 'left'
+    },
+    {
       title: '任务包',
       dataIndex: 'tasks',
     },
@@ -295,11 +301,11 @@ const Account = () => {
       dataIndex: 'amount',
     },
     {
-      title: '单价',
+      title: '单价(元)',
       dataIndex: 'price'
     },
     {
-      title: '总计',
+      title: '总计(元)',
       dataIndex: 'sum',
     },
     {
@@ -362,6 +368,16 @@ const Account = () => {
       fixed: 'left'
     },
     {
+      title: '结算状态',
+      dataIndex: 'settlement_status',
+      fixed: 'left'
+    },
+    {
+      title: '回款状态',
+      dataIndex: 'refund_status',
+      fixed: 'left'
+    },
+    {
       title: '任务包',
       dataIndex: 'tasks',
     },
@@ -398,11 +414,11 @@ const Account = () => {
       dataIndex: 'times_overtime_hour3',
     },
     {
-      title: '单价',
+      title: '单价(元)',
       dataIndex: 'price'
     },
     {
-      title: '总计',
+      title: '总计(元)',
       dataIndex: 'sum',
     },
     {
@@ -758,7 +774,7 @@ const Account = () => {
           <Form.Item
             label='结算比例'
             name="settlement_scale"
-            rules={[{required:true,message:'请输入结算比例'}]}
+            rules={[{required:true,message:'请输入结算比例 如:0.85'}]}
             initialValue={0}
           >
             <InputNumber max={1} min={0} style={{width:'200px'}}/>
@@ -772,7 +788,7 @@ const Account = () => {
             <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='单价'
+            label='单价(元)'
             name="price"
             rules={[{required:true,message:'请输入单价'}]}
             initialValue={0}
@@ -780,7 +796,7 @@ const Account = () => {
             <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='总金额'
+            label='总金额(元)'
             name="sum"
             rules={[{required:true,message:'请输入总金额'}]}
             initialValue={0}
@@ -808,7 +824,7 @@ const Account = () => {
             />
           </Form.Item>
           <Form.Item>
-            <Button style={{width:'100%',marginLeft:'38%'}} onClick={ handleOk1 } type='primary' > + 新增 </Button>
+            <Button style={{marginLeft:'38%'}} onClick={ handleOk1 } type='primary' > + 新增 </Button>
           </Form.Item>
         </Form>
         <div style={{ width: '100%', height: '85%', overflow:'auto'}}>
@@ -882,7 +898,7 @@ const Account = () => {
             label='结算比例'
             name="settlement_scale"
             initialValue={0}
-            rules={[{required:true,message:'请输入结算比例'}]}
+            rules={[{required:true,message:'请输入结算比例 如:0.85'}]}
           >
             <InputNumber max={1} min={0} style={{width:'200px'}}/>
           </Form.Item>
@@ -937,7 +953,7 @@ const Account = () => {
             <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='单价'
+            label='单价(元)'
             name="price"
             rules={[{required:true,message:'请输入单价'}]}
             initialValue={0}
@@ -945,7 +961,7 @@ const Account = () => {
             <InputNumber min={0} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='总金额'
+            label='总金额(元)'
             name="sum"
             rules={[{required:true,message:'请输入总金额'}]}
             initialValue={0}
@@ -973,7 +989,7 @@ const Account = () => {
           </Form.Item>
           <Form.Item
           >
-              <Button style={{width:'100%',marginLeft:'38%'}} onClick={ handleOk2 } type='primary' > + 新增 </Button>
+              <Button style={{ marginLeft:'38%' }} onClick={ handleOk2 } type='primary' > + 新增 </Button>
           </Form.Item>
         </Form>
         <div style={{ width: '100%', height: '85%', overflow:'auto'}}>
