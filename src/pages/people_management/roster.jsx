@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-06 15:42:34
+ * @LastEditTime: 2024-12-18 17:38:50
  */
 
 import React, { useEffect, useState } from 'react'
@@ -115,6 +115,7 @@ const Roster = () => {
         if(result.status === 1){
           getTableData()
           setIsModalOpen(false)
+          setDStatus(true)
           form_add.resetFields()
           message.info('新增成功...')
         }else{
@@ -122,9 +123,10 @@ const Roster = () => {
         }
       }else{
         if(val.dimission_date === '' || val.dimission_date === null){
-            return;
+            val.dimission_date = ''
+        }else{
+            val.dimission_date = dayjs(val.dimission_date).format('YYYY-MM-DD')
         }
-        val.dimission_date = val.dimission_date ? dayjs(val.dimission_date).format('YYYY-MM-DD') : ''
         val.edit_id = id
         const result = await reqEditRosterDatas(val)
         if(result.status === 1){
@@ -171,6 +173,7 @@ const Roster = () => {
 
   const handleCancle = () => {
     setIsModalOpen(false)
+    setDStatus(true)
     form_add.resetFields()
   }
 
@@ -219,17 +222,20 @@ const Roster = () => {
     {
       title: '性别',
       dataIndex: 'sex',
+      fixed: 'left'
     },
     {
       title: '部门',
       dataIndex: 'department',
+      fixed: 'left'
     },
     {
       title: '基地',
       dataIndex: 'base',
+      fixed: 'left'
     },
     {
-      title: '角色',
+      title: '职务信息',
       dataIndex: 'role',
     },
     {
@@ -257,14 +263,6 @@ const Roster = () => {
     {
       title: '合同类型',
       dataIndex: 'contract_type',
-    },
-    {
-      title: '业务线',
-      dataIndex: 'service_line',
-    },
-    {
-      title: '项目名称',
-      dataIndex: 'item',
     },
     {
       title: '职级',
@@ -391,6 +389,25 @@ const Roster = () => {
     {
       title: '语言能力',
       dataIndex: 'language_competence',
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
+    },
+    {
+      title: '项目名称',
+      dataIndex: 'item',
+      render:(item)=>{
+        if(item === 'undefined'){
+          return (
+            <></>
+          )
+        }else{
+          return (
+            <>{item}</>
+          )
+        }
+      }
     },
     {
       title: '是否二次入职',
@@ -745,7 +762,6 @@ const Roster = () => {
           >
             <Select
               placeholder='请输入部门'
-              disabled={_disable}
             >
               {
                 departmentData.map((option)=>(
@@ -765,7 +781,6 @@ const Roster = () => {
               placeholder='请输入基地'
               style={{textAlign:'left'}}
               allowClear={true}
-              disabled={_disable}
             >
               {
                 baseData?.map((option)=>(
@@ -777,13 +792,12 @@ const Roster = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            label='职位角色'
+            label='职务信息'
             name="role"
-            rules={[{required:true,message:'请输入基地'}]}
+            rules={[{required:true,message:'请输入职务信息'}]}
           >
             <Select
-              placeholder='请输入职位角色'
-              disabled={_disable}
+              placeholder='请输入职务信息'
             > 
              {
                 roleData.map((option)=>(
@@ -799,7 +813,7 @@ const Roster = () => {
             name="immediate_superior"
             initialValue=''
           >
-            <Input placeholder='请输入直属上级' disabled={_disable}/>
+            <Input placeholder='请输入直属上级' />
           </Form.Item>
           <Form.Item
             label='入职日期'
@@ -846,7 +860,6 @@ const Roster = () => {
           >
               <Select
                 placeholder='请输入职级'
-                disabled={_disable}
                 options={[
                   {
                     value: '初级',
@@ -973,20 +986,20 @@ const Roster = () => {
                 disabled={_disable}
                 options={[
                   {
-                    value: '群众',
-                    label: '群众',
-                  },
-                  {
-                    value: '团员',
-                    label: '团员',
+                    value: '党员',
+                    label: '党员',
                   },
                   {
                     value: '预备党员',
                     label: '预备党员',
                   },
                   {
-                    value: '党员',
-                    label: '党员',
+                    value: '共青团员',
+                    label: '共青团员',
+                  },
+                  {
+                    value: '群众',
+                    label: '群众',
                   }
                 ]}
               />
@@ -1218,12 +1231,16 @@ const Roster = () => {
                     label: '本科',
                   },
                   {
-                    value: '专科',
-                    label: '专科',
+                    value: '大专',
+                    label: '大专',
                   },
                   {
-                    value: '其他',
-                    label: '其他',
+                    value: '中专',
+                    label: '中专',
+                  },
+                  {
+                    value: '高中',
+                    label: '高中',
                   }
                 ]}
               />
@@ -1269,16 +1286,17 @@ const Roster = () => {
                 ]}
               />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label='工作经历'
             name="work_experience"
             initialValue=''
           >
             <TextArea placeholder='请输入工作经历' rows={4} disabled={_disable}/>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label='招聘渠道'
             name="recruitment_channel"
+            initialValue='HR招聘'
             rules={[{required:true,message:'请输入招聘渠道'}]}
           >
             <Select
@@ -1330,6 +1348,7 @@ const Roster = () => {
           >
             <Select
               placeholder="请输入业务线"
+              allowClear={true}
             >
               {
                 service_item_lineData?.map((option)=>(

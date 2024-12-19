@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2024-12-12 15:44:28
+ * @LastEditTime: 2024-12-19 13:12:37
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -245,7 +245,7 @@ const Portrait = () => {
         >
           <Row style={{ width:'100%' }}>
             <Col span={6}>
-              <Form.Item name="name" label="业务线" {...itemLayout}>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
               <Select
                   placeholder="请输入业务线"
                   style={{textAlign:'left',width:'250px'}}
@@ -263,7 +263,7 @@ const Portrait = () => {
             </Col>
            
             <Col span={6}>
-              <Form.Item name="base" label="项目" {...itemLayout}>
+              <Form.Item name="item" label="项目" {...itemLayout}>
                 <Input placeholder='请输入项目' />
               </Form.Item>
             </Col>
@@ -442,7 +442,7 @@ const Portrait = () => {
             initialValue=''
             rules={[{required:true,message:'请输入工具技能'}]}
           >
-            <Input placeholder='请输入工具技能' />
+            <TextArea placeholder='请输入工具技能' rows={4} />
           </Form.Item>
           <Form.Item
             label='工作经历'
@@ -474,7 +474,7 @@ const Portrait = () => {
             initialValue=''
             rules={[{required:true,message:'请输入性格特点'}]}
           >
-            <Input placeholder='请输入性格特点' />
+            <TextArea placeholder='请输入性格特点' rows={4} />
           </Form.Item>
           <Form.Item
             label='指派人事负责人'
