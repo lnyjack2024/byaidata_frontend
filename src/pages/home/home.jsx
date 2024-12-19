@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-12-12 16:59:16
+ * @LastEditTime: 2024-12-18 14:31:16
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -439,33 +439,6 @@ const Home = () => {
                 {
                     key: '/person/trainer',
                     label: '培训师列表',
-                }
-            ]
-        },
-        {
-            key: '/config',
-            label: '配置管理',
-            icon: <ClusterOutlined />,
-            children: [
-                {
-                    key: '/config/service_line',
-                    label: '业务线列表',
-                },
-                {
-                    key: '/config/base',
-                    label: '基地列表',
-                },
-                {
-                    key: '/config/settlement_type',
-                    label: '结算类型列表',
-                },
-                {
-                    key: '/config/overtime_type',
-                    label: '加班类型列表',
-                },
-                {
-                    key: '/config/delivery_requirement',
-                    label: '交付要求列表',
                 }
             ]
         }

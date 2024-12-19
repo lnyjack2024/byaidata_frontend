@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:55:23
- * @LastEditTime: 2024-12-02 14:15:46
+ * @LastEditTime: 2024-12-19 11:39:19
  */
 import React, { useRef, useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
@@ -116,40 +116,60 @@ const Clocking = () => {
       fixed: 'left'
     },
     {
-      title: '部门',
-      dataIndex: 'department',
-      width: 120,
+      title: '所属规则',
+      dataIndex: 'item',
+      width: 150,
       fixed: 'left'
+    },
+    {
+      title: '应出勤(天)',
+      dataIndex: 'should_attendance',
+      width: 100,
+    },
+    {
+      title: '实际出勤(天)',
+      dataIndex: 'actual_attendance',
+      width: 120,
+    },
+    {
+      title: '病假(天)',
+      dataIndex: 'sick_leave',
+      width: 100,
+    },
+    {
+      title: '事假(天)',
+      dataIndex: 'things_leave',
+      width: 100,
     },
     {
       title: '1号',
       dataIndex: 'day_1',
-      width: 90
+      width: 80
     },
     {
       title: '2号',
       dataIndex: 'day_2',
-      width: 90
+      width: 80
     },
     {
       title: '3号',
       dataIndex: 'day_3',
-      width: 90
+      width: 80
     },
     {
       title: '4号',
       dataIndex: 'day_4',
-      width: 90
+      width: 80
     },
     {
       title: '5号',
       dataIndex: 'day_5',
-      width: 90
+      width: 80
     },
     {
       title: '6号',
       dataIndex: 'day_6',
-      width: 90
+      width: 80
     },
     {
       title: '7号',
@@ -159,122 +179,122 @@ const Clocking = () => {
     {
       title: '8号',
       dataIndex: 'day_8',
-      width: 90
+      width: 80
     },
     {
       title: '9号',
       dataIndex: 'day_9',
-      width: 90
+      width: 80
     },
     {
       title: '10号',
       dataIndex: 'day_10',
-      width: 90
+      width: 80
     },
     {
       title: '11号',
       dataIndex: 'day_11',
-      width: 90
+      width: 80
     },
     {
       title: '12号',
       dataIndex: 'day_12',
-      width: 90
+      width: 80
     },
     {
       title: '13号',
       dataIndex: 'day_13',
-      width: 90
+      width: 80
     },
     {
       title: '14号',
       dataIndex: 'day_14',
-      width: 90
+      width: 80
     },
     {
       title: '15号',
       dataIndex: 'day_15',
-      width: 90
+      width: 80
     },
     {
       title: '16号',
       dataIndex: 'day_16',
-      width: 90
+      width: 80
     },
     {
       title: '17号',
       dataIndex: 'day_17',
-      width: 90
+      width: 80
     },
     {
       title: '18号',
       dataIndex: 'day_18',
-      width: 90
+      width: 80
     },
     {
       title: '19号',
       dataIndex: 'day_19',
-      width: 90
+      width: 80
     },
     {
       title: '20号',
       dataIndex: 'day_20',
-      width: 90
+      width: 80
     },
     {
       title: '21号',
       dataIndex: 'day_21',
-      width: 90
+      width: 80
     },
     {
       title: '22号',
       dataIndex: 'day_22',
-      width: 90
+      width: 80
     },
     {
       title: '23号',
       dataIndex: 'day_23',
-      width: 90
+      width: 80
     },
     {
       title: '24号',
       dataIndex: 'day_24',
-      width: 90
+      width: 80
     },
     {
       title: '25号',
       dataIndex: 'day_25',
-      width: 90
+      width: 80
     },
     {
       title: '26号',
       dataIndex: 'day_26',
-      width: 90
+      width: 80
     },
     {
       title: '27号',
       dataIndex: 'day_27',
-      width: 90
+      width: 80
     },
     {
       title: '28号',
       dataIndex: 'day_28',
-      width: 90
+      width: 80
     },
     {
       title: '29号',
       dataIndex: 'day_29',
-      width: 90
+      width: 80
     },
     {
       title: '30号',
       dataIndex: 'day_30',
-      width: 90
+      width: 80
     },
     {
       title: '31号',
       dataIndex: 'day_31',
-      width: 90
+      width: 80
     }
   ];
 
@@ -311,7 +331,11 @@ const Clocking = () => {
                 { title: "姓名", width: 100 },      
                 { title: "年月", width: 100 },      
                 { title: "基地", width: 100 },    
-                { title: "部门", width: 200 },      
+                { title: "所属规则", width: 200 },      
+                { title: "应出勤(天)", width: 100 },      
+                { title: "实际出勤(天)", width: 100 },      
+                { title: "病假(天)", width: 100 },      
+                { title: "事假(天)", width: 100 },      
                 { title: "1号", width: 70 },      
                 { title: "2号", width: 70 },      
                 { title: "3号", width: 70 },      
@@ -359,7 +383,7 @@ const Clocking = () => {
               beforeRenderer={addClassesToRows}
               manualRowMove={true}
               navigableHeaders={true}
-              minSpareRows={50}
+              minSpareRows={100}
               // persistentState={true}
               licenseKey="non-commercial-and-evaluation"
           />
@@ -373,7 +397,8 @@ const Clocking = () => {
             <HotTable
               ref={hotRef1}
               data={data}
-              colHeaders={["ID","姓名","年月","基地","部门","1号","2号","3号",
+              colHeaders={["ID","姓名","年月","基地","所属规则","应出勤(天)",
+              "实际出勤(天)","病假(天)","事假(天)","1号","2号","3号",
               "4号","5号","6号","7号","8号","9号","10号","11号","12号",
               "13号","14号","15号","16号","17号","18号","19号","20号",
               "21号","22号","23号","24号","25号","26号","27号","28号",
@@ -422,6 +447,7 @@ const Clocking = () => {
                 <DatePicker 
                   picker="month" 
                   style={{width:'200px'}}
+                  allowClear={false}
                 />
               </Form.Item>
             </Col>
@@ -436,8 +462,7 @@ const Clocking = () => {
                <Select
                     placeholder='请输入基地'
                     style={{textAlign:'left',width:'250px'}}
-                    allowClear={true}
-                  >
+                    allowClear={false}                  >
                   {
                     baseData?.map((option)=>(
                       <Option key={option.id} value={option.name}>
@@ -461,7 +486,7 @@ const Clocking = () => {
           </Row>
         </Form>
       </div>
-      <Tabs type="card" items={tabItems} />
+      <Tabs type="card" items={tabItems}/>
     </div>
   )
 }
