@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-12-07 14:13:37
+ * @LastEditTime: 2024-12-24 17:33:13
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +44,7 @@ export default function Login() {
                 <Form 
                   onFinish={onFinish} 
                 >
-                  <div style={{fontSize:'30px',fontWeight:'bold',marginBottom:'20px',color:'#808080'}}>上海本原智数管理系统</div>
+                  <div style={{fontSize:'30px',fontWeight:'bold',marginBottom:'20px',color:'#000000'}}>上海本原智数管理系统</div>
                   <Form.Item
                     name="username"
                     rules={[
@@ -73,7 +73,7 @@ export default function Login() {
                     </Button>
                   </Form.Item>
                   <div style={{color:'#ccc'}}>
-                    <span style={{verticalAlign:'middle'}}>请点击下载谷歌浏览器：</span>
+                    <span style={{verticalAlign:'middle'}}>建议使用谷歌浏览器、点击下载：</span>
                     <a href='https://www.google.com/chrome/' target="_blank" rel="noopener noreferrer">
                       <img src={logo} alt='logo' style={{width:'25px', height:'25px',verticalAlign:'middle'}}/>
                     </a>
