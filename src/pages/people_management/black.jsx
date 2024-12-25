@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:52:06
- * @LastEditTime: 2024-12-06 15:43:16
+ * @LastEditTime: 2024-12-25 11:02:48
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -63,6 +63,43 @@ const Black = () => {
     form.resetFields()
   }
   
+  const maskIdCard = (idCard) => {
+    if (idCard && idCard.length === 18) {
+      return idCard.replace(/(\d{6})\d{8}(\d{4})/, "$1********$2");
+    }
+    return idCard;
+  };
+  
+  const maskPhoneNumber = (phone) => {
+    if (phone && phone.length === 11) {
+      return phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    }
+    return phone;
+  };
+
+  const maskAddress = (address) => {
+    if (address && address.length > 6) {
+      return address.replace(/(.{3}).+(.{3})/, "$1***$2");
+    }
+    return address;
+  };
+
+  const maskName = (name) => {
+    if (name && name.length > 1) {
+      return name.length === 2
+        ? name.replace(/(.)./, "$1*")
+        : name.replace(/(.).+(.)/, "$1*$2");
+    }
+    return name;
+  };
+
+  const maskBankCard = (card) => {
+    if (card && card.length > 8) {
+      return card.replace(/(\d{4})\d+(\d{4})/, "$1 **** **** $2");
+    }
+    return card;
+  };
+  
   const column = [
     {
       title: '姓名',
@@ -72,17 +109,20 @@ const Black = () => {
     {
       title: '性别',
       dataIndex: 'sex',
+      fixed: 'left'
     },
     {
       title: '部门',
       dataIndex: 'department',
+      fixed: 'left'
     },
     {
       title: '基地',
       dataIndex: 'base',
+      fixed: 'left'
     },
     {
-      title: '角色',
+      title: '职务信息',
       dataIndex: 'role',
     },
     {
@@ -110,18 +150,6 @@ const Black = () => {
     {
       title: '合同类型',
       dataIndex: 'contract_type',
-    },
-    {
-      title: '业务线',
-      dataIndex: 'service_line',
-    },
-    {
-      title: '项目名称',
-      dataIndex: 'item',
-    },
-    {
-      title: '项目类型',
-      dataIndex: 'item_type',
     },
     {
       title: '职级',
@@ -155,6 +183,11 @@ const Black = () => {
     {
       title: '身份证',
       dataIndex: 'id_card',
+      render:(id_card)=>{
+        return (
+          maskIdCard(id_card)
+        )
+      }
     },
     // {
     //   title: '身份证有效期',
@@ -165,7 +198,7 @@ const Black = () => {
       dataIndex: 'politics_status',
     },
     {
-      title: '名族',
+      title: '籍贯',
       dataIndex: 'family_name',
     },
     {
@@ -175,6 +208,11 @@ const Black = () => {
     {
       title: '手机号码',
       dataIndex: 'number',
+      render:(number)=>{
+        return (
+          maskPhoneNumber(number)
+        )
+      }
     },
     {
       title: '邮箱',
@@ -183,14 +221,29 @@ const Black = () => {
     {
       title: '户籍所在地',
       dataIndex: 'domicile',
+      render:(domicile)=>{
+        return (
+          maskAddress(domicile)
+        )
+      }
     },
     {
       title: '现居住地',
       dataIndex: 'urrent_address',
+      render:(urrent_address)=>{
+        return (
+          maskAddress(urrent_address)
+        )
+      }
     },
     {
       title: '紧急联系人',
       dataIndex: 'emergency_contact',
+      render:(emergency_contact)=>{
+        return (
+          maskName(emergency_contact)
+        )
+      }
     },
     {
       title: '与紧急联系人关系',
@@ -199,14 +252,24 @@ const Black = () => {
     {
       title: '紧急联系人手机号',
       dataIndex: 'emergency_contact_number',
+      render:(emergency_contact_number)=>{
+        return (
+          maskPhoneNumber(emergency_contact_number)
+        )
+      }
     },
     {
       title: '银行卡卡',
       dataIndex: 'bank_card',
+      render:(emergency_contact)=>{
+        return (
+          maskBankCard(emergency_contact)
+        )
+      }
     },
     {
       title: '银行卡开户行信息',
-      dataIndex: 'pasbank_card_detail',
+      dataIndex: 'bank_card_detail',
     },
     {
       title: '是否毕业',
@@ -250,22 +313,45 @@ const Black = () => {
       dataIndex: 'language_competence',
     },
     {
+      title: '业务线',
+      dataIndex: 'service_line',
+    },
+    {
+      title: '项目名称',
+      dataIndex: 'item',
+      render:(item)=>{
+        if(item === 'undefined'){
+          return (
+            <></>
+          )
+        }else{
+          return (
+            <>{item}</>
+          )
+        }
+      }
+    },
+    {
       title: '是否二次入职',
       dataIndex: 'is_two_entry',
     },
-    {
-      title: '工作经历',
-      dataIndex: 'work_experience',
-    },
+    // {
+    //   title: '工作经历',
+    //   dataIndex: 'work_experience',
+    // },
     {
       title: '招聘渠道',
       dataIndex: 'recruitment_channel',
     },
     {
+      title: '是否离职',
+      dataIndex: 'is_dimission',
+    },
+    {
       title: '离职日期',
       dataIndex: 'dimission_date',
       render:(dimission_date)=>{
-        if(dimission_date === null){
+        if(dimission_date === null || dimission_date === ''){
           return <></>
         }else{
           return (
@@ -318,24 +404,6 @@ const Black = () => {
         )
       }
     },
-    // {
-    //   title: '操作',
-    //   render:(rowData)=>{
-    //     return (
-    //       <div>
-    //         <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
-    //         <Popconfirm
-    //           description='是否删除?'
-    //           okText='确认'
-    //           cancelText='取消'
-    //           onConfirm={ () => handDelete(rowData)}
-    //         >
-    //           <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
-    //         </Popconfirm>
-    //       </div>
-    //     )
-    //   }
-    // }
   ];
  
   return (

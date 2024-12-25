@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-18 17:38:50
+ * @LastEditTime: 2024-12-25 10:55:59
  */
 
 import React, { useEffect, useState } from 'react'
@@ -213,6 +213,43 @@ const Roster = () => {
   const bankCardRegex = /^\d{16,19}$/; // 银行卡号正则（一般为 16-19 位数字）
   const phoneNumberRegex = /^1[3-9]\d{9}$/; //手机号
   
+  const maskIdCard = (idCard) => {
+    if (idCard && idCard.length === 18) {
+      return idCard.replace(/(\d{6})\d{8}(\d{4})/, "$1********$2");
+    }
+    return idCard;
+  };
+  
+  const maskPhoneNumber = (phone) => {
+    if (phone && phone.length === 11) {
+      return phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    }
+    return phone;
+  };
+
+  const maskAddress = (address) => {
+    if (address && address.length > 6) {
+      return address.replace(/(.{3}).+(.{3})/, "$1***$2");
+    }
+    return address;
+  };
+
+  const maskName = (name) => {
+    if (name && name.length > 1) {
+      return name.length === 2
+        ? name.replace(/(.)./, "$1*")
+        : name.replace(/(.).+(.)/, "$1*$2");
+    }
+    return name;
+  };
+
+  const maskBankCard = (card) => {
+    if (card && card.length > 8) {
+      return card.replace(/(\d{4})\d+(\d{4})/, "$1 **** **** $2");
+    }
+    return card;
+  };
+
   const column = [
     {
       title: '姓名',
@@ -296,6 +333,11 @@ const Roster = () => {
     {
       title: '身份证',
       dataIndex: 'id_card',
+      render:(id_card)=>{
+        return (
+          maskIdCard(id_card)
+        )
+      }
     },
     // {
     //   title: '身份证有效期',
@@ -316,6 +358,11 @@ const Roster = () => {
     {
       title: '手机号码',
       dataIndex: 'number',
+      render:(number)=>{
+        return (
+          maskPhoneNumber(number)
+        )
+      }
     },
     {
       title: '邮箱',
@@ -324,14 +371,29 @@ const Roster = () => {
     {
       title: '户籍所在地',
       dataIndex: 'domicile',
+      render:(domicile)=>{
+        return (
+          maskAddress(domicile)
+        )
+      }
     },
     {
       title: '现居住地',
       dataIndex: 'urrent_address',
+      render:(urrent_address)=>{
+        return (
+          maskAddress(urrent_address)
+        )
+      }
     },
     {
       title: '紧急联系人',
       dataIndex: 'emergency_contact',
+      render:(emergency_contact)=>{
+        return (
+          maskName(emergency_contact)
+        )
+      }
     },
     {
       title: '与紧急联系人关系',
@@ -340,10 +402,20 @@ const Roster = () => {
     {
       title: '紧急联系人手机号',
       dataIndex: 'emergency_contact_number',
+      render:(emergency_contact_number)=>{
+        return (
+          maskPhoneNumber(emergency_contact_number)
+        )
+      }
     },
     {
       title: '银行卡卡',
       dataIndex: 'bank_card',
+      render:(emergency_contact)=>{
+        return (
+          maskBankCard(emergency_contact)
+        )
+      }
     },
     {
       title: '银行卡开户行信息',
