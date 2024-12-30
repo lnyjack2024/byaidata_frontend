@@ -2,7 +2,7 @@
  * @Description: 结算列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:38:35
- * @LastEditTime: 2024-12-02 14:20:14
+ * @LastEditTime: 2024-12-27 15:59:51
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -17,7 +17,7 @@ import { reqGetSettleDatas,
          reqEditSettleInvoice, 
          reqGetInvoiceDetailDatas, 
          reqDeleteInvoiceDatas, reqGetServiceLineDatas } from '../../api/index'
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 const itemLayout = { labelCol:{span:7},wrapperCol:{span:15} }
 const { Option } = Select;
 
@@ -462,7 +462,7 @@ const Settle = () => {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Form.Item name="create_time" label="开票日期" {...itemLayout}>
                 <RangePicker     
                   placeholder={['开始日期', '结束日期']}
@@ -477,7 +477,7 @@ const Settle = () => {
                   style={{width:'250px'}}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={6}>
               <Form.Item >
               <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;

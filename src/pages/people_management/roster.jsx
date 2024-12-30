@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-25 10:55:59
+ * @LastEditTime: 2024-12-26 15:18:44
  */
 
 import React, { useEffect, useState } from 'react'
@@ -24,6 +24,7 @@ import { reqGetRosterDatas,
 const { TextArea } = Input;
 const itemLayout = { labelCol:{span:6},wrapperCol:{span:18} }
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const Roster = () => {
   const [ modalType, setModalType ] = useState(0)
@@ -272,6 +273,10 @@ const Roster = () => {
       fixed: 'left'
     },
     {
+      title: '职场',
+      dataIndex: 'workplace',
+    },
+    {
       title: '职务信息',
       dataIndex: 'role',
     },
@@ -339,10 +344,10 @@ const Roster = () => {
         )
       }
     },
-    // {
-    //   title: '身份证有效期',
-    //   dataIndex: 'id_card_time',
-    // },
+    {
+      title: '身份证有效期',
+      dataIndex: 'id_card_time',
+    },
     {
       title: '政治面貌',
       dataIndex: 'politics_status',
@@ -1047,6 +1052,18 @@ const Roster = () => {
             ]}
           >
             <Input placeholder='请输入身份证' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
+            label='身份证有效期'
+            name="id_card_time"
+            rules={[
+              { required: true, message: "请输入身份证有效期!" },
+            ]}
+          >
+              <RangePicker     
+                placeholder={['开始日期', '结束日期']}
+                style={{width:'250px'}}
+              />
           </Form.Item>
           <Form.Item
             label='政治面貌'
