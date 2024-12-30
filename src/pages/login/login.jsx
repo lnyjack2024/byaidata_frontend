@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2024-12-24 17:33:13
+ * @LastEditTime: 2024-12-30 13:28:56
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,7 @@ export default function Login() {
                       },
                     ]}
                   >
-                    <Input prefix={<LockOutlined />} type="password" placeholder="密码" />
+                    <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" />
                   </Form.Item>
                   <Form.Item>
                     <Button block type="primary" htmlType="submit">
