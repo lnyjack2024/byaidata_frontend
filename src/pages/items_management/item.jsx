@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2024-12-30 16:11:45
+ * @LastEditTime: 2025-01-03 15:56:19
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -23,6 +23,8 @@ const itemLayout = { labelCol:{span:7},wrapperCol:{span:15} }
 const { Option } = Select;
 
 const Item = () => {
+  const [ form ] = Form.useForm();
+  const [ form_add ] = Form.useForm();
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
@@ -34,32 +36,59 @@ const Item = () => {
   const [ service_lineData, setServiceLineDataData ] = useState([])
   const [ settlement_type, setSettlementTypeData ] = useState([])
   const [ overtime_type, setOvertimeTypeData ] = useState([])
-  const [ form ] = Form.useForm();
-  const [ form_add ] = Form.useForm();
+  const [ aaa, setAaa ] = useState(false)
+  const [ bbb, setBbb ] = useState(false)
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
-    getTableData()
-    getBaseData()
-    getServiceLineData()
+    // getTableData()
+    // getBaseData()
+    // getServiceLineData()
     getSettlementTypeData()
     getOvertimeTypeData()
-  },[])
+    const getOptions = async () => {
+      const baseData = await getBaseData(); 
+      const serviceLineData = await getServiceLineData();
+      if(baseData.length === 0){
+        setBbb(true)
+      }
+      if(serviceLineData.length === 0){
+        setAaa(true)
+      }
+      setBaseData(baseData)
+      setServiceLineDataData(serviceLineData)
+      if (baseData.length > 0 || serviceLineData.length > 0) {
+        form.setFieldsValue({ base : baseData[0]?.name, service_line : serviceLineData[0]?.name });
+        getTableData(baseData[0]?.name, serviceLineData[0]?.name); // 获取数据
+      }
+    };
+    getOptions();
+  },[form])
 
-  const getTableData = async () => {
-    const reqData = await reqGetItemDatas()
-      setData(reqData.data)
-      setTableLoading(false)
+  const getTableData = async (base,serviceLine) => {
+    if(base === '全部'){
+      base = ''
+    }
+    if(serviceLine === '全部'){
+      serviceLine = ''
+    }
+    const reqData = await reqGetItemDatas({ base:base, service_line:serviceLine })
+    setData(reqData.data)
+    setTableLoading(false)
   }
 
   const getBaseData = async () => {
     const reqData = await reqGetBaseDatas()
-    setBaseData(reqData.data)
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
   }
 
   const getServiceLineData = async () => {
     const reqData = await reqGetServiceLineDatas()
-    setServiceLineDataData(reqData.data)
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
   }
 
   const getSettlementTypeData = async () => {
@@ -142,6 +171,9 @@ const Item = () => {
       // }
       // delete(val.delivery_date)
       // delete(val.create_time)
+      if(val.base === '全部'){
+        val.base = ''
+      }
       const reqData = await reqGetItemDatas(val)
       setData(reqData.data)
       setTableLoading(false)
@@ -149,7 +181,7 @@ const Item = () => {
   }
 
   const handReset = () => {
-    form.resetFields()
+    form.resetFields(['name','status','settlement_status'])
   }
   
   const handDelete = async (e) => {
@@ -186,6 +218,18 @@ const Item = () => {
       fixed: 'left'
     },
     {
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
+      title: '项目经理',
+      dataIndex: 'item_manager',
+    },
+    {
+      title: '组长',
+      dataIndex: 'group_manager',
+    },
+    {
       title: '周期(天)',
       dataIndex: 'day',
       render:(day)=>{
@@ -203,10 +247,6 @@ const Item = () => {
     {
       title: '结算周期(天)',
       dataIndex: 'settlement_day'
-    },
-    {
-      title: '项目负责人',
-      dataIndex: 'item_leader',
     },
     {
       title: '标注团队',
@@ -236,11 +276,6 @@ const Item = () => {
     {
       title: '交付日期',
       dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
-        return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
-        )
-      }
     },
     {
       title: '延期日期',
@@ -334,6 +369,10 @@ const Item = () => {
         <Form form={form}
           className='flex-box-form'
           layout='inline'
+          initialValues={{
+            base : '', //初始值默认为空
+            service_line : ''
+          }}
         >
           <Row>
             <Col span={6}>
@@ -342,11 +381,15 @@ const Item = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="base" label="基地" {...itemLayout}>
+              <Form.Item 
+                name = "base"
+                label="基地" 
+                {...itemLayout}
+              >
                 <Select
                   placeholder='请输入基地'
                   style={{textAlign:'left'}}
-                  allowClear={true}
+                  disabled={bbb}
                 >
                 {
                   baseData?.map((option)=>(
@@ -364,6 +407,7 @@ const Item = () => {
                   placeholder="请输入业务线"
                   style={{textAlign:'left'}}
                   allowClear={true}
+                  disabled={aaa}
                 >
                   {
                     service_lineData?.map((option)=>(
@@ -464,7 +508,7 @@ const Item = () => {
       {contextHolder}
       <Modal
         open={isModalOpen}
-        title={ modalType ? '编辑' : ''}
+        title={ modalType ? '编辑' : '新建'}
         onOk={handleOk}
         onCancel={handleCancle}
         okText='确定'
@@ -526,11 +570,32 @@ const Item = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            label='项目负责人'
-            name="item_leader"
-            rules={[{required:true,message:'请输入项目负责人'}]}
+            label='业务负责人'
+            name="business_leader"
+            rules={[{required:true,message:'请输入业务负责人'}]}
           >
-            <Input placeholder='请输入项目负责人' disabled={_disable}/>
+            <Input placeholder='请输入业务负责人' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
+            label='项目经理'
+            name="item_manager"
+            rules={[{required:true,message:'请输入项目经理'}]}
+          >
+            <Input placeholder='请输入项目经理' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
+            label='组长'
+            name="group_manager"
+            rules={[{required:true,message:'请输入组长'}]}
+          >
+            <Input placeholder='请输入组长' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
+            label='培训师'
+            name="trainer"
+            rules={[{required:true,message:'请输入培训师'}]}
+          >
+            <Input placeholder='请输入培训师' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='标注团队'
@@ -599,7 +664,6 @@ const Item = () => {
             name="delivery_date"
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
-            {/* <span style={{color:'red',marginLeft:'10px'}}>长期项目不填</span> */}
           </Form.Item>
           <Form.Item
             label='延期日期'
@@ -614,7 +678,6 @@ const Item = () => {
             initialValue={0}
           >
             <InputNumber min={0} disabled={_disable}/>
-            {/* <span style={{color:'red',marginLeft:'10px'}}>长期项目不填</span> */}
           </Form.Item>
           <Form.Item
             label='结算周期(天)'

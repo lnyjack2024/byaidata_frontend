@@ -2,27 +2,55 @@
  * @Description: 操作员列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2024-12-12 17:03:56
+ * @LastEditTime: 2025-01-02 13:24:42
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Popconfirm, Table, Select, message } from 'antd'
 import moment from 'moment';
 import './user.css'
-import { reqGetUserDatas, reqAddUserDatas, reqDeleteUserDatas } from '../../api/index'
+import { reqGetUserDatas, 
+         reqAddUserDatas, 
+         reqDeleteUserDatas,
+         reqGetDepartmentDatas,
+         reqGetServiceLineDatas,
+         reqGetBaseDatas
+       } from '../../api/index'
+const { Option } = Select;
 
 const User = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
   const [ table_loading, setTableLoading ] = useState(true)
+  const [ departmentData, setDepartmentData ] = useState([])
+  const [ service_lineData, setServiceLineData ] = useState([])
+  const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_ ] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     getTableData()
+    getDepartmentData() //获取部门数据
+    getServiceLineData() //获取业务线数据
+    getBaseData()
   },[])
+
+  const getDepartmentData = async () => {
+    const reqDepartmentData = await reqGetDepartmentDatas()
+    setDepartmentData(reqDepartmentData.data)
+  }
+
+  const getServiceLineData = async () => {
+    const reqServiceLineData = await reqGetServiceLineDatas()
+    setServiceLineData(reqServiceLineData.data)
+  }
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
 
   const getTableData = async () => {
     const reqData = await reqGetUserDatas()
@@ -65,6 +93,9 @@ const User = () => {
     if(val.department === undefined){
       val.department = ''
     }
+    if(val.service_line === undefined){
+      val.service_line = ''
+    }
     const result = await reqAddUserDatas(val)
     if(result.status === 1){
       getTableData()
@@ -93,16 +124,20 @@ const User = () => {
       dataIndex: 'name',
     },
     {
-      title: '部门',
-      dataIndex: 'department',
+      title: '职位信息',
+      dataIndex: 'role',
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
     },
     {
       title: '基地',
       dataIndex: 'base',
     },
     {
-      title: '角色',
-      dataIndex: 'role',
+      title: '部门',
+      dataIndex: 'department',
     },
     {
       title: '创建时间',
@@ -169,14 +204,14 @@ const User = () => {
       {contextHolder}
       <Modal
         open={isModalOpen}
-        title={ modalType ? '编辑' : '新增'}
+        title={ modalType ? '' : ''}
         onOk={handleOk}
         onCancel={handleCancle}
         okText='确定'
         cancelText='取消'
         centered={true}
         maskClosable={false}
-        width={'60%'}
+        width={'70%'}
       >
         <Form
           form={form}
@@ -206,52 +241,42 @@ const User = () => {
             <Input placeholder='请输入密码' />
           </Form.Item>
           <Form.Item
+            label='业务线'
+            name="service_line"
+          >
+            <Select
+              mode="multiple"
+              placeholder="请输入业务线"
+              style={{textAlign:'left'}}
+              allowClear={true}
+            >
+              {
+                service_lineData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
+          </Form.Item>
+          <Form.Item
             label='基地'
             name="base"
             rules={[{message:'请输入基地'}]}
           >
             <Select
               placeholder='请输入基地'
-              // onChange={handleChange}
-              options={[
-                {
-                  value: '上海',
-                  label: '上海',
-                },
-                {
-                  value: '郑州',
-                  label: '郑州',
-                },
-                {
-                  value: '成都',
-                  label: '成都',
-                },
-                {
-                  value: '长沙',
-                  label: '长沙',
-                },
-                {
-                  value: '商丘',
-                  label: '商丘',
-                },
-                {
-                  value: '太原',
-                  label: '太原',
-                },
-                {
-                  value: '邯郸',
-                  label: '邯郸',
-                },
-                {
-                  value: '宿迁',
-                  label: '宿迁',
-                },
-                {
-                  value: '濮阳',
-                  label: '濮阳',
-                }
-              ]}
-            />
+              style={{textAlign:'left'}}
+              allowClear={true}
+            >
+              {
+                baseData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='部门'
@@ -260,55 +285,27 @@ const User = () => {
           >
             <Select
               placeholder='请输入部门'
-              // onChange={handleChange}
-              options={[
-                {
-                  value: '总经办',
-                  label: '总经办',
-                },
-                {
-                  value: '财务部',
-                  label: '财务部',
-                },
-                {
-                  value: '技术部',
-                  label: '技术部',
-                },
-                {
-                  value: '法务部',
-                  label: '法务部',
-                },
-                {
-                  value: '行政人事部',
-                  label: '行政人事部',
-                },
-                {
-                  value: '政府合作部',
-                  label: '政府合作部',
-                },
-                {
-                  value: '商务拓展部',
-                  label: '商务拓展部',
-                },
-                {
-                  value: '运营分析部',
-                  label: '运营分析部',
-                },
-                {
-                  value: '业务管理中心',
-                  label: '业务管理中心',
-                }
-              ]}
-            />
+              style={{textAlign:'left'}}
+              allowClear={true}
+            >
+              {
+                departmentData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
-            label='角色'
+            label='职位信息'
             name="role"
-            rules={[{required:true,message:'请输入角色'}]}
+            rules={[{required:true,message:'请输入职位信息'}]}
           >
             <Select
-              placeholder='请输入角色'
-              // onChange={handleChange}
+              mode="multiple"
+              placeholder='请输入职位信息'
+              allowClear={true}
               options={[
                 {
                   value: '管理层-1',
@@ -357,6 +354,10 @@ const User = () => {
                 {
                   value: '产品经理-6',
                   label: '产品经理',
+                },
+                {
+                  value: '基地业务负责人-7',
+                  label: '基地业务负责人',
                 },
                 {
                   value: '业务负责人-7',
