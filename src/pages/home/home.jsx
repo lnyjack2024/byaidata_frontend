@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2024-12-18 14:31:16
+ * @LastEditTime: 2025-01-03 11:47:03
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -203,10 +203,10 @@ const Home = () => {
                   key: '/person/portrait',
                   label: '人员画像',
               },
-              {
-                  key: '/person/clocking',
-                  label: '人员考勤列表',
-              },
+            //   {
+            //       key: '/person/clocking',
+            //       label: '人员考勤列表',
+            //   },
               {
                   key: '/person/trainer',
                   label: '培训师列表',
@@ -325,10 +325,10 @@ const Home = () => {
                     key: '/person/portrait',
                     label: '人员画像',
                 },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
+                // {
+                //     key: '/person/clocking',
+                //     label: '人员考勤列表',
+                // },
                 {
                     key: '/person/trainer',
                     label: '培训师列表',
@@ -451,63 +451,17 @@ const Home = () => {
             label: '首页',
         },
         {
-            key: '/person',
-            label: '人员管理',
-            icon: <UsergroupAddOutlined />,
-            children: [
-                {
-                    key: '/person/section',
-                    label: '部门列表',
-                },
-                {
-                    key: '/person/roster',
-                    label: '人员花名册',
-                },
-                {
-                    key: '/person/dimission',
-                    label: '人员花名册-离职',
-                },
-                {
-                    key: '/person/black',
-                    label: '人员花名册-黑名单',
-                },
-                {
-                    key: '/person/portrait',
-                    label: '人员画像',
-                },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
-                {
-                    key: '/person/trainer',
-                    label: '培训师列表',
-                }
-            ]
-        },
-        {
             key: '/items',
             label: '项目管理',
             icon: <AppstoreAddOutlined />,
             children: [
-                {
-                    key: '/items/item',
-                    label: '项目列表'
-                },
+                // {
+                //     key: '/items/item',
+                //     label: '项目列表'
+                // },
                 {
                     key: '/items/account',
                     label: '对账列表',
-                }
-            ]
-        },
-        {
-            key: '/tasks',
-            label: '任务包管理',
-            icon: <CalendarOutlined />,
-            children: [
-                {
-                    key: '/tasks/task',
-                    label: '任务包列表',
                 }
             ]
         },
@@ -522,33 +476,6 @@ const Home = () => {
                 }
             ]
         },
-        {
-            key: '/config',
-            label: '配置管理',
-            icon: <ClusterOutlined />,
-            children: [
-                {
-                    key: '/config/service_line',
-                    label: '业务线列表',
-                },
-                {
-                    key: '/config/base',
-                    label: '基地列表',
-                },
-                {
-                    key: '/config/settlement_type',
-                    label: '结算类型列表',
-                },
-                {
-                    key: '/config/overtime_type',
-                    label: '加班类型列表',
-                },
-                {
-                    key: '/config/delivery_requirement',
-                    label: '交付要求列表',
-                }
-            ]
-        }
       ]
   }else if( role === 6 ){
     items = [
@@ -696,30 +623,30 @@ const Home = () => {
             label: '人员管理',
             icon: <UsergroupAddOutlined />,
             children: [
-                {
-                    key: '/person/section',
-                    label: '部门列表',
-                },
-                {
-                    key: '/person/roster',
-                    label: '人员花名册',
-                },
-                {
-                    key: '/person/dimission',
-                    label: '人员花名册-离职',
-                },
-                {
-                    key: '/person/black',
-                    label: '人员花名册-黑名单',
-                },
+                // {
+                //     key: '/person/section',
+                //     label: '部门列表',
+                // },
+                // {
+                //     key: '/person/roster',
+                //     label: '人员花名册',
+                // },
+                // {
+                //     key: '/person/dimission',
+                //     label: '人员花名册-离职',
+                // },
+                // {
+                //     key: '/person/black',
+                //     label: '人员花名册-黑名单',
+                // },
                 {
                     key: '/person/portrait',
                     label: '人员画像',
                 },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
+                // {
+                //     key: '/person/clocking',
+                //     label: '人员考勤列表',
+                // },
                 {
                     key: '/person/trainer',
                     label: '培训师列表',
@@ -757,10 +684,10 @@ const Home = () => {
             label: '配置管理',
             icon: <ClusterOutlined />,
             children: [
-                {
-                    key: '/config/service_line',
-                    label: '业务线列表',
-                },
+                // {
+                //     key: '/config/service_line',
+                //     label: '业务线列表',
+                // },
                 {
                     key: '/config/base',
                     label: '基地列表',

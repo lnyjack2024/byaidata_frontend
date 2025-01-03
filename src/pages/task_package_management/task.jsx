@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2024-12-30 16:27:10
+ * @LastEditTime: 2025-01-03 17:16:00
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -20,7 +20,10 @@ import { reqGetTaskDatas,
          reqAddCheckDatas,
          reqGetDetailDatas,
          reqGetSettlementTypeDatas,
-         reqGetDeliveryRequirementDatas,reqGetItemsDatas
+         reqGetDeliveryRequirementDatas,
+         reqGetItemsDatas,
+         reqGetBaseDatas,
+         reqGetServiceLineDatas
        } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -47,6 +50,11 @@ const Task = () => {
   const [ settlement_type, setSettlementTypeData ] = useState([])
   const [ delivery_requirement, setDeliveryRequirementData ] = useState([])
   const [ itemData, setItemData ] = useState([])
+  const [ baseData, setBaseData ] = useState([])
+  const [ service_lineData, setServiceLineDataData ] = useState([])
+  const [ aaa, setAaa ] = useState(false)
+  const [ bbb, setBbb ] = useState(false)
+  const [ ccc, setCcc ] = useState(true)
   // const [ num, setNum ] = useState(0)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
@@ -56,18 +64,60 @@ const Task = () => {
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
-    getTableData()
+    // getTableData()
     getSettlementTypeData()
     getDeliveryRequirementData()
-    getItemsData()
-  },[])
+    // getItemsData()
+    const getOptions = async () => {
+      const baseData = await getBaseData(); 
+      const serviceLineData = await getServiceLineData();
+      if(baseData.length === 0){
+        setBbb(true)
+      }
+      if(serviceLineData.length === 0){
+        setAaa(true)
+      }
+      setBaseData(baseData)
+      setServiceLineDataData(serviceLineData)
+      if (baseData.length > 0 || serviceLineData.length > 0) {
+        form.setFieldsValue({ base : baseData[0]?.name, service_line : serviceLineData[0]?.name });
+        getTableData(baseData[0]?.name, serviceLineData[0]?.name); // 获取数据
+      }
+    };
+    getOptions();
+  },[form])
 
-  const getTableData = async () => {
-    const reqData = await reqGetTaskDatas()
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
+  }
+
+  const getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas()
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
+  }
+
+  // const getTableData = async () => {
+  //   const reqData = await reqGetTaskDatas()
+  //   setData(reqData.data)
+  //   setTableLoading(false)
+  // }
+
+  const getTableData = async (base,serviceLine) => {
+    if(base === '全部'){
+      base = ''
+    }
+    if(serviceLine === '全部'){
+      serviceLine = ''
+    }
+    const reqData = await reqGetTaskDatas({ base:base, service_line:serviceLine })
     setData(reqData.data)
     setTableLoading(false)
   }
-
   const getSettlementTypeData = async () => {
     const reqData = await reqGetSettlementTypeDatas()
     setSettlementTypeData(reqData.data)
@@ -78,10 +128,10 @@ const Task = () => {
     setDeliveryRequirementData(reqData.data)
   }
 
-  const getItemsData = async () => {
-    const reqData = await reqGetItemsDatas()
-    setItemData(reqData.data)
-  }
+  // const getItemsData = async () => {
+  //   const reqData = await reqGetItemsDatas()
+  //   setItemData(reqData.data)
+  // }
   
   // const getTaskProgressData = async () => {
   //   const reqData = await reqTaskProgressDatas()
@@ -115,6 +165,7 @@ const Task = () => {
       setDisable(false)
       setDelayDateStatus(true)
       setId(rowData?rowData.id:'')
+      setCcc(true)
     }else if(type === 'effect'){
       setTaskId(rowData.id)
       setIsEffectModalOpen(!isEffectModalOpen)
@@ -125,6 +176,7 @@ const Task = () => {
       setModalType(1)
       setDisable(true)
       setDelayDateStatus(false)
+      setCcc(true)
       const cloneData = JSON.parse(JSON.stringify(rowData))
       cloneData.start_date = dayjs(cloneData.start_date)
       cloneData.delivery_date = dayjs(cloneData.delivery_date)
@@ -156,6 +208,7 @@ const Task = () => {
         if(modalType === 0){
           const result = await reqAddTaskDatas(val)
           if(result.status === 1){
+            setCcc(true)
             setIsModalOpen(false)
             form_add.resetFields()
             getTableData()
@@ -169,6 +222,7 @@ const Task = () => {
           val.delay_date = val.delay_date ? dayjs(val.delay_date).format('YYYY-MM-DD') : ''
           const result = await reqEditTaskDatas(val)
           if(result.status === 1){
+            setCcc(true)
             setIsModalOpen(false)
             form_add.resetFields()
             getTableData()
@@ -183,6 +237,7 @@ const Task = () => {
   }
 
   const handleCancle = () => {
+    setCcc(true)
     setIsModalOpen(false)
     form_add.resetFields()
   }
@@ -236,6 +291,19 @@ const Task = () => {
     )
   }
 
+  const selectHandle = async (e) => {
+    const reqData = await reqGetItemsDatas({service_line:e})
+    setCcc(false)
+    setItemData(reqData.data)
+  }
+  
+  const selectItemHandle = async (e) => {
+    const reqData = await reqGetItemsDatas({name:e})
+    // form_add.setFieldValue(reqData.data[0])
+    const cloneData = JSON.parse(JSON.stringify(reqData.data))
+    form_add.setFieldsValue(cloneData[0])
+  }
+  
   const column = [
     {
       title: 'ID',
@@ -250,6 +318,29 @@ const Task = () => {
     {
       title: '所属项目',
       dataIndex: 'item',
+      fixed: 'left'
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
+      fixed: 'left'
+    },
+    {
+      title: '基地',
+      dataIndex: 'base',
+      fixed: 'left'
+    },
+    {
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
+      title: '项目经理',
+      dataIndex: 'item_manager',
+    },
+    {
+      title: '组长',
+      dataIndex: 'group_manager',
     },
     {
       title: '标注团队',
@@ -260,15 +351,15 @@ const Task = () => {
       dataIndex: 'settlement_type',
     },
     {
-      title: '数量级',
+      title: '任务包数量级',
       dataIndex: 'amount',
     },
     {
-      title: '周期',
+      title: '任务包周期',
       dataIndex: 'day',
     },
     {
-      title: '状态',
+      title: '任务包状态',
       dataIndex: 'status',
     },
     // {
@@ -300,20 +391,10 @@ const Task = () => {
     {
       title: '交付日期',
       dataIndex: 'delivery_date',
-      render:(delivery_date)=>{
-        return (
-          dayjs(delivery_date).format('YYYY-MM-DD')
-        )
-      }
     },
     {
       title: '完成日期',
       dataIndex: 'end_date',
-      render:(end_date)=>{
-        return (
-          dayjs(end_date).format('YYYY-MM-DD')
-        )
-      }
     },
     {
       title: '创建日期',
@@ -477,25 +558,63 @@ const Task = () => {
   return (
     <div className='style'>
       <div className='flex-box'>
-        <Form form={form}
+      <Form form={form}
           className='flex-box-form'
           layout='inline'
+          initialValues={{
+            base : '', //初始值默认为空
+            service_line : ''
+          }}
         >
           <Row>
             <Col span={6}>
-              <Form.Item name="name" label="任务包名称" {...itemLayout}>
+            <Form.Item name="name" label="任务包名称" {...itemLayout}>
                 <Input placeholder='请输入任务包名称'/>
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="item" label="所属项目" {...itemLayout}>
-                <Input placeholder='请输入所属项目'/>
+              <Form.Item 
+                name = "base"
+                label="基地" 
+                {...itemLayout}
+              >
+                <Select
+                  placeholder='请输入基地'
+                  style={{textAlign:'left'}}
+                  disabled={bbb}
+                >
+                {
+                  baseData?.map((option)=>(
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+                }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="status" label="状态" {...itemLayout}>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
+                <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left'}}
+                  allowClear={true}
+                  disabled={aaa}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="status" label="任务包状态" {...itemLayout}>
               <Select
-                  placeholder='请输入状态'
+                  placeholder='请输入任务包状态'
                   style={{textAlign:'left'}}
                   allowClear={true}
                   options={[
@@ -582,7 +701,7 @@ const Task = () => {
           wrapperCol={{span:10}} 
           style={{marginTop:'20px'}}
         >
-           <Form.Item
+          <Form.Item
             label='任务包名称'
             name="name"
             rules={[{required:true,message:'请输入任务包名称'}]}
@@ -590,15 +709,34 @@ const Task = () => {
             <Input placeholder='请输入任务包名称' disabled={_disable}/>
           </Form.Item>
           <Form.Item
+            label='业务线'
+            name="service_line"
+            rules={[{required:true,message:'请输入业务线'}]}
+          >
+            <Select
+              placeholder="请输入业务线"
+              style={{textAlign:'left'}}
+              disabled={_disable}
+              onChange={ (e) => selectHandle(e) }
+            >
+              {
+                service_lineData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
+          </Form.Item>
+          <Form.Item
             label='所属项目'
             name="item"
             rules={[{required:true,message:'所属项目'}]}
           >
            <Select
-                placeholder='请输入所属项目'
                 style={{textAlign:'left'}}
-                allowClear={true}
-                disabled={_disable}
+                onChange={ (e) => selectItemHandle(e) }
+                disabled={ccc}
               >
               {
                 itemData?.map((option)=>(
@@ -609,52 +747,36 @@ const Task = () => {
               }
            </Select>
           </Form.Item>
-          {/* <Form.Item
-            label='项目负责人'
-            name="item_leader"
-            initialValue=''
-            rules={[{required:true,message:'请输入项目负责人'}]}
+          <Form.Item
+            label='基地'
+            name="base"
+            rules={[{required:true,message:'请输入基地'}]}
           >
-            <Input placeholder='请输入项目负责人' disabled={_disable}/>
-          </Form.Item> */}
+            <Input disabled={true}/>
+          </Form.Item>
           <Form.Item
             label='业务负责人'
             name="business_leader"
             initialValue=''
             rules={[{required:true,message:'请输入业务负责人'}]}
           >
-            <Input placeholder='请输入业务负责人' disabled={_disable}/>
+            <Input disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='项目经理/负责人'
+            label='项目经理'
             name="item_manager"
             initialValue=''
             rules={[{required:true,message:'请输入项目经理'}]}
           >
-            <Input placeholder='请输入项目经理' disabled={_disable}/>
+            <Input disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='项目主管'
-            name="item_supervisor"
-            initialValue=''
-            rules={[{required:true,message:'请输入项目主管'}]}
-          >
-            <Input placeholder='请输入项目主管' disabled={_disable}/>
-          </Form.Item>
-          <Form.Item
-            label='小组长'
+            label='组长'
             name="group_manager"
             initialValue=''
             rules={[{required:true,message:'请输入小组长'}]}
           >
-            <Input placeholder='请输入小组长' disabled={_disable}/>
-          </Form.Item>
-          <Form.Item
-            label='培训师'
-            name="trainer"
-            initialValue=''
-          >
-            <Input placeholder='请输入培训师' disabled={_disable}/>
+            <Input disabled={true}/>
           </Form.Item>
           <Form.Item
             label='标注团队'
@@ -803,7 +925,7 @@ const Task = () => {
             <Input placeholder='如:底薪3000、全勤500、加班费1.5倍' disabled={_disable}/>
           </Form.Item>
           <Form.Item
-            label='任务包简介'
+            label='备注'
             name="detail"
             initialValue=''
           >
@@ -860,20 +982,20 @@ const Task = () => {
           layout='inline'
           style={{marginTop:'20px',marginBottom:'50px'}}
         >
+            <Form.Item
+            label='业务负责人'
+            name="business_leader"
+           >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
            <Form.Item
-            label='项目经理/负责人'
+            label='项目经理'
             name="item_manager"
            >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
            <Form.Item
-            label='项目主管'
-            name="item_supervisor"
-           >
-            <Input variant="borderless" disabled={true}/>
-          </Form.Item>
-           <Form.Item
-            label='小组长'
+            label='组长'
             name="group_manager"
            >
             <Input variant="borderless" disabled={true}/>
@@ -941,7 +1063,7 @@ const Task = () => {
           >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
-          {/* <Form.Item
+          <Form.Item
             label='业务线'
             name="service_line"
           >
@@ -952,7 +1074,7 @@ const Task = () => {
             name="base"
           >
             <Input variant="borderless" disabled={true}/>
-          </Form.Item> */}
+          </Form.Item>
           <Form.Item
             label='业务负责人'
             name="business_leader"
@@ -960,26 +1082,14 @@ const Task = () => {
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='项目经理/负责人'
+            label='项目经理'
             name="item_manager"
-          >
-            <Input variant="borderless" disabled={true}/>
-          </Form.Item>
-          <Form.Item
-            label='项目主管'
-            name="item_supervisor"
           >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
           <Form.Item
             label='小组长'
             name="group_manager"
-          >
-            <Input variant="borderless" disabled={true}/>
-          </Form.Item>
-          <Form.Item
-            label='培训师'
-            name="trainer"
           >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
@@ -996,7 +1106,7 @@ const Task = () => {
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='数量级'
+            label='任务包数量级'
             name="amount"
           >
             <Input variant="borderless" disabled={true}/>

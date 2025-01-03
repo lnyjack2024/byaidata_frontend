@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2024-12-26 15:18:44
+ * @LastEditTime: 2024-12-31 18:16:56
  */
 
 import React, { useEffect, useState } from 'react'
@@ -90,7 +90,8 @@ const Roster = () => {
       setModalType(0)
       setDimissionStatus(true)
       setDisable(false)
-    }else{ 
+    }else{
+      const [startDateString, endDateString] = rowData.id_card_time.split(',');
       setModalType(1)
       setDimissionStatus(false)
       setDisable(true)
@@ -99,6 +100,7 @@ const Roster = () => {
       cloneData.become_date = dayjs(cloneData.become_date)
       cloneData.graduation_time = dayjs(cloneData.graduation_time)
       cloneData.birthday = dayjs(cloneData.birthday)
+      cloneData.id_card_time = [dayjs(startDateString),dayjs(endDateString)]
       cloneData.dimission_date = cloneData.dimission_date ? dayjs(cloneData.dimission_date) : ''
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
@@ -869,6 +871,14 @@ const Roster = () => {
             </Select>
           </Form.Item>
           <Form.Item
+            label='职场'
+            name="workplace"
+            initialValue=''
+            rules={[{required:true,message:'请输入职场'}]}
+          >
+            <Input placeholder='请输入职场' disabled={_disable}/>
+          </Form.Item>
+          <Form.Item
             label='职务信息'
             name="role"
             rules={[{required:true,message:'请输入职务信息'}]}
@@ -900,15 +910,21 @@ const Roster = () => {
             <DatePicker
               placeholder={['请选择时间']}
               style={{width:'200px'}}
+              allowEmpty
               disabled={_disable}
-              />
+            />
           </Form.Item>
           <Form.Item
             label='转正日期'
             name="become_date"
             rules={[{required:true,message:'请输入转正日期'}]}
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
+            <DatePicker 
+              placeholder={['请选择时间']} 
+              style={{width:'200px'}} 
+              allowEmpty
+              disabled={_disable}
+            />
           </Form.Item>
           <Form.Item
             label='合同类型'
@@ -1033,7 +1049,12 @@ const Roster = () => {
             name="birthday"
             rules={[{required:true,message:'请输入出生年月日'}]}
           >
-            <DatePicker placeholder={['请选择出生年月日']} style={{width:'200px'}} disabled={_disable}/>
+            <DatePicker 
+              placeholder={['请选择出生年月日']} 
+              style={{width:'200px'}} 
+              allowEmpty
+              disabled={_disable}
+            />
           </Form.Item>
           <Form.Item
             label='年龄'
@@ -1063,6 +1084,8 @@ const Roster = () => {
               <RangePicker     
                 placeholder={['开始日期', '结束日期']}
                 style={{width:'250px'}}
+                allowEmpty
+                disabled={_disable}
               />
           </Form.Item>
           <Form.Item
@@ -1296,7 +1319,12 @@ const Roster = () => {
             name="graduation_time"
             rules={[{required:true,message:'请输入毕业时间'}]}
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
+            <DatePicker 
+              placeholder={['请选择时间']} 
+              style={{width:'200px'}} 
+              allowEmpty
+              disabled={_disable}
+            />
           </Form.Item>
           <Form.Item
             label='最高学历'
@@ -1453,7 +1481,10 @@ const Roster = () => {
             name="dimission_date"
             hidden={dimission_status}
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
+            <DatePicker 
+              placeholder={['请选择时间']} 
+              style={{width:'200px'}}
+            />
           </Form.Item>
           <Form.Item
             label='离职类型'
