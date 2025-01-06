@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2025-01-03 12:13:21
+ * @LastEditTime: 2025-01-06 13:14:09
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +79,7 @@ export default function Login() {
                 </div>
               </Form>
             </div>
-            <div style={{marginTop:'10%',marginLeft:'10%',width:'100%'}}>
+            <div style={{marginTop:'10%',marginLeft:'14%',width:'100%'}}>
             工信部备案号:沪ICP备19037661号 链接:https://beian.miit.gov.cn
             </div>
           </div>

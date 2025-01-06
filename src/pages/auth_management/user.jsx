@@ -2,7 +2,7 @@
  * @Description: 操作员列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:42:03
- * @LastEditTime: 2025-01-02 13:24:42
+ * @LastEditTime: 2025-01-06 11:16:53
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
@@ -372,8 +372,8 @@ const User = () => {
                   label: '项目主管',
                 },
                 {
-                  value: '小组长-8',
-                  label: '小组长',
+                  value: '组长-8',
+                  label: '组长',
                 },
                 {
                   value: '培训师-9',
