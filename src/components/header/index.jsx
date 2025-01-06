@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2024-12-12 16:04:23
+ * @LastEditTime: 2025-01-06 13:19:47
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
@@ -54,7 +54,7 @@ export default function Header() {
         <Avatar style={{ backgroundColor: '#1677FF' }} icon={<UserOutlined />} />
       </Dropdown>
       <div style={{marginLeft:'10px',fontWeight:'bold'}}>
-        你好... { username } !
+        欢迎登录 ! { username } ...
       </div>
       <div style={{marginLeft:'20px',paddingTop:'5px'}}>
         <Button type='primary' danger style={{borderRadius:'20px',fontWeight:'bold',backgroundColor:'#a82a2e'}} onClick={()=> logout()}>

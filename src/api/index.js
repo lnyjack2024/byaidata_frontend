@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2024-12-02 13:48:28
+ * @LastEditTime: 2025-01-06 13:13:18
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -100,6 +100,8 @@ export const reqDeleteItemDatas = (data) => reqApi( BASE + '/items/item/delete',
 //配置管理-业务线-查询
 export const reqGetServiceLineDatas = () => reqApi( BASE + '/config/serviceline/search', {}, 'GET')
 
+export const reqGetServiceLineDatas_ = () => reqApi( BASE + '/config/serviceline/search_', {}, 'GET')
+
 //配置管理-业务线-新增
 export const reqAddServiceLineDatas = (data) => reqApi( BASE + '/config/serviceline/add', data, 'POST')
 
@@ -108,6 +110,8 @@ export const reqDeleteServiceLineDatas = (data) => reqApi( BASE + '/config/servi
 
 //配置管理-基地-查询
 export const reqGetBaseDatas = () => reqApi( BASE + '/config/base/search', {}, 'GET')
+
+export const reqGetBaseDatas_ = () => reqApi( BASE + '/config/base/search_', {}, 'GET')
 
 //配置管理-基地-新增
 export const reqAddBaseDatas = (data) => reqApi( BASE + '/config/base/add', data, 'POST')

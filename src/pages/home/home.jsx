@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-01-03 11:47:03
+ * @LastEditTime: 2025-01-06 13:17:11
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -684,10 +684,10 @@ const Home = () => {
             label: '配置管理',
             icon: <ClusterOutlined />,
             children: [
-                // {
-                //     key: '/config/service_line',
-                //     label: '业务线列表',
-                // },
+                {
+                    key: '/config/service_line',
+                    label: '业务线列表',
+                },
                 {
                     key: '/config/base',
                     label: '基地列表',
