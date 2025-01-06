@@ -2,14 +2,14 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-10-21 16:07:49
- * @LastEditTime: 2024-12-02 14:22:57
+ * @LastEditTime: 2025-01-06 13:12:44
  */
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import './service_line.css'
-import { reqGetBaseDatas, reqAddBaseDatas, reqDeleteBaseDatas } from '../../api/index'
+import { reqGetBaseDatas_, reqAddBaseDatas, reqDeleteBaseDatas } from '../../api/index'
 const ServiceLine = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
@@ -22,7 +22,7 @@ const ServiceLine = () => {
   },[])
 
   const getTableData = async () => {
-    const reqData = await reqGetBaseDatas()
+    const reqData = await reqGetBaseDatas_()
       setData(reqData.data)
   }
 
