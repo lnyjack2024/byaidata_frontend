@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-01-06 13:17:11
+ * @LastEditTime: 2025-01-07 13:48:22
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -141,6 +141,18 @@ const Home = () => {
               {
                   key: '/config/delivery_requirement',
                   label: '交付要求列表',
+              },
+              {
+                  key: '/config/item_manager',
+                  label: '项目经理列表',
+              },
+              {
+                  key: '/config/group_manager',
+                  label: '组长列表',
+              },
+              {
+                  key: '/config/trainers',
+                  label: '培训师列表',
               }
           ]
       },
@@ -274,6 +286,18 @@ const Home = () => {
             {
                 key: '/config/delivery_requirement',
                 label: '交付要求列表',
+            },
+            {
+                key: '/config/item_manager',
+                label: '项目经理列表',
+            },
+            {
+                key: '/config/group_manager',
+                label: '组长列表',
+            },
+            {
+                key: '/config/trainers',
+                label: '培训师列表',
             }
         ]
     },
@@ -396,6 +420,18 @@ const Home = () => {
                 {
                     key: '/config/delivery_requirement',
                     label: '交付要求列表',
+                },
+                {
+                    key: '/config/item_manager',
+                    label: '项目经理列表',
+                },
+                {
+                    key: '/config/group_manager',
+                    label: '组长列表',
+                },
+                {
+                    key: '/config/trainers',
+                    label: '培训师列表',
                 }
             ]
         }
@@ -591,6 +627,18 @@ const Home = () => {
                 {
                     key: '/config/delivery_requirement',
                     label: '交付要求列表',
+                },
+                {
+                    key: '/config/item_manager',
+                    label: '项目经理列表',
+                },
+                {
+                    key: '/config/group_manager',
+                    label: '组长列表',
+                },
+                {
+                    key: '/config/trainers',
+                    label: '培训师列表',
                 }
             ]
         },
@@ -703,6 +751,18 @@ const Home = () => {
                 {
                     key: '/config/delivery_requirement',
                     label: '交付要求列表',
+                },
+                {
+                    key: '/config/item_manager',
+                    label: '项目经理列表',
+                },
+                {
+                    key: '/config/group_manager',
+                    label: '组长列表',
+                },
+                {
+                    key: '/config/trainers',
+                    label: '培训师列表',
                 }
             ]
         }

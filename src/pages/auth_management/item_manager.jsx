@@ -2,28 +2,40 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-10-21 16:07:49
- * @LastEditTime: 2025-01-07 14:27:29
+ * @LastEditTime: 2025-01-07 14:43:19
  */
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
+import { Button, Form, Input, Modal, Popconfirm, Table, message, Select } from 'antd'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import './service_line.css'
 
-import { reqGetServiceLineDatas_, reqAddServiceLineDatas, reqDeleteServiceLineDatas } from '../../api/index'
-const ServiceLine = () => {
+import { reqItemManagerDatas, 
+         reqAddItemManagerDatas, 
+         reqDeleteItemManagerDatas,reqGetBaseDatas_
+       } from '../../api/index'
+const { Option } = Select;
+
+const ItemManager = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ _baseData, _setBaseData ] = useState([])
   const [ form ] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
+  const [ messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     getTableData()
+    _getBaseData()
   },[])
 
+  const _getBaseData = async () => {
+    const reqData = await reqGetBaseDatas_()
+    _setBaseData(reqData.data)
+  }
+
   const getTableData = async () => {
-    const reqData = await reqGetServiceLineDatas_()
+    const reqData = await reqItemManagerDatas()
       setData(reqData.data)
   }
 
@@ -35,9 +47,9 @@ const ServiceLine = () => {
       setModalType(1)
     }
   }
-
+  
   const handDelete = async (e) => {
-    const result = await reqDeleteServiceLineDatas(e)
+    const result = await reqDeleteItemManagerDatas(e)
     if(result.status === 1){
       getTableData()
       message.info('删除成功...')
@@ -48,7 +60,7 @@ const ServiceLine = () => {
 
   const handleOk = () => {
     form.validateFields().then( async (val)=>{
-    const result = await reqAddServiceLineDatas(val)
+    const result = await reqAddItemManagerDatas(val)
     if(result.status === 1){
       setIsModalOpen(false)
       form.resetFields()
@@ -61,7 +73,7 @@ const ServiceLine = () => {
       messageApi.error('参数有误...请检查!!!')
     })
   }
-  
+
   const handleCancle = () => {
     setIsModalOpen(false)
     form.resetFields()
@@ -69,8 +81,12 @@ const ServiceLine = () => {
 
   const column = [
     {
-      title: '业务线',
+      title: '项目经理',
       dataIndex: 'name',
+    },
+    {
+      title: '基地',
+      dataIndex: 'base',
     },
     {
       title: '创建时间',
@@ -126,15 +142,32 @@ const ServiceLine = () => {
           form={form}
           labelCol={{span:3}} 
           wrapperCol={{span:15}} 
-          labelAlign='left'
           style={{marginTop:'30px'}}
         >
           <Form.Item
-            label='业务线'
+            label='项目经理'
             name="name"
-            rules={[{required:true,message:'请输入业务线'}]}
+            rules={[{required:true,message:'请输入项目经理'}]}
           >
-            <Input placeholder='请输入业务线' />
+            <Input placeholder='请输入项目经理' />
+          </Form.Item>
+          <Form.Item
+            label='基地'
+            name="base"
+            rules={[{required:true,message:'请输入基地'}]}
+          >
+            <Select
+              placeholder='请输入基地'
+              style={{textAlign:'left'}}
+            >
+              {_baseData?.filter((option) => option.name !== "全部")
+                  ?.map((option) => (
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+              }
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
@@ -142,4 +175,4 @@ const ServiceLine = () => {
   )
 }
 
-export default ServiceLine;
+export default ItemManager;
