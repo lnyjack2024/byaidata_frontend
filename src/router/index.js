@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2024-12-08 10:53:34
+ * @LastEditTime: 2025-01-07 10:28:09
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home from '../pages/home/home'
@@ -28,6 +28,9 @@ import SettlementType from '../pages/auth_management/settlement_type'
 import OvertimeType from '../pages/auth_management/overtime_type'
 import DeliveryRequirement from '../pages/auth_management/delivery_requirement'
 import Logs from '../pages/auth_management/logs'
+import ItemManager from '../pages/auth_management/item_manager'
+import GroupManager from '../pages/auth_management/group_manager'
+import Trainers from '../pages/auth_management/trainers'
 
 const routes = [
     {
@@ -142,6 +145,18 @@ const routes = [
                     {
                         path:'delivery_requirement',
                         Component:DeliveryRequirement,
+                    },
+                    {
+                        path:'item_manager',
+                        Component:ItemManager,
+                    },
+                    {
+                        path:'group_manager',
+                        Component:GroupManager,
+                    },
+                    {
+                        path:'trainers',
+                        Component:Trainers,
                     }
                 ]
             },
