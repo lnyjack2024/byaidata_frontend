@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2025-01-06 13:13:18
+ * @LastEditTime: 2025-01-07 14:13:23
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -208,4 +208,31 @@ export const reqDeleteInvoiceDatas = (data) => reqApi( BASE + '/finance/settle/d
 
 //日志管理-查询
 export const reqGetLogsDatas = (data) => reqApi( BASE + '/config/logs/log', data, 'GET')
+
+//配置管理-项目经理列表-查询
+export const reqItemManagerDatas = () => reqApi( BASE + '/config/item_manager/search', {}, 'GET')
+
+//配置管理-项目经理列表-新增
+export const reqAddItemManagerDatas = (data) => reqApi( BASE + '/config/item_manager/add', data, 'POST')
+
+//配置管理-项目经理列表-删除
+export const reqDeleteItemManagerDatas = (data) => reqApi( BASE + '/config/item_manager/delete', data, 'POST')
+
+//配置管理-组长列表-查询
+export const reqGroupManagerDatas = () => reqApi( BASE + '/config/group_manager/search', {}, 'GET')
+
+//配置管理-组长列表-新增
+export const reqAddGroupManagerDatas = (data) => reqApi( BASE + '/config/group_manager/add', data, 'POST')
+
+//配置管理-组长列表-删除
+export const reqDeleteGroupManagerDatas = (data) => reqApi( BASE + '/config/group_manager/delete', data, 'POST')
+
+//配置管理-培训师列表-查询
+export const reqGetTrainersDatas = () => reqApi( BASE + '/config/trainers/search', {}, 'GET')
+
+//配置管理-培训师列表-新增
+export const reqAddTrainersDatas = (data) => reqApi( BASE + '/config/trainers/add', data, 'POST')
+
+//配置管理-培训师列表-删除
+export const reqDeleteTrainersDatas = (data) => reqApi( BASE + '/config/trainers/delete', data, 'POST')
 

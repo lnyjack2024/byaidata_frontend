@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2025-01-03 15:56:19
+ * @LastEditTime: 2025-01-07 16:52:26
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -13,9 +13,9 @@ import { reqGetItemDatas,
          reqAddItemDatas, 
          reqEditItemDatas, 
          reqDeleteItemDatas, 
-         reqGetBaseDatas, 
+         reqGetBaseDatas, reqGetBaseDatas_,
          reqGetServiceLineDatas,
-         reqGetSettlementTypeDatas,
+         reqGetSettlementTypeDatas,reqItemManagerDatas,reqGroupManagerDatas,reqGetTrainersDatas,
          reqGetOvertimeTypeDatas } from '../../api/index'
 const { TextArea } = Input;
 // const { RangePicker } = DatePicker;
@@ -33,19 +33,26 @@ const Item = () => {
   const [ table_loading, setTableLoading ] = useState(true)
   const [ delay_date_status, setDelayDateStatus ] = useState(true)
   const [ baseData, setBaseData ] = useState([])
+  const [ _baseData, _setBaseData ] = useState([])
   const [ service_lineData, setServiceLineDataData ] = useState([])
   const [ settlement_type, setSettlementTypeData ] = useState([])
   const [ overtime_type, setOvertimeTypeData ] = useState([])
   const [ aaa, setAaa ] = useState(false)
   const [ bbb, setBbb ] = useState(false)
+  const [ item_manager_arr, setItemManagerArr ] = useState([])
+  const [ group_manager_arr, setGroupManagerArr ] = useState([])
+  const [ trainer_arr, settTainerArr ] = useState([])
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
     // getTableData()
-    // getBaseData()
+    _getBaseData()
     // getServiceLineData()
     getSettlementTypeData()
     getOvertimeTypeData()
+    getItemManagerData()
+    getGroupManagerData()
+    getTainerArrData()
     const getOptions = async () => {
       const baseData = await getBaseData(); 
       const serviceLineData = await getServiceLineData();
@@ -84,6 +91,26 @@ const Item = () => {
     });
   }
 
+  const  _getBaseData = async () => {
+    const reqData = await reqGetBaseDatas_()
+    _setBaseData(reqData.data)
+  }
+
+  const getItemManagerData = async () => {
+    const reqData = await reqItemManagerDatas()
+    setItemManagerArr(reqData.data)
+  }
+
+  const getGroupManagerData = async () => {
+    const reqData = await reqGroupManagerDatas()
+    setGroupManagerArr(reqData.data)
+  }
+
+  const getTainerArrData = async () => {
+    const reqData = await reqGetTrainersDatas()
+    settTainerArr(reqData.data)
+  }
+
   const getServiceLineData = async () => {
     const reqData = await reqGetServiceLineDatas()
     return new Promise((resolve) => {
@@ -114,8 +141,12 @@ const Item = () => {
       setDelayDateStatus(false)
       const cloneData = JSON.parse(JSON.stringify(rowData))
       cloneData.start_date = dayjs(cloneData.start_date)
-      cloneData.delivery_date = dayjs(cloneData.delivery_date)
+      cloneData.delivery_date = cloneData.delivery_date ? dayjs(cloneData.delivery_date) : ''
       cloneData.delay_date = cloneData.delay_date ? dayjs(cloneData.delay_date) : ''
+      cloneData.base = (cloneData.base).split(",")
+      cloneData.item_manager = (cloneData.item_manager).split(",")
+      cloneData.group_manager = (cloneData.group_manager).split(",")
+      cloneData.trainer = (cloneData.trainer).split(",")
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
     }
@@ -228,6 +259,10 @@ const Item = () => {
     {
       title: '组长',
       dataIndex: 'group_manager',
+    },
+    {
+      title: '培训师',
+      dataIndex: 'trainer',
     },
     {
       title: '周期(天)',
@@ -527,7 +562,7 @@ const Item = () => {
             name="name"
             rules={[{required:true,message:'请输入项目名称'}]}
           >
-            <Input placeholder='请输入姓名' disabled={_disable}/>
+            <Input placeholder='请输入项目名称' disabled={_disable}/>
           </Form.Item>
           <Form.Item
             label='业务线'
@@ -540,12 +575,12 @@ const Item = () => {
               disabled={_disable}
               allowClear={true}
             >
-              {
-                service_lineData?.map((option)=>(
-                  <Option key={option.id} value={option.name}>
-                    {option.name}
-                  </Option>
-                ))
+              {service_lineData?.filter((option) => option.name !== "全部")
+                  ?.map((option) => (
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
               }
             </Select>
           </Form.Item>
@@ -555,17 +590,17 @@ const Item = () => {
             rules={[{required:true,message:'请输入基地'}]}
           >
             <Select
+              mode="multiple"
               placeholder='请输入基地'
               style={{textAlign:'left'}}
-              allowClear={true}
               disabled={_disable}
             >
-              {
-                baseData?.map((option)=>(
-                  <Option key={option.id} value={option.name}>
-                    {option.name}
-                  </Option>
-                ))
+              {_baseData?.filter((option) => option.name !== "全部")
+                  ?.map((option) => (
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
               }
             </Select>
           </Form.Item>
@@ -581,21 +616,60 @@ const Item = () => {
             name="item_manager"
             rules={[{required:true,message:'请输入项目经理'}]}
           >
-            <Input placeholder='请输入项目经理' disabled={_disable}/>
+            <Select
+              mode="multiple"
+              placeholder="请输入项目经理"
+              style={{textAlign:'left'}}
+              disabled={_disable}
+            >
+              {
+                item_manager_arr?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='组长'
             name="group_manager"
             rules={[{required:true,message:'请输入组长'}]}
           >
-            <Input placeholder='请输入组长' disabled={_disable}/>
+            <Select
+              mode="multiple"
+              placeholder="请输入组长"
+              style={{textAlign:'left'}}
+              disabled={_disable}
+            >
+              {
+                group_manager_arr?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='培训师'
             name="trainer"
             rules={[{required:true,message:'请输入培训师'}]}
           >
-            <Input placeholder='请输入培训师' disabled={_disable}/>
+             <Select
+              mode="multiple"
+              placeholder="请输入培训师"
+              style={{textAlign:'left'}}
+              disabled={_disable}
+            >
+              {
+                trainer_arr?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label='标注团队'
@@ -660,7 +734,7 @@ const Item = () => {
             />
           </Form.Item>
           <Form.Item
-            label='交付日期'
+            label='交付日期(*长期不填)'
             name="delivery_date"
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
@@ -673,7 +747,7 @@ const Item = () => {
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='周期(天)'
+            label='周期(天)(*长期不填)'
             name="day"
             initialValue={0}
           >
