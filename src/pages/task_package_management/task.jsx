@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-01-03 17:16:00
+ * @LastEditTime: 2025-01-08 14:08:15
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -318,17 +318,14 @@ const Task = () => {
     {
       title: '所属项目',
       dataIndex: 'item',
-      fixed: 'left'
     },
     {
       title: '业务线',
       dataIndex: 'service_line',
-      fixed: 'left'
     },
     {
       title: '基地',
       dataIndex: 'base',
-      fixed: 'left'
     },
     {
       title: '业务负责人',
@@ -886,6 +883,10 @@ const Task = () => {
                   {
                     value: '排班制',
                     label: '排班制',
+                  },
+                  {
+                    value: '无',
+                    label: '无',
                   }
                 ]}
               />
