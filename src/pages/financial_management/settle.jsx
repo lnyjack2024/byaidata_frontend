@@ -2,7 +2,7 @@
  * @Description: 结算列表
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:38:35
- * @LastEditTime: 2024-12-27 15:59:51
+ * @LastEditTime: 2025-01-09 13:44:20
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
@@ -537,8 +537,26 @@ const Settle = () => {
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
            <Form.Item
-            label='项目负责人'
-            name="item_leader"
+            label='业务负责人'
+            name="business_leader"
+           >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+           <Form.Item
+            label='项目经理'
+            name="item_manager"
+           >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+           <Form.Item
+            label='组长'
+            name="group_manager"
+           >
+            <Input variant="borderless" disabled={true}/>
+          </Form.Item>
+           <Form.Item
+            label='培训师'
+            name="trainer"
            >
             <Input variant="borderless" disabled={true}/>
           </Form.Item>

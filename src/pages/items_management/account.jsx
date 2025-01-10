@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2024-12-13 14:42:48
+ * @LastEditTime: 2025-01-09 13:41:07
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -207,8 +207,20 @@ const Account = () => {
       dataIndex: 'base',
     },
     {
-      title: '项目负责人',
-      dataIndex: 'item_leader',
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
+      title: '项目经理',
+      dataIndex: 'item_manager',
+    },
+    {
+      title: '组长',
+      dataIndex: 'group_manager',
+    },
+    {
+      title: '培训师',
+      dataIndex: 'trainer',
     },
     {
       title: '结算类型',
@@ -281,12 +293,10 @@ const Account = () => {
     {
       title: '结算状态',
       dataIndex: 'settlement_status',
-      fixed: 'left'
     },
     {
       title: '回款状态',
       dataIndex: 'refund_status',
-      fixed: 'left'
     },
     {
       title: '任务包',
@@ -370,12 +380,10 @@ const Account = () => {
     {
       title: '结算状态',
       dataIndex: 'settlement_status',
-      fixed: 'left'
     },
     {
       title: '回款状态',
       dataIndex: 'refund_status',
-      fixed: 'left'
     },
     {
       title: '任务包',
@@ -665,8 +673,26 @@ const Account = () => {
             <Input disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='项目负责人'
-            name="item_leader"
+            label='业务负责人'
+            name="business_leader"
+          >
+            <Input disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='项目经理'
+            name="item_manager"
+          >
+            <Input disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='组长'
+            name="group_manager"
+          >
+            <Input disabled={true}/>
+          </Form.Item>
+          <Form.Item
+            label='培训师'
+            name="trainer"
           >
             <Input disabled={true}/>
           </Form.Item>
