@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-01-08 14:08:15
+ * @LastEditTime: 2025-01-10 13:57:23
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -153,8 +153,8 @@ const Task = () => {
     reqData.data[0].recently_push_date = reqData.data[0].recently_push_date === '' ? '' : dayjs(reqData.data[0].recently_push_date).format('YYYY-MM-DD HH:mm:ss')
     reqData.data[0].frist_push_date = reqData.data[0].frist_push_date === '' ? '' : dayjs(reqData.data[0].frist_push_date).format('YYYY-MM-DD HH:mm:ss')
     reqData.data[0].start_date = dayjs(reqData.data[0].start_date).format('YYYY-MM-DD')
-    reqData.data[0].end_date = dayjs(reqData.data[0].end_date).format('YYYY-MM-DD')
-    reqData.data[0].delivery_date = dayjs(reqData.data[0].delivery_date).format('YYYY-MM-DD')
+    reqData.data[0].end_date = reqData.data[0].end_date ? dayjs(reqData.data[0].end_date).format('YYYY-MM-DD') : ''
+    reqData.data[0].delivery_date = reqData.data[0].delivery_date ? dayjs(reqData.data[0].delivery_date).format('YYYY-MM-DD') : ''
     form_detail.setFieldsValue(reqData.data[0])
   }
 
@@ -529,6 +529,7 @@ const Task = () => {
 
   const props = {
     name: 'file',
+    accept: ".xls,.xlsx",
     action: `${BASE}/tasks/task/upload?task_id=${task_id}`,
     headers: {
       authorization: 'authorization-text',
@@ -550,7 +551,7 @@ const Task = () => {
     },
   };
   
-  const attachment = '/excel/dome.xlsx'
+  const attachment = '/excel/task_detail_daily.xlsx'
 
   return (
     <div className='style'>
@@ -981,7 +982,7 @@ const Task = () => {
           labelCol={{span:10}} 
           wrapperCol={{span:20}} 
           layout='inline'
-          style={{marginTop:'20px',marginBottom:'50px'}}
+          style={{marginTop:'30px',marginBottom:'30px'}}
         >
             <Form.Item
             label='业务负责人'
@@ -1002,14 +1003,14 @@ const Task = () => {
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
         </Form>
-        <Divider style={{color:'#1677ff'}}>作业人员每日作业数据</Divider>
+        <Divider style={{color:'#1677ff',fontWeight:'bold'}}>作业人员每日作业数据</Divider>
         <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
             <div>
               <Upload
                   showUploadList={false} 
                   {...props}
                 >
-                  <Button style={{width:'200px'}} icon={<UploadOutlined />}>导入</Button>
+                  <Button style={{width:'100px'}} icon={<UploadOutlined />}>导入</Button>
               </Upload>
             </div>
             <div style={{marginLeft:'50px'}}>
@@ -1018,9 +1019,9 @@ const Task = () => {
                   download={'附件'} 
                   style={{ color: '#007bff' }}
                 >
-                { `📎 模板` }
+                { `📎 人效作业数据模板` }
               </a>
-              <span style={{color:'red',marginLeft:'50px'}}>数据导入之前请慎重核验数据…</span>
+              <span style={{color:'red',marginLeft:'50px'}}>导入之前请慎重核验数据格式、导入异常联系王永红...</span>
             </div>
         </div>
         <div style={{ width: '100%', height: '85%', overflow:'auto',marginTop:'10px'}}>
