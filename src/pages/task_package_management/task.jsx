@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-01-10 13:57:23
+ * @LastEditTime: 2025-01-15 14:47:18
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -178,11 +178,11 @@ const Task = () => {
       setDelayDateStatus(false)
       setCcc(true)
       const cloneData = JSON.parse(JSON.stringify(rowData))
-      cloneData.start_date = dayjs(cloneData.start_date)
-      cloneData.delivery_date = dayjs(cloneData.delivery_date)
-      cloneData.end_date = dayjs(cloneData.end_date)
+      cloneData.start_date    = dayjs(cloneData.start_date)
+      cloneData.delivery_date = cloneData.delivery_date ? dayjs(cloneData.delivery_date) : ''
+      cloneData.end_date      = cloneData.end_date ? dayjs(cloneData.end_date) : ''
       cloneData.get_task_date = cloneData.get_task_date ? dayjs(cloneData.get_task_date) : ''
-      cloneData.delay_date = cloneData.delay_date ? dayjs(cloneData.delay_date) : ''
+      cloneData.delay_date    = cloneData.delay_date ? dayjs(cloneData.delay_date) : ''
       setId(cloneData.id)
       form_add.setFieldsValue(cloneData)
     }else if(type === 'check'){
