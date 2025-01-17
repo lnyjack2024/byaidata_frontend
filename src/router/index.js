@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2025-01-07 10:28:09
+ * @LastEditTime: 2025-01-17 16:14:50
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home from '../pages/home/home'
@@ -44,7 +44,7 @@ const routes = [
             //重定向
             {
                 path:'/',
-                element:<Navigate to='page' replace/>
+                element:<Navigate to='login' replace/>
             },
             {
                 path:'page',
@@ -76,7 +76,12 @@ const routes = [
                     {
                         path:'clocking',
                         Component:Clocking,
-                    },
+                    }
+                ]
+            },
+            {
+                path:'train',
+                children:[
                     {
                         path:'trainer',
                         Component:Trainer,

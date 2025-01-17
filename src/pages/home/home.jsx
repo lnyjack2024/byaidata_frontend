@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-01-07 13:48:22
+ * @LastEditTime: 2025-01-17 16:21:06
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -18,7 +18,8 @@ import { AccountBookOutlined,
          CalendarOutlined,
          SettingOutlined,
          ClusterOutlined,
-         FileTextOutlined
+         FileTextOutlined,
+         InsertRowLeftOutlined
        } from '@ant-design/icons';
 const { Header, Sider, Content } = Layout;
 
@@ -62,9 +63,16 @@ const Home = () => {
               {
                   key: '/person/clocking',
                   label: '人员考勤列表',
-              },
+              }
+          ]
+      },
+      {
+          key: '/train',
+          label: '培训管理',
+          icon: <InsertRowLeftOutlined />,
+          children: [
               {
-                  key: '/person/trainer',
+                  key: '/train/trainer',
                   label: '培训师列表',
               }
           ]
@@ -215,16 +223,23 @@ const Home = () => {
                   key: '/person/portrait',
                   label: '人员画像',
               },
-            //   {
-            //       key: '/person/clocking',
-            //       label: '人员考勤列表',
-            //   },
               {
-                  key: '/person/trainer',
-                  label: '培训师列表',
-              }
+                  key: '/person/clocking',
+                  label: '人员考勤列表',
+              },
           ]
       },
+      {
+        key: '/train',
+        label: '培训管理',
+        icon: <InsertRowLeftOutlined />,
+        children: [
+            {
+                key: '/train/trainer',
+                label: '培训师列表',
+            }
+        ]
+    },
       {
           key: '/items',
           label: '项目管理',
@@ -301,21 +316,6 @@ const Home = () => {
             }
         ]
     },
-    {
-        key: '/auth',
-        icon: <SettingOutlined />,
-        label: '权限管理',
-        children: [
-            {
-                key: '/auth/user',
-                label: '操作员列表',
-            },
-            {
-                key: '/auth/role',
-                label: '角色列表',
-            }
-        ]
-    },
     ]
   }else if( role === 3 ){
     items = [
@@ -349,12 +349,19 @@ const Home = () => {
                     key: '/person/portrait',
                     label: '人员画像',
                 },
-                // {
-                //     key: '/person/clocking',
-                //     label: '人员考勤列表',
-                // },
                 {
-                    key: '/person/trainer',
+                    key: '/person/clocking',
+                    label: '人员考勤列表',
+                },
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
+                {
+                    key: '/train/trainer',
                     label: '培训师列表',
                 }
             ]
@@ -472,12 +479,19 @@ const Home = () => {
                     key: '/person/clocking',
                     label: '人员考勤列表',
                 },
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
                 {
-                    key: '/person/trainer',
+                    key: '/train/trainer',
                     label: '培训师列表',
                 }
             ]
-        }
+        },
     ]
   }else if( role === 2 ){
     items = [
@@ -549,8 +563,15 @@ const Home = () => {
                     key: '/person/clocking',
                     label: '人员考勤列表',
                 },
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
                 {
-                    key: '/person/trainer',
+                    key: '/train/trainer',
                     label: '培训师列表',
                 }
             ]
@@ -671,32 +692,19 @@ const Home = () => {
             label: '人员管理',
             icon: <UsergroupAddOutlined />,
             children: [
-                // {
-                //     key: '/person/section',
-                //     label: '部门列表',
-                // },
-                // {
-                //     key: '/person/roster',
-                //     label: '人员花名册',
-                // },
-                // {
-                //     key: '/person/dimission',
-                //     label: '人员花名册-离职',
-                // },
-                // {
-                //     key: '/person/black',
-                //     label: '人员花名册-黑名单',
-                // },
                 {
                     key: '/person/portrait',
                     label: '人员画像',
                 },
-                // {
-                //     key: '/person/clocking',
-                //     label: '人员考勤列表',
-                // },
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
                 {
-                    key: '/person/trainer',
+                    key: '/train/trainer',
                     label: '培训师列表',
                 }
             ]
@@ -847,12 +855,12 @@ const Home = () => {
             label: '首页',
         },
         {
-            key: '/person',
-            label: '人员管理',
-            icon: <UsergroupAddOutlined />,
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
             children: [
                 {
-                    key: '/person/trainer',
+                    key: '/train/trainer',
                     label: '培训师列表',
                 }
             ]
