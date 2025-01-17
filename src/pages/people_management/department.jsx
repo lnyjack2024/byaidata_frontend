@@ -2,7 +2,7 @@
  * @Description: 部门列表
  * @Author: wangyonghong
  * @Date: 2024-09-29 15:25:05
- * @LastEditTime: 2024-11-28 10:40:58
+ * @LastEditTime: 2025-01-17 13:42:20
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
@@ -15,7 +15,7 @@ const Department = () => {
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
   const [ form ] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
+  const [ messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     getTableData()
@@ -34,6 +34,7 @@ const Department = () => {
       setModalType(1)
     }
   }
+
   const handDelete = async (e) => {
     const result = await reqDeleteDepartmentDatas(e)
     if(result.status === 1){
@@ -43,6 +44,7 @@ const Department = () => {
       message.error('删除失败...')
     }
   }
+
   const hangFinish = async (e) => {
       const reqData = await reqGetDepartmentDatas({name:e.keyword})
       setData(reqData.data)

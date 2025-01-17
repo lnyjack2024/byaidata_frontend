@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2025-01-06 13:14:09
+ * @LastEditTime: 2025-01-16 17:15:20
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +30,7 @@ export default function Login() {
             storageUtils.saveUser(username)
             storageUtils.saveRole(role_id)
             storageUtils.saveToken(response.token)
-            navigate('/')   
+            navigate('/page')   
         }else{
           message.error(response.msg)
         }
