@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-01-17 18:01:38
+ * @LastEditTime: 2025-01-22 10:49:03
  */
 
 import React, { useEffect, useState } from 'react'
@@ -77,7 +77,7 @@ const Roster = () => {
   // }
 
   const getTableData = async () => {
-    const reqData = await reqGetRosterDatas()
+    const reqData = await reqGetRosterDatas({is_dimission: "否"})
     setData(reqData.data)
     setTableLoading(false)
   }
@@ -180,6 +180,7 @@ const Roster = () => {
 
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
+      console.log(val)
       const reqData = await reqGetRosterDatas(val)
       setData(reqData.data)
       setTableLoading(false)
@@ -552,7 +553,7 @@ const Roster = () => {
               cancelText='取消'
               onConfirm={ () => handDelete(rowData)}
             >
-              <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button>
+              {/* <Button type='primary' danger style={{marginLeft:'15px'}}>删除</Button> */}
             </Popconfirm>
           </div>
         )
@@ -574,9 +575,9 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="role" label="职位角色" {...itemLayout}>
+              <Form.Item name="role" label="职务信息" {...itemLayout}>
                 <Select
-                  placeholder='请输入职位角色'
+                  placeholder='请输入职务信息'
                   style={{textAlign:'left',width:'250px'}}
                   allowClear={true}
                   options={[
@@ -712,7 +713,12 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="is_dimission" label="是否离职" {...itemLayout}>
+              <Form.Item 
+                  name="is_dimission" 
+                  label="是否离职" 
+                  {...itemLayout}
+                  initialValue={'否'}
+              >
                 <Select
                   placeholder='请输入是否离职'
                   style={{textAlign:'left',width:'250px'}}
