@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:50:24
- * @LastEditTime: 2024-12-25 11:03:02
+ * @LastEditTime: 2025-01-22 11:30:23
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -113,18 +113,33 @@ const Dimission = () => {
       fixed: 'left'
     },
     {
-      title: '部门',
-      dataIndex: 'department',
-      fixed: 'left'
-    },
-    {
       title: '基地',
       dataIndex: 'base',
       fixed: 'left'
     },
     {
+      title: '部门',
+      dataIndex: 'department',
+    },
+    {
+      title: '职场',
+      dataIndex: 'workplace',
+    },
+    {
       title: '职务信息',
       dataIndex: 'role',
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
+    },
+    {
+      title: '项目名称',
+      dataIndex: 'item',
+    },
+    {
+      title: '项目类型',
+      dataIndex: 'item_type',
     },
     {
       title: '直属上级',
@@ -190,10 +205,10 @@ const Dimission = () => {
         )
       }
     },
-    // {
-    //   title: '身份证有效期',
-    //   dataIndex: 'id_card_time',
-    // },
+    {
+      title: '身份证有效期',
+      dataIndex: 'id_card_time',
+    },
     {
       title: '政治面貌',
       dataIndex: 'politics_status',
@@ -312,37 +327,6 @@ const Dimission = () => {
     {
       title: '语言能力',
       dataIndex: 'language_competence',
-    },
-    {
-      title: '业务线',
-      dataIndex: 'service_line',
-    },
-    {
-      title: '项目名称',
-      dataIndex: 'item',
-      render:(item)=>{
-        if(item === 'undefined'){
-          return (
-            <></>
-          )
-        }else{
-          return (
-            <>{item}</>
-          )
-        }
-      }
-    },
-    {
-      title: '是否二次入职',
-      dataIndex: 'is_two_entry',
-    },
-    // {
-    //   title: '工作经历',
-    //   dataIndex: 'work_experience',
-    // },
-    {
-      title: '招聘渠道',
-      dataIndex: 'recruitment_channel',
     },
     {
       title: '是否离职',
