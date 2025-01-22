@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:34:40
- * @LastEditTime: 2025-01-09 13:41:07
+ * @LastEditTime: 2025-01-21 14:40:46
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ import { reqGetAccountDatas,
          reqGetItemDatas, 
          reqAddAccountDetailDatas, 
          reqGetAccountDetailDatas,
+         reqGetServiceLineDatas,
          reqGetBaseDatas, _reqGetTaskDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
 const { RangePicker } = DatePicker;
@@ -37,7 +38,10 @@ const Account = () => {
   const [ item_settlement_type, setItemSettlementType ] = useState('')
   const [ item_detail, setItemDetail ] = useState({})
   const [ baseData, setBaseData ] = useState([])
+  const [ service_lineData, setServiceLineDataData ] = useState([])
   const [ taskData, setTaskData ] = useState([])
+  const [ aaa, setAaa ] = useState(false)
+  const [ bbb, setBbb ] = useState(false)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_detail ] = Form.useForm();
@@ -47,7 +51,24 @@ const Account = () => {
   useEffect(() => {
     getTableData()
     getBaseData()
-  },[])
+    const getOptions = async () => {
+      const baseData = await getBaseData(); 
+      const serviceLineData = await getServiceLineData();
+      if(baseData.length === 0){
+        setBbb(true)
+      }
+      if(serviceLineData.length === 0){
+        setAaa(true)
+      }
+      setBaseData(baseData)
+      setServiceLineDataData(serviceLineData)
+      if (baseData.length > 0 || serviceLineData.length > 0) {
+        form.setFieldsValue({ base : baseData[0]?.name, service_line : serviceLineData[0]?.name });
+        getTableData(baseData[0]?.name, serviceLineData[0]?.name); // 获取数据
+      }
+    };
+    getOptions();
+  },[form])
 
   const getTableData = async () => {
     const reqData = await reqGetAccountDatas()
@@ -55,9 +76,18 @@ const Account = () => {
       setTableLoading(false)
   }
 
+  const getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas()
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
+  }
+
   const getBaseData = async () => {
     const reqData = await reqGetBaseDatas()
-    setBaseData(reqData.data)
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(reqData.data), 100);
+    });
   }
 
   const getAccountDetailData = async (e) => {
@@ -195,10 +225,6 @@ const Account = () => {
       fixed: 'left'
     },
     {
-      title: '项目状态',
-      dataIndex: 'item_status'
-    },
-    {
       title: '业务线',
       dataIndex: 'service_line',
     },
@@ -223,12 +249,24 @@ const Account = () => {
       dataIndex: 'trainer',
     },
     {
-      title: '结算类型',
-      dataIndex: 'item_settlement_type',
-    },
-    {
       title: '项目周期(天)',
       dataIndex: 'item_day',
+    },
+    {
+      title: '项目状态',
+      dataIndex: 'item_status'
+    },
+    {
+      title: '结算状态',
+      dataIndex: 'item_settlement_status'
+    },
+    {
+      title: '回款状态',
+      dataIndex: 'refund_status'
+    },
+    {
+      title: '结算类型',
+      dataIndex: 'item_settlement_type',
     },
     {
       title: '结算周期(天)',
@@ -501,19 +539,40 @@ const Account = () => {
         <Form form={form}
           className='flex-box-form'
           layout='inline'
+          initialValues={{
+            base : '', //初始值默认为空
+            service_line : ''
+          }}
         >
           <Row>
             <Col span={6}>
-              <Form.Item name="item_name" label="项目名称" {...itemLayout}>
-                <Input placeholder='请输入项目名称'/>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
+                <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left'}}
+                  allowClear={true}
+                  disabled={aaa}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="base" label="基地" {...itemLayout}>
-              <Select
+              <Form.Item 
+                name = "base"
+                label="基地" 
+                {...itemLayout}
+              >
+                <Select
                   placeholder='请输入基地'
                   style={{textAlign:'left'}}
-                  allowClear={true}
+                  disabled={bbb}
                 >
                 {
                   baseData?.map((option)=>(
@@ -523,6 +582,11 @@ const Account = () => {
                   ))
                 }
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="item_name" label="项目名称" {...itemLayout}>
+                <Input placeholder='请输入项目名称'/>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -552,16 +616,7 @@ const Account = () => {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
-              <Form.Item name="business_manager" label="项目负责人" {...itemLayout}>
-                <Input placeholder='请输入项目负责人'/>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="reconciler" label="对账人" {...itemLayout}>
-                <Input placeholder='请输入对账人'/>
-              </Form.Item>
-            </Col>
+         
             <Col span={6}>
               <Form.Item name="delivery_status" label="结算状态" {...itemLayout}>
               <Select
@@ -602,6 +657,11 @@ const Account = () => {
                     }
                   ]}
                 />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="reconciler" label="对账人" {...itemLayout}>
+                <Input placeholder='请输入对账人'/>
               </Form.Item>
             </Col>
             <Col span={6}>

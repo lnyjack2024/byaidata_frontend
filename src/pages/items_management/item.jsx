@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2025-01-07 16:52:26
+ * @LastEditTime: 2025-01-21 14:27:14
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -416,6 +416,24 @@ const Item = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
+                <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left'}}
+                  allowClear={true}
+                  disabled={aaa}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
               <Form.Item 
                 name = "base"
                 label="基地" 
@@ -433,24 +451,6 @@ const Item = () => {
                     </Option>
                   ))
                 }
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="service_line" label="业务线" {...itemLayout}>
-                <Select
-                  placeholder="请输入业务线"
-                  style={{textAlign:'left'}}
-                  allowClear={true}
-                  disabled={aaa}
-                >
-                  {
-                    service_lineData?.map((option)=>(
-                      <Option key={option.id} value={option.name}>
-                        {option.name}
-                      </Option>
-                    ))
-                  }
                 </Select>
               </Form.Item>
             </Col>
