@@ -2,11 +2,11 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-01-22 10:49:03
+ * @LastEditTime: 2025-01-24 09:21:49
  */
 
 import React, { useEffect, useState } from 'react'
-// import { SearchOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
+// import { SearchOutlined, RedoOutlined, UploadOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber } from 'antd'
 import dayjs from 'dayjs';
@@ -16,8 +16,7 @@ import { reqGetRosterDatas,
          reqAddRosterDatas, 
          reqEditRosterDatas, 
          reqGetDepartmentDatas, 
-         reqGetRoleDatas, 
-         reqGetServiceLineDatas, 
+        //  reqGetServiceLineDatas, 
          reqDeleteRosterDatas,
          reqGetBaseDatas } from '../../api/index'
 // import storageUtils from '../../utils/storageUtils'
@@ -35,8 +34,7 @@ const Roster = () => {
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ departmentData, setDepartmentData ] = useState([])
-  const [ roleData, setRoleData ] = useState([])
-  const [ service_lineData, setServiceLineData ] = useState([])
+  // const [ service_lineData, setServiceLineData ] = useState([])
   const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
@@ -45,8 +43,7 @@ const Roster = () => {
   useEffect(() => {
     getTableData() //获取列表数据
     getDepartmentData() //获取部门数据
-    getRoleData() //获取角色数据
-    getServiceLineData() //获取业务线数据
+    // getServiceLineData() //获取业务线数据
     getBaseData()
     // getPortraitData()
   },[])
@@ -56,15 +53,10 @@ const Roster = () => {
     setDepartmentData(reqDepartmentData.data)
   }
 
-  const getRoleData = async () => {
-    const reqRoleData = await reqGetRoleDatas()
-    setRoleData(reqRoleData.data)
-  }
-
-  const getServiceLineData = async () => {
-    const reqServiceLineData = await reqGetServiceLineDatas()
-    setServiceLineData(reqServiceLineData.data)
-  }
+  // const getServiceLineData = async () => {
+  //   const reqServiceLineData = await reqGetServiceLineDatas()
+  //   setServiceLineData(reqServiceLineData.data)
+  // }
 
   const getBaseData = async () => {
     const reqData = await reqGetBaseDatas()
@@ -575,6 +567,29 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
+              <Form.Item name="base" label="基地" {...itemLayout}>
+                <Select
+                    placeholder='请输入基地'
+                    style={{textAlign:'left',width:'250px'}}
+                    allowClear={true}
+                  >
+                  {/* {
+                    baseData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                   } */}
+                  {baseData?.filter((option) => option.name !== "全部")?.map((option) => (
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
               <Form.Item name="role" label="职务信息" {...itemLayout}>
                 <Select
                   placeholder='请输入职务信息'
@@ -582,8 +597,8 @@ const Roster = () => {
                   allowClear={true}
                   options={[
                     {
-                      value: '管理层',
-                      label: '管理层',
+                      value: '总经办',
+                      label: '总经办',
                     },
                     {
                       value: '财务总监',
@@ -610,12 +625,24 @@ const Roster = () => {
                       label: '人力资源总监',
                     },
                     {
-                      value: '人事经理或主管',
-                      label: '人事经理或主管',
+                      value: '人事主管',
+                      label: '人事主管',
                     },
                     {
                       value: '人事专员',
                       label: '人事专员',
+                    },
+                    {
+                      value: '商务VP',
+                      label: '商务VP',
+                    },
+                    {
+                      value: '商务拓展专员',
+                      label: '商务拓展专员',
+                    },
+                    {
+                      value: 'CEO助理',
+                      label: 'CEO助理',
                     },
                     {
                       value: '开发负责人',
@@ -630,6 +657,10 @@ const Roster = () => {
                       label: '产品经理',
                     },
                     {
+                      value: '基地负责人',
+                      label: '基地负责人',
+                    },
+                    {
                       value: '业务负责人',
                       label: '业务负责人',
                     },
@@ -642,8 +673,8 @@ const Roster = () => {
                       label: '项目主管',
                     },
                     {
-                      value: '小组长',
-                      label: '小组长',
+                      value: '组长',
+                      label: '组长',
                     },
                     {
                       value: '培训师',
@@ -654,11 +685,11 @@ const Roster = () => {
                       label: '骨干',
                     },
                     {
-                      value: '标注员',
-                      label: '标注员',
+                      value: '普通员工',
+                      label: '普通员工',
                     }
                   ]}
-            />
+                />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -678,24 +709,7 @@ const Roster = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
-              <Form.Item name="base" label="基地" {...itemLayout}>
-                <Select
-                    placeholder='请输入基地'
-                    style={{textAlign:'left',width:'250px'}}
-                    allowClear={true}
-                  >
-                  {
-                    baseData?.map((option)=>(
-                      <Option key={option.id} value={option.name}>
-                        {option.name}
-                      </Option>
-                    ))
-                  }
-                  </Select>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Form.Item name="service_line" label="业务线" {...itemLayout}>
               <Select
                   placeholder="请输入业务线"
@@ -711,7 +725,7 @@ const Roster = () => {
                   }
                 </Select>
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={6}>
               <Form.Item 
                   name="is_dimission" 
@@ -758,6 +772,7 @@ const Roster = () => {
             <Col span={8} >
               <Form.Item  >
                 <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
+                {/* <Button onClick={ handReset } type='primary'  icon={<VerticalAlignBottomOutlined />} style={{backgroundColor: "#555555",color:'white'}}> 下载 </Button>&nbsp;&nbsp; */}
                 <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
                 <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
@@ -904,16 +919,102 @@ const Roster = () => {
             rules={[{required:true,message:'请输入职务信息'}]}
           >
             <Select
-              placeholder='请输入职务信息'
-            > 
-             {
-                roleData.map((option)=>(
-                  <Option key={option.id} value={option.name}>
-                    {option.name}
-                  </Option>
-                ))
-              }
-            </Select>     
+                placeholder='请输入职务信息'
+                options={[
+                  {
+                    value: '总经办',
+                    label: '总经办',
+                  },
+                  {
+                    value: '财务总监',
+                    label: '财务总监',
+                  },
+                  {
+                    value: '财务经理',
+                    label: '财务经理',
+                  },
+                  {
+                    value: '财务专员',
+                    label: '财务专员',
+                  },
+                  {
+                    value: '运营负责人',
+                    label: '运营负责人',
+                  },
+                  {
+                    value: '运营人员',
+                    label: '运营人员',
+                  },
+                  {
+                    value: '人力资源总监',
+                    label: '人力资源总监',
+                  },
+                  {
+                    value: '人事主管',
+                    label: '人事主管',
+                  },
+                  {
+                    value: '人事专员',
+                    label: '人事专员',
+                  },
+                  {
+                    value: '商务VP',
+                    label: '商务VP',
+                  },
+                  {
+                    value: '商务拓展专员',
+                    label: '商务拓展专员',
+                  },
+                  {
+                    value: 'CEO助理',
+                    label: 'CEO助理',
+                  },
+                  {
+                    value: '开发负责人',
+                    label: '开发负责人',
+                  },
+                  {
+                    value: '开发人员',
+                    label: '开发人员',
+                  },
+                  {
+                    value: '产品经理',
+                    label: '产品经理',
+                  },
+                  {
+                    value: '基地负责人',
+                    label: '基地负责人',
+                  },
+                  {
+                    value: '业务负责人',
+                    label: '业务负责人',
+                  },
+                  {
+                    value: '项目经理',
+                    label: '项目经理',
+                  },
+                  {
+                    value: '项目主管',
+                    label: '项目主管',
+                  },
+                  {
+                    value: '组长',
+                    label: '组长',
+                  },
+                  {
+                    value: '培训师',
+                    label: '培训师',
+                  },
+                  {
+                    value: '骨干',
+                    label: '骨干',
+                  },
+                  {
+                    value: '普通员工',
+                    label: '普通员工',
+                  }
+                ]}
+            />    
           </Form.Item>
           <Form.Item
             label='直属上级'
