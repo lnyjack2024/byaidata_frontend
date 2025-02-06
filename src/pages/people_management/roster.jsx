@@ -2,13 +2,13 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-01-24 09:21:49
+ * @LastEditTime: 2025-02-06 11:36:45
  */
 
 import React, { useEffect, useState } from 'react'
 // import { SearchOutlined, RedoOutlined, UploadOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
-import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber } from 'antd'
+import { SearchOutlined, RedoOutlined, PlusOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber, Cascader } from 'antd'
 import dayjs from 'dayjs';
 // import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
@@ -19,7 +19,7 @@ import { reqGetRosterDatas,
         //  reqGetServiceLineDatas, 
          reqDeleteRosterDatas,
          reqGetBaseDatas } from '../../api/index'
-// import storageUtils from '../../utils/storageUtils'
+import storageUtils from '../../utils/storageUtils'
 const { TextArea } = Input;
 const itemLayout = { labelCol:{span:6},wrapperCol:{span:18} }
 const { Option } = Select;
@@ -172,7 +172,13 @@ const Roster = () => {
 
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
-      console.log(val)
+      const _base = val.base_name
+      if(_base?.length > 1){
+        val.workplace = _base[1]
+      }else if(_base){
+        val.base = _base?.[0]
+      }
+      delete(val.base_name)
       const reqData = await reqGetRosterDatas(val)
       setData(reqData.data)
       setTableLoading(false)
@@ -191,6 +197,35 @@ const Roster = () => {
     }else{
       message.error('删除失败...')
     }
+  }
+  
+  const handDownexcel = async () => {
+    form.validateFields().then( async (val)=>{
+      const _base = val.base_name
+      if(_base?.length > 1){
+        val.workplace = _base[1]
+      }else if(_base){
+        val.base = _base?.[0]
+      }
+      delete(val.base_name)
+      const params = new URLSearchParams(val);
+      const response = await fetch(`http://localhost:3004/person/roster/down?${params}`,{
+        method: "GET", 
+        headers: {
+          authorization : 'authorization-text',
+          'token' : storageUtils.getToken(),
+          "Content-Type" : "application/json", // 根据需要添加
+        }
+      })
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "人员花名册.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    })
   }
   
   // const recruitmentTypeHandle = (e) => {
@@ -261,12 +296,12 @@ const Roster = () => {
       fixed: 'left'
     },
     {
-      title: '部门',
-      dataIndex: 'department',
-    },
-    {
       title: '职场',
       dataIndex: 'workplace',
+    },
+    {
+      title: '部门',
+      dataIndex: 'department',
     },
     {
       title: '职务信息',
@@ -418,7 +453,7 @@ const Roster = () => {
       }
     },
     {
-      title: '银行卡卡',
+      title: '银行卡号',
       dataIndex: 'bank_card',
       render:(emergency_contact)=>{
         return (
@@ -552,7 +587,34 @@ const Roster = () => {
       }
     }
   ];
- 
+
+  const options = [
+    {
+      value: "上海",
+      label: "上海",
+      // children: [
+      //   {
+      //     value: "徐汇区宜山路创新大楼19楼",
+      //     label: "徐汇区宜山路创新大楼19楼",
+      //   },
+      // ],
+    },
+    {
+      value: "郑州",
+      label: "郑州",
+      children: [
+        {
+          value: "龙子湖创智天地",
+          label: "龙子湖创智天地",
+        },
+        {
+          value: "国弘世纪大厦",
+          label: "国弘世纪大厦",
+        },
+      ],
+    },
+  ];
+
   return (
     <div className='style'>
       <div className='flex-box'>
@@ -567,26 +629,23 @@ const Roster = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="base" label="基地" {...itemLayout}>
-                <Select
+              <Form.Item name="base_name" label="基地" {...itemLayout}>
+                {/* <Select
                     placeholder='请输入基地'
                     style={{textAlign:'left',width:'250px'}}
                     allowClear={true}
                   >
-                  {/* {
-                    baseData?.map((option)=>(
-                      <Option key={option.id} value={option.name}>
-                        {option.name}
-                      </Option>
-                    ))
-                   } */}
                   {baseData?.filter((option) => option.name !== "全部")?.map((option) => (
                       <Option key={option.id} value={option.name}>
                         {option.name}
                       </Option>
                     ))
                   }
-                </Select>
+                </Select> */}
+                <Cascader
+                  options={options} 
+                  placeholder="请输入基地" 
+                />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -772,7 +831,7 @@ const Roster = () => {
             <Col span={8} >
               <Form.Item  >
                 <Button onClick={() => handClink('add')} icon={<PlusOutlined />} style={{backgroundColor: "#000000",color:'white'}}> 新增 </Button>&nbsp;&nbsp;
-                {/* <Button onClick={ handReset } type='primary'  icon={<VerticalAlignBottomOutlined />} style={{backgroundColor: "#555555",color:'white'}}> 下载 </Button>&nbsp;&nbsp; */}
+                <Button onClick={ handDownexcel } type='primary'  icon={<VerticalAlignBottomOutlined />} style={{backgroundColor: "#555555",color:'white'}}> 下载 </Button>&nbsp;&nbsp;
                 <Button onClick={ handReset } type='primary'  icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;&nbsp;
                 <Button onClick={ handSearch } type='primary'  icon={<SearchOutlined />}> 查询 </Button>
               </Form.Item>
@@ -893,6 +952,10 @@ const Roster = () => {
                 {
                   value: 'BY人月',
                   label: 'BY人月',
+                },
+                {
+                  value: 'BY人天',
+                  label: 'BY人天',
                 },
                 {
                   value: 'BY条',
@@ -1097,6 +1160,14 @@ const Roster = () => {
                 {
                   value: '实习合同',
                   label: '实习合同',
+                },
+                {
+                  value: '兼职',
+                  label: '兼职',
+                },
+                {
+                  value: '其他',
+                  label: '其他',
                 }
               ]}
             />      
