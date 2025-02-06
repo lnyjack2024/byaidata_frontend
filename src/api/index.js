@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2025-01-16 17:20:49
+ * @LastEditTime: 2025-02-05 16:06:09
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -39,6 +39,9 @@ export const reqAddRosterDatas = (data) => reqApi( BASE + '/person/roster/add', 
 
 //人员管理-人员花名册-编辑
 export const reqEditRosterDatas = (data) => reqApi( BASE + '/person/roster/edit', data, 'POST')
+
+//人员管理-人员花名册-下载
+export const reqDownRosterDatas = (data) => reqApi( BASE + '/person/roster/down', data, 'GET')
 
 //人员管理-人员花名册-删除
 export const reqDeleteRosterDatas = (data) => reqApi( BASE + '/person/roster/delete', data, 'POST')
