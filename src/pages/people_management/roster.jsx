@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-02-06 13:41:01
+ * @LastEditTime: 2025-02-06 15:51:14
  */
 
 import React, { useEffect, useState } from 'react'
@@ -592,12 +592,10 @@ const Roster = () => {
     {
       value: "上海",
       label: "上海",
-      // children: [
-      //   {
-      //     value: "徐汇区宜山路创新大楼19楼",
-      //     label: "徐汇区宜山路创新大楼19楼",
-      //   },
-      // ],
+    },
+    {
+      value: "北京",
+      label: "北京",
     },
     {
       value: "郑州",
@@ -613,6 +611,64 @@ const Roster = () => {
         },
       ],
     },
+    {
+      value: "商丘",
+      label: "商丘",
+    },
+    {
+      value: "濮阳",
+      label: "濮阳",
+      children: [
+        {
+          value: "恒丰中央广场B座2201室",
+          label: "恒丰中央广场B座2201室",
+        },
+        {
+          value: "崛起时代A座1006室",
+          label: "崛起时代A座1006室",
+        },
+      ],
+    },
+    {
+      value: "新乡",
+      label: "新乡",
+    },
+    {
+      value: "长沙",
+      label: "长沙",
+      children: [
+        {
+          value: "青商数字共创",
+          label: "青商数字共创",
+        },
+        {
+          value: "中建智慧谷",
+          label: "中建智慧谷",
+        },
+        {
+          value: "第一大道",
+          label: "第一大道",
+        },
+      ],
+    },
+    {
+      value: "成都",
+      label: "成都",
+      children: [
+        {
+          value: "西部智谷A区2组团",
+          label: "西部智谷A区2组团",
+        },
+        {
+          value: "西部智谷A区1组团",
+          label: "西部智谷A区1组团",
+        },
+      ],
+    },
+    {
+      value: "邯郸",
+      label: "邯郸",
+    }
   ];
 
   return (
