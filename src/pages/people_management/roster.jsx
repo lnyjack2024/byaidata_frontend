@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-02-06 11:36:45
+ * @LastEditTime: 2025-02-06 13:41:01
  */
 
 import React, { useEffect, useState } from 'react'
@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, Popconfirm, InputNumber, Cascader } from 'antd'
 import dayjs from 'dayjs';
-// import { BASE } from '../../utils/networkUrl'
+import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
 import { reqGetRosterDatas, 
          reqAddRosterDatas, 
@@ -209,7 +209,7 @@ const Roster = () => {
       }
       delete(val.base_name)
       const params = new URLSearchParams(val);
-      const response = await fetch(`http://localhost:3004/person/roster/down?${params}`,{
+      const response = await fetch(`${BASE}/person/roster/down?${params}`,{
         method: "GET", 
         headers: {
           authorization : 'authorization-text',
