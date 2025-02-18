@@ -2,16 +2,18 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2024-12-19 13:12:37
+ * @LastEditTime: 2025-02-18 14:13:22
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker, InputNumber, Slider } from 'antd'
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, Popconfirm, DatePicker, InputNumber, Slider, Timeline, Progress } from 'antd'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import { reqGetPortraitDatas, 
          reqAddPortraitDatas, 
-         reqEditPortraitDatas,reqGetServiceLineDatas,reqDeletePortraitDatas } from '../../api/index'
+         reqEditPortraitDatas,
+         reqGetServiceLineDatas,
+         reqDeletePortraitDatas,reqGetItemsDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:18} }
 const { TextArea } = Input;
 const { Option } = Select;
@@ -19,14 +21,18 @@ const { Option } = Select;
 const Portrait = () => {
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
+  const [ detailModalOpen, setDetailModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
   const [ id, setId ] = useState(0)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ service_lineData, setServiceLineData ] = useState([])
   const [ ageRange, setAgeRange ] = useState([20, 30]); // 默认区间为18-40岁
+  const [ itemData, setItemData ] = useState([])
+  const [ ccc, setCcc ] = useState(true)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
+  
   useEffect(() => {
     getTableData()
     getServiceLineData() //获取业务线数据
@@ -44,10 +50,11 @@ const Portrait = () => {
   }
 
   const handClink = (type,rowData) => {
-    setIsModalOpen(!isModalOpen)
     if(type === 'add'){
+      setIsModalOpen(!isModalOpen)
       setModalType(0)
-    }else{ 
+    }else if(type === 'edit'){ 
+      setIsModalOpen(!isModalOpen)
       setModalType(1)
       const cloneData = JSON.parse(JSON.stringify(rowData))
       cloneData.age = (cloneData.age).split(",").map(Number)
@@ -55,6 +62,8 @@ const Portrait = () => {
       setId(cloneData.id)
       setAgeRange(cloneData.age)
       form_add.setFieldsValue(cloneData)
+    }else if(type === 'detail'){
+      setDetailModalOpen(true)
     }
   }
 
@@ -95,6 +104,10 @@ const Portrait = () => {
     form_add.resetFields()
   }
 
+  const handleDetailCancle = () => {
+    setDetailModalOpen(false)
+  }
+
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
       const reqData = await reqGetPortraitDatas(val)
@@ -119,6 +132,12 @@ const Portrait = () => {
 
   const onChange1 = (value) => {
     setAgeRange(value);
+  }
+
+  const selectHandle = async (e) => {
+    const reqData = await reqGetItemsDatas({service_line:e})
+    setCcc(false)
+    setItemData(reqData.data)
   }
 
   const column = [
@@ -221,7 +240,8 @@ const Portrait = () => {
       render:(rowData)=>{
         return (
           <div>
-            <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>
+            <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={()=> handClink('detail',rowData)}>招聘详情</Button>
             <Popconfirm
               description='是否删除?'
               okText='确认'
@@ -236,6 +256,19 @@ const Portrait = () => {
     }
   ];
  
+  const columns = [
+    { title: "姓名", dataIndex: "name", key: "name" },
+    { title: "性别", dataIndex: "sex", key: "sex" },
+    { title: "基地", dataIndex: "base", key: "base" },
+    { title: "状态", dataIndex: "status", key: "status" },
+  ];
+
+  const datas = [
+    { key: "1", name: "张歆萍", sex: "女", base:'上海', status:"已入职" },
+    { key: "2", name: "林在宇", sex: "男", base:'上海', status:"已入职" },
+    { key: "3", name: "王永红", sex: "男", base:'上海', status:"已入职" },
+  ];
+
   return (
     <div className='style'>
       <div className='flex-box'>
@@ -303,7 +336,7 @@ const Portrait = () => {
           wrapperCol={{span:10}} 
           style={{marginTop:'50px'}}
         >
-            <Form.Item
+          <Form.Item
             label='业务线'
             name="service_line"
             rules={[{required:true,message:'请输入业务线'}]}
@@ -312,23 +345,35 @@ const Portrait = () => {
                 placeholder="请输入业务线"
                 style={{textAlign:'left'}}
                 allowClear={true}
+                onChange={ (e) => selectHandle(e) }
               >
-                {
-                  service_lineData?.map((option)=>(
-                    <Option key={option.id} value={option.name}>
-                      {option.name}
-                    </Option>
-                  ))
-                }
+              {service_lineData?.filter((option) => option.name !== "全部")
+                ?.map((option) => (
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
             </Select>
           </Form.Item>
           <Form.Item
-            label='项目'
+            label='所属项目'
             name="item"
             initialValue=''
-            rules={[{required:true,message:'请输入项目'}]}
+            rules={[{required:true,message:'请输入所属项目'}]}
           >
-            <Input placeholder='请输入项目' />
+            <Select
+                style={{textAlign:'left'}}
+                disabled={ccc}
+              >
+              {
+                itemData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+           </Select>
           </Form.Item>
           <Form.Item
             label='业务负责人'
@@ -339,7 +384,7 @@ const Portrait = () => {
             <Input placeholder='请输入业务负责人' />
           </Form.Item>
           <Form.Item
-            label='性别'
+            label='性别要求'
             name="sex"
             rules={[{required:true,message:'请输入性别'}]}
           >
@@ -500,6 +545,30 @@ const Portrait = () => {
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        open={ detailModalOpen }
+        onCancel={handleDetailCancle}
+        width={'65%'}
+        footer={true}
+        maskClosable={false}
+      >
+        <div style={{marginTop:'50px'}}>
+          <Timeline>
+            <Timeline.Item color="green">项目创建时间 : 2024-02-01</Timeline.Item>
+            <Timeline.Item color="blue">业务负责人 : XXX</Timeline.Item>
+            <Timeline.Item color="blue">人事负责人 : XXX</Timeline.Item>
+            <Timeline.Item color="orange">招聘人数 : 20 人</Timeline.Item>
+            <Timeline.Item color="red">到岗时间 : 2025-02-28</Timeline.Item>
+            <Timeline.Item color="red">招聘状态 : 进行中</Timeline.Item>
+          </Timeline>
+        </div>
+        <div style={{marginLeft:'10px'}}>
+          招聘进度：<Progress percent={80} style={{width:'70%'}} />
+        </div>
+        <div style={{marginTop:'50px'}}>
+          <Table columns={columns} dataSource={datas} pagination={false} style={{ marginTop: 20 }} />
+        </div>
       </Modal>
     </div>
   )
