@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-01-17 16:21:06
+ * @LastEditTime: 2025-02-07 12:38:05
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -57,10 +57,6 @@ const Home = () => {
                   label: '人员花名册-黑名单',
               },
               {
-                  key: '/person/portrait',
-                  label: '人员画像',
-              },
-              {
                   key: '/person/clocking',
                   label: '人员考勤列表',
               }
@@ -85,6 +81,10 @@ const Home = () => {
               {
                   key: '/items/item',
                   label: '项目列表'
+              },
+              {
+                  key: '/person/portrait',
+                  label: '项目人员招聘',
               },
               {
                   key: '/items/account',
@@ -220,10 +220,6 @@ const Home = () => {
                   label: '人员花名册-黑名单',
               },
               {
-                  key: '/person/portrait',
-                  label: '人员画像',
-              },
-              {
                   key: '/person/clocking',
                   label: '人员考勤列表',
               },
@@ -248,6 +244,10 @@ const Home = () => {
               {
                   key: '/items/item',
                   label: '项目列表'
+              },
+              {
+                  key: '/person/portrait',
+                  label: '项目人员招聘',
               },
               {
                   key: '/items/account',
@@ -346,10 +346,6 @@ const Home = () => {
                     label: '人员花名册-黑名单',
                 },
                 {
-                    key: '/person/portrait',
-                    label: '人员画像',
-                },
-                {
                     key: '/person/clocking',
                     label: '人员考勤列表',
                 },
@@ -374,6 +370,10 @@ const Home = () => {
                 {
                     key: '/items/item',
                     label: '项目列表'
+                },
+                {
+                    key: '/person/portrait',
+                    label: '项目人员招聘',
                 },
                 {
                     key: '/items/account',
@@ -472,10 +472,6 @@ const Home = () => {
                     label: '人员花名册-黑名单',
                 },
                 {
-                    key: '/person/portrait',
-                    label: '人员画像',
-                },
-                {
                     key: '/person/clocking',
                     label: '人员考勤列表',
                 },
@@ -556,10 +552,6 @@ const Home = () => {
                     label: '人员花名册-黑名单',
                 },
                 {
-                    key: '/person/portrait',
-                    label: '人员画像',
-                },
-                {
                     key: '/person/clocking',
                     label: '人员考勤列表',
                 },
@@ -584,6 +576,10 @@ const Home = () => {
                 {
                     key: '/items/item',
                     label: '项目列表'
+                },
+                {
+                    key: '/person/portrait',
+                    label: '项目人员招聘',
                 },
                 {
                     key: '/items/account',
@@ -688,17 +684,6 @@ const Home = () => {
             label: '首页',
         },
         {
-            key: '/person',
-            label: '人员管理',
-            icon: <UsergroupAddOutlined />,
-            children: [
-                {
-                    key: '/person/portrait',
-                    label: '人员画像',
-                },
-            ]
-        },
-        {
             key: '/train',
             label: '培训管理',
             icon: <InsertRowLeftOutlined />,
@@ -717,6 +702,10 @@ const Home = () => {
                 {
                     key: '/items/item',
                     label: '项目列表'
+                },
+                {
+                    key: '/person/portrait',
+                    label: '项目人员招聘',
                 },
                 {
                     key: '/items/account',
@@ -801,6 +790,10 @@ const Home = () => {
                 {
                     key: '/items/item',
                     label: '项目列表'
+                },
+                {
+                    key: '/person/portrait',
+                    label: '项目人员招聘',
                 },
                 {
                     key: '/items/account',

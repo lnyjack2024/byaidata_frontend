@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-02-06 15:51:14
+ * @LastEditTime: 2025-02-18 10:48:08
  */
 
 import React, { useEffect, useState } from 'react'
@@ -700,6 +700,7 @@ const Roster = () => {
                 </Select> */}
                 <Cascader
                   options={options} 
+                  changeOnSelect
                   placeholder="请输入基地" 
                 />
               </Form.Item>
@@ -853,6 +854,10 @@ const Roster = () => {
                   style={{textAlign:'left',width:'250px'}}
                   allowClear={true}
                   options={[
+                    {
+                      value: '全部',
+                      label: '全部',
+                    },
                     {
                       value: '是',
                       label: '是',
@@ -1227,6 +1232,56 @@ const Roster = () => {
                 }
               ]}
             />      
+          </Form.Item>
+          <Form.Item
+            label='社保缴纳主体'
+            name="social_insurance_name"
+          >
+            <Select
+              placeholder='请输入社保缴纳主体'
+              disabled={_disable}
+              allowClear={true}
+              options={[
+                {
+                  value: '上海本原智数科技有限公司',
+                  label: '上海本原智数科技有限公司',
+                },
+                {
+                  value: '上海小咖邦智能科技有限公司',
+                  label: '上海小咖邦智能科技有限公司',
+                },
+                {
+                  value: '上海前不见古人科技有限公司',
+                  label: '上海前不见古人科技有限公司',
+                },
+                {
+                  value: '成都小咖邦智能科技有限公司',
+                  label: '成都小咖邦智能科技有限公司',
+                },
+                {
+                  value: '泉行智数(郑州)科技有限公司',
+                  label: '泉行智数(郑州)科技有限公司',
+                },
+                {
+                  value: '商丘前不见古人信息科技有限公司',
+                  label: '商丘前不见古人信息科技有限公司',
+                },
+                {
+                  value: '其他',
+                  label: '其他',
+                }
+              ]}
+            />      
+          </Form.Item>
+          <Form.Item
+            label='社保缴纳日期'
+            name="social_insurance_date"
+          >
+            <DatePicker 
+              placeholder={['请选择社保缴纳日期']} 
+              style={{width:'200px'}} 
+              disabled={_disable}
+            />
           </Form.Item>
           <Form.Item
             label='是否签约发薪平台'
