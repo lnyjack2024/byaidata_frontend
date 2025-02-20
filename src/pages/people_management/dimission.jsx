@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:50:24
- * @LastEditTime: 2025-01-22 11:30:23
+ * @LastEditTime: 2025-02-20 13:38:35
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons';
@@ -166,6 +166,19 @@ const Dimission = () => {
     {
       title: '合同类型',
       dataIndex: 'contract_type',
+    },
+    {
+      title: '社保缴纳主体',
+      dataIndex: 'social_insurance_name',
+    },
+    {
+      title: '社保缴纳日期',
+      dataIndex: 'social_insurance_date',
+      render:(social_insurance_date)=>{
+        return (
+          social_insurance_date ? dayjs(social_insurance_date).format('YYYY-MM-DD') : ''
+        )
+      }
     },
     {
       title: '职级',
