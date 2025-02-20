@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:47:08
- * @LastEditTime: 2025-02-18 14:13:22
+ * @LastEditTime: 2025-02-20 14:53:19
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -13,22 +13,31 @@ import { reqGetPortraitDatas,
          reqAddPortraitDatas, 
          reqEditPortraitDatas,
          reqGetServiceLineDatas,
-         reqDeletePortraitDatas,reqGetItemsDatas } from '../../api/index'
+         reqDeletePortraitDatas,
+         reqGetItemsDatas,
+         reqGetRosterDetail,
+         reqGetItemDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:5},wrapperCol:{span:18} }
 const { TextArea } = Input;
 const { Option } = Select;
 
 const Portrait = () => {
   const [ modalType, setModalType ] = useState(0)
+  const [ percentage, setPercentage ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ detailModalOpen, setDetailModalOpen ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ datas, setDatas ] = useState([])
   const [ id, setId ] = useState(0)
+  const [ personStatus, setPersonStatus ] = useState(0)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ service_lineData, setServiceLineData ] = useState([])
   const [ ageRange, setAgeRange ] = useState([20, 30]); // 默认区间为18-40岁
   const [ itemData, setItemData ] = useState([])
   const [ ccc, setCcc ] = useState(true)
+  const [ bbb, setBbb ] = useState(false)
+  const [ rowData, setRowData ] = useState([])
+  const [ itemCreateTime, setItemCreateTime ] = useState(null)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ messageApi, contextHolder ] = message.useMessage();
@@ -49,12 +58,14 @@ const Portrait = () => {
       setTableLoading(false)
   }
 
-  const handClink = (type,rowData) => {
+  const handClink = async (type,rowData) => {
     if(type === 'add'){
+      setBbb(false)
       setIsModalOpen(!isModalOpen)
       setModalType(0)
     }else if(type === 'edit'){ 
       setIsModalOpen(!isModalOpen)
+      setBbb(true)
       setModalType(1)
       const cloneData = JSON.parse(JSON.stringify(rowData))
       cloneData.age = (cloneData.age).split(",").map(Number)
@@ -63,6 +74,27 @@ const Portrait = () => {
       setAgeRange(cloneData.age)
       form_add.setFieldsValue(cloneData)
     }else if(type === 'detail'){
+      //人员画像数据
+      const reqData = await reqGetRosterDetail(
+        { service_line: rowData.service_line,
+          item:rowData.item
+        }
+      )
+      setDatas(reqData.data)
+      //招聘进度
+      const number = rowData.number
+      const current_count = (reqData.data).length
+      setPercentage( (current_count / number ) * 100)
+      //招聘状态
+      if(current_count / number === 1){
+        setPersonStatus(1)
+      }else{
+        setPersonStatus(0)
+      }
+      //项目创建时间
+      const reqItemData = await reqGetItemDatas({ name:rowData.item})
+      setItemCreateTime(reqItemData.data[0].create_time)
+      setRowData(rowData)
       setDetailModalOpen(true)
     }
   }
@@ -75,6 +107,7 @@ const Portrait = () => {
       if(result.status === 1){
         getTableData()
         setIsModalOpen(false)
+        setCcc(true)
         form_add.resetFields()
         message.info('新增成功...')
       }else{
@@ -86,6 +119,7 @@ const Portrait = () => {
       if(result.status === 1){
         getTableData()
         setIsModalOpen(false)
+        setCcc(true)
         form_add.resetFields()
         message.info('编辑成功...')
       }else{
@@ -101,6 +135,7 @@ const Portrait = () => {
 
   const handleCancle = () => {
     setIsModalOpen(false)
+    setCcc(true)
     form_add.resetFields()
   }
 
@@ -152,6 +187,10 @@ const Portrait = () => {
       fixed: 'left'
     },
     {
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
       title: '性别',
       dataIndex: 'sex',
     },
@@ -201,14 +240,6 @@ const Portrait = () => {
       dataIndex: 'characters',
     },
     {
-      title: '业务负责人',
-      dataIndex: 'business_leader',
-    },
-    {
-      title: '操作人',
-      dataIndex: 'user',
-    },
-    {
       title: '指派人事负责人',
       dataIndex: 'personnel',
     },
@@ -217,13 +248,17 @@ const Portrait = () => {
       dataIndex: 'number',
     },
     {
-      title: '到岗时间',
+      title: '到岗截止时间',
       dataIndex: 'inter_time',
       render:(inter_time)=>{
         return (
           dayjs(inter_time).format('YYYY-MM-DD')
         )
       }
+    },
+    {
+      title: '操作人',
+      dataIndex: 'user',
     },
     {
       title: '创建时间',
@@ -259,14 +294,36 @@ const Portrait = () => {
   const columns = [
     { title: "姓名", dataIndex: "name", key: "name" },
     { title: "性别", dataIndex: "sex", key: "sex" },
+    { title: "年龄", dataIndex: "age", key: "age" },
     { title: "基地", dataIndex: "base", key: "base" },
-    { title: "状态", dataIndex: "status", key: "status" },
+    { title: "入职日期", dataIndex: "entry_date", key: "entry_date" },
   ];
 
-  const datas = [
-    { key: "1", name: "张歆萍", sex: "女", base:'上海', status:"已入职" },
-    { key: "2", name: "林在宇", sex: "男", base:'上海', status:"已入职" },
-    { key: "3", name: "王永红", sex: "男", base:'上海', status:"已入职" },
+  const items = [
+    {
+      color: 'green',
+      children: `项目创建时间 : ${ dayjs(itemCreateTime).format('YYYY-MM-DD')}`,
+    },
+    {
+      color: 'blue',
+      children: `业务负责人 : ${rowData.business_leader}`,
+    },
+    {
+      color: 'blue',
+      children: `人事招聘负责人 : ${rowData.personnel}`,
+    },
+    {
+      color: 'orange',
+      children: `招聘人数 : ${rowData.number} 人`,
+    },
+    {
+      color: 'red',
+      children: `到岗截止时间 : ${ dayjs(rowData.inter_time).format('YYYY-MM-DD') }`,
+    },
+    {
+      color: 'red',
+      children: `招聘状态 : ${ personStatus === 1 ? '已完成' : '进行中'} `,
+    },
   ];
 
   return (
@@ -346,6 +403,7 @@ const Portrait = () => {
                 style={{textAlign:'left'}}
                 allowClear={true}
                 onChange={ (e) => selectHandle(e) }
+                disabled={bbb}
               >
               {service_lineData?.filter((option) => option.name !== "全部")
                 ?.map((option) => (
@@ -538,7 +596,7 @@ const Portrait = () => {
             <InputNumber placeholder='请输入招聘人数' min={0}/>
           </Form.Item>
           <Form.Item
-            label='到岗时间'
+            label='到岗截止时间'
             name="inter_time"
             rules={[{required:true,message:'请输入到岗时间'}]}
           >
@@ -549,25 +607,28 @@ const Portrait = () => {
       <Modal
         open={ detailModalOpen }
         onCancel={handleDetailCancle}
-        width={'65%'}
+        width={'75%'}
         footer={true}
         maskClosable={false}
       >
         <div style={{marginTop:'50px'}}>
-          <Timeline>
-            <Timeline.Item color="green">项目创建时间 : 2024-02-01</Timeline.Item>
-            <Timeline.Item color="blue">业务负责人 : XXX</Timeline.Item>
-            <Timeline.Item color="blue">人事负责人 : XXX</Timeline.Item>
-            <Timeline.Item color="orange">招聘人数 : 20 人</Timeline.Item>
-            <Timeline.Item color="red">到岗时间 : 2025-02-28</Timeline.Item>
-            <Timeline.Item color="red">招聘状态 : 进行中</Timeline.Item>
-          </Timeline>
+          <Timeline items={items} />
         </div>
         <div style={{marginLeft:'10px'}}>
-          招聘进度：<Progress percent={80} style={{width:'70%'}} />
+          招聘进度：<Progress 
+                    percent={percentage} 
+                    strokeColor="red" 
+                    style={{width:'70%'}} 
+                  />
         </div>
         <div style={{marginTop:'50px'}}>
-          <Table columns={columns} dataSource={datas} pagination={false} style={{ marginTop: 20 }} />
+          <Table 
+            columns={columns} 
+            dataSource={datas} 
+            rowKey={ datas => datas.id }
+            pagination={false} 
+            style={{ marginTop: 20 }} 
+          />
         </div>
       </Modal>
     </div>

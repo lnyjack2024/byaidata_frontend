@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-02-18 10:48:08
+ * @LastEditTime: 2025-02-20 13:38:43
  */
 
 import React, { useEffect, useState } from 'react'
@@ -16,9 +16,10 @@ import { reqGetRosterDatas,
          reqAddRosterDatas, 
          reqEditRosterDatas, 
          reqGetDepartmentDatas, 
-        //  reqGetServiceLineDatas, 
+         reqGetServiceLineDatas, 
          reqDeleteRosterDatas,
-         reqGetBaseDatas } from '../../api/index'
+         reqGetBaseDatas,
+         reqGetItemsDatas } from '../../api/index'
 import storageUtils from '../../utils/storageUtils'
 const { TextArea } = Input;
 const itemLayout = { labelCol:{span:6},wrapperCol:{span:18} }
@@ -34,7 +35,9 @@ const Roster = () => {
   const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ departmentData, setDepartmentData ] = useState([])
-  // const [ service_lineData, setServiceLineData ] = useState([])
+  const [ service_lineData, setServiceLineData ] = useState([])
+  const [ itemData, setItemData ] = useState([])
+  const [ ccc, setCcc ] = useState(true)
   const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
@@ -43,7 +46,7 @@ const Roster = () => {
   useEffect(() => {
     getTableData() //获取列表数据
     getDepartmentData() //获取部门数据
-    // getServiceLineData() //获取业务线数据
+    getServiceLineData() //获取业务线数据
     getBaseData()
     // getPortraitData()
   },[])
@@ -53,10 +56,10 @@ const Roster = () => {
     setDepartmentData(reqDepartmentData.data)
   }
 
-  // const getServiceLineData = async () => {
-  //   const reqServiceLineData = await reqGetServiceLineDatas()
-  //   setServiceLineData(reqServiceLineData.data)
-  // }
+  const getServiceLineData = async () => {
+    const reqServiceLineData = await reqGetServiceLineDatas()
+    setServiceLineData(reqServiceLineData.data)
+  }
 
   const getBaseData = async () => {
     const reqData = await reqGetBaseDatas()
@@ -109,6 +112,7 @@ const Roster = () => {
           getTableData()
           setIsModalOpen(false)
           // setDStatus(true)
+          setCcc(true)
           form_add.resetFields()
           message.info('新增成功...')
         }else{
@@ -125,6 +129,7 @@ const Roster = () => {
         if(result.status === 1){
           getTableData()
           setIsModalOpen(false)
+          setCcc(true)
           form_add.resetFields()
           message.info('编辑成功...')
         }else{
@@ -166,7 +171,7 @@ const Roster = () => {
 
   const handleCancle = () => {
     setIsModalOpen(false)
-    // setDStatus(true)
+    setCcc(true)
     form_add.resetFields()
   }
 
@@ -228,6 +233,12 @@ const Roster = () => {
     })
   }
   
+  const selectHandle = async (e) => {
+    const reqData = await reqGetItemsDatas({service_line:e})
+    setCcc(false)
+    setItemData(reqData.data)
+  }
+
   // const recruitmentTypeHandle = (e) => {
   //   if(e === '1'){
   //     setDStatus(false)
@@ -344,6 +355,19 @@ const Roster = () => {
     {
       title: '合同类型',
       dataIndex: 'contract_type',
+    },
+    {
+      title: '社保缴纳主体',
+      dataIndex: 'social_insurance_name',
+    },
+    {
+      title: '社保缴纳日期',
+      dataIndex: 'social_insurance_date',
+      render:(social_insurance_date)=>{
+        return (
+          social_insurance_date ? dayjs(social_insurance_date).format('YYYY-MM-DD') : ''
+        )
+      }
     },
     {
       title: '职级',
@@ -995,13 +1019,39 @@ const Roster = () => {
             label='业务线'
             name="service_line"
           >
-            <Input placeholder='请输入业务线'/>
+            <Select
+                placeholder="请输入业务线"
+                style={{textAlign:'left'}}
+                allowClear={true}
+                onChange={ (e) => selectHandle(e) }
+              >
+              {service_lineData?.filter((option) => option.name !== "全部")
+                ?.map((option) => (
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
-            label='项目'
+            label='所属项目'
             name="item"
+            initialValue=''
           >
-            <Input placeholder='请输入项目'/>
+            <Select
+                style={{textAlign:'left'}}
+                disabled={ccc}
+                allowClear={true}
+              >
+              {
+                itemData?.map((option)=>(
+                  <Option key={option.id} value={option.name}>
+                    {option.name}
+                  </Option>
+                ))
+              }
+           </Select>
           </Form.Item>
           <Form.Item
             label='项目类型'
