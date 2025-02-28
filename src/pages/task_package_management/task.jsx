@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-01-15 14:47:18
+ * @LastEditTime: 2025-02-27 11:03:33
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -410,9 +410,9 @@ const Task = () => {
           return (
             <div>
               <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
-              <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
               <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
-              <Button onClick={()=> handClink('detail',rowData)}>详情</Button>
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>详情</Button> }
               <Popconfirm
                 description='是否暂停?'
                 okText='确认'
@@ -566,8 +566,21 @@ const Task = () => {
         >
           <Row>
             <Col span={6}>
-            <Form.Item name="name" label="任务包名称" {...itemLayout}>
-                <Input placeholder='请输入任务包名称'/>
+              <Form.Item name="service_line" label="业务线" {...itemLayout}>
+                <Select
+                  placeholder="请输入业务线"
+                  style={{textAlign:'left'}}
+                  allowClear={true}
+                  disabled={aaa}
+                >
+                  {
+                    service_lineData?.map((option)=>(
+                      <Option key={option.id} value={option.name}>
+                        {option.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -592,21 +605,8 @@ const Task = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="service_line" label="业务线" {...itemLayout}>
-                <Select
-                  placeholder="请输入业务线"
-                  style={{textAlign:'left'}}
-                  allowClear={true}
-                  disabled={aaa}
-                >
-                  {
-                    service_lineData?.map((option)=>(
-                      <Option key={option.id} value={option.name}>
-                        {option.name}
-                      </Option>
-                    ))
-                  }
-                </Select>
+              <Form.Item name="name" label="任务包名称" {...itemLayout}>
+                <Input placeholder='请输入任务包名称'/>
               </Form.Item>
             </Col>
             <Col span={6}>

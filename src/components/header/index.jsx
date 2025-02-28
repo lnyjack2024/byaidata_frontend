@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-08-30 11:37:17
- * @LastEditTime: 2025-01-06 13:19:47
+ * @LastEditTime: 2025-02-26 17:09:28
  */
 import React from 'react'
 import { useNavigate,Navigate} from 'react-router-dom'
@@ -17,6 +17,7 @@ export default function Header() {
   const logout = () => {
     storageUtils.removeUser('user_key')
     storageUtils.removeRole('role')
+    storageUtils.removeRoleName('roleName')
     // memoryUtils.user = {}
     navigate('/login')
     window.location.reload(); // 强制刷新
