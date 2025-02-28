@@ -2,11 +2,12 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2025-01-21 14:27:14
+ * @LastEditTime: 2025-02-27 10:51:51
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Popconfirm } from 'antd'
+import storageUtils from '../../utils/storageUtils'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import { reqGetItemDatas, 
@@ -43,7 +44,7 @@ const Item = () => {
   const [ group_manager_arr, setGroupManagerArr ] = useState([])
   const [ trainer_arr, settTainerArr ] = useState([])
   const [ messageApi, contextHolder ] = message.useMessage();
-
+  
   useEffect(() => {
     // getTableData()
     _getBaseData()
@@ -365,7 +366,7 @@ const Item = () => {
             <div>
               {/* <Button onClick={()=> handClink('detail',rowData)}>详情</Button>&nbsp;&nbsp; */}
               <Button onClick={()=> handClink('add',rowData)}>新增子项目</Button>&nbsp;&nbsp;
-              <Button onClick={()=> handClink('edit',rowData)}>编辑</Button>&nbsp;&nbsp;
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
               {/* <Button onClick={()=> handClink('edit',rowData)}>生产报告</Button> */}
               <Popconfirm
                 description='是否删除?'
@@ -411,11 +412,6 @@ const Item = () => {
         >
           <Row>
             <Col span={6}>
-              <Form.Item name="name" label="项目名称" {...itemLayout}>
-                <Input placeholder='请输入项目名称'/>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
               <Form.Item name="service_line" label="业务线" {...itemLayout}>
                 <Select
                   placeholder="请输入业务线"
@@ -452,6 +448,11 @@ const Item = () => {
                   ))
                 }
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="name" label="项目名称" {...itemLayout}>
+                <Input placeholder='请输入项目名称'/>
               </Form.Item>
             </Col>
             <Col span={6}>

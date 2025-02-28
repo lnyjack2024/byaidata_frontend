@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2025-01-16 17:15:20
+ * @LastEditTime: 2025-02-26 17:02:56
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -24,11 +24,13 @@ export default function Login() {
         const response = await reqLogin(values)
         const username = response?.data?.[0].name
         const role_id = response?.data?.[0].role_id
+        const role = response?.data?.[0].role
         if(response.status === 1){
             message.success('登录成功...')
             memoryUtils.user = username
             storageUtils.saveUser(username)
             storageUtils.saveRole(role_id)
+            storageUtils.saveRoleName(role)
             storageUtils.saveToken(response.token)
             navigate('/page')   
         }else{
