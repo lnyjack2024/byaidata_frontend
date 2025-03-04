@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2025-02-20 14:10:02
+ * @LastEditTime: 2025-03-03 15:32:44
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -243,4 +243,7 @@ export const reqAddTrainersDatas = (data) => reqApi( BASE + '/config/trainers/ad
 
 //配置管理-培训师列表-删除
 export const reqDeleteTrainersDatas = (data) => reqApi( BASE + '/config/trainers/delete', data, 'POST')
+
+//修改密码
+export const reqEditPasswordDatas = (data) => reqApi( BASE + '/user/set_password', data, 'POST')
 
