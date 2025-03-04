@@ -2,7 +2,7 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-02-27 11:03:33
+ * @LastEditTime: 2025-03-04 12:10:36
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -23,7 +23,8 @@ import { reqGetTaskDatas,
          reqGetDeliveryRequirementDatas,
          reqGetItemsDatas,
          reqGetBaseDatas,
-         reqGetServiceLineDatas
+         reqGetServiceLineDatas,
+         reqGetServiceLineDatas_,
        } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -52,10 +53,10 @@ const Task = () => {
   const [ itemData, setItemData ] = useState([])
   const [ baseData, setBaseData ] = useState([])
   const [ service_lineData, setServiceLineDataData ] = useState([])
+  const [ _service_lineData, _setServiceLineDataData ] = useState([])
   const [ aaa, setAaa ] = useState(false)
   const [ bbb, setBbb ] = useState(false)
   const [ ccc, setCcc ] = useState(true)
-  // const [ num, setNum ] = useState(0)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_effect ] = Form.useForm();
@@ -67,7 +68,7 @@ const Task = () => {
     // getTableData()
     getSettlementTypeData()
     getDeliveryRequirementData()
-    // getItemsData()
+    _getServiceLineData()
     const getOptions = async () => {
       const baseData = await getBaseData(); 
       const serviceLineData = await getServiceLineData();
@@ -101,6 +102,11 @@ const Task = () => {
     });
   }
 
+  const _getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas_()
+    _setServiceLineDataData(reqData.data)
+  }
+
   // const getTableData = async () => {
   //   const reqData = await reqGetTaskDatas()
   //   setData(reqData.data)
@@ -118,6 +124,7 @@ const Task = () => {
     setData(reqData.data)
     setTableLoading(false)
   }
+
   const getSettlementTypeData = async () => {
     const reqData = await reqGetSettlementTypeDatas()
     setSettlementTypeData(reqData.data)
@@ -304,129 +311,6 @@ const Task = () => {
     form_add.setFieldsValue(cloneData[0])
   }
   
-  const column = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      fixed: 'left'
-    },
-    {
-      title: '任务包名称',
-      dataIndex: 'name',
-      fixed: 'left'
-    },
-    {
-      title: '所属项目',
-      dataIndex: 'item',
-    },
-    {
-      title: '业务线',
-      dataIndex: 'service_line',
-    },
-    {
-      title: '基地',
-      dataIndex: 'base',
-    },
-    {
-      title: '业务负责人',
-      dataIndex: 'business_leader',
-    },
-    {
-      title: '项目经理',
-      dataIndex: 'item_manager',
-    },
-    {
-      title: '组长',
-      dataIndex: 'group_manager',
-    },
-    {
-      title: '标注团队',
-      dataIndex: 'work_team',
-    },
-    {
-      title: '结算类型',
-      dataIndex: 'settlement_type',
-    },
-    {
-      title: '任务包数量级',
-      dataIndex: 'amount',
-    },
-    {
-      title: '任务包周期',
-      dataIndex: 'day',
-    },
-    {
-      title: '任务包状态',
-      dataIndex: 'status',
-    },
-    // {
-    //   title: '任务包进度',
-    //   dataIndex: '',
-    //   render:()=>{
-    //     return (
-    //       <Progress percent={num} />
-    //     )
-    //   }
-    // },
-    {
-      title: '交付要求',
-      dataIndex: 'delivery_requirement',
-    },
-    {
-      title: '是否交付',
-      dataIndex: 'is_delivery',
-    },
-    {
-      title: '作业日期',
-      dataIndex: 'start_date',
-      render:(start_date)=>{
-        return (
-          dayjs(start_date).format('YYYY-MM-DD')
-        )
-      }
-    },
-    {
-      title: '交付日期',
-      dataIndex: 'delivery_date',
-    },
-    {
-      title: '完成日期',
-      dataIndex: 'end_date',
-    },
-    {
-      title: '创建日期',
-      dataIndex: 'create_time',
-      render:(create_time)=>{
-        return (
-          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
-        )
-      }
-    },
-    {
-      title: '操作',
-      key: 'operation',
-      fixed: 'right',
-      render:(rowData)=>{
-          return (
-            <div>
-              <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
-              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
-              <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
-              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>详情</Button> }
-              <Popconfirm
-                description='是否暂停?'
-                okText='确认'
-                cancelText='取消'
-                onConfirm={ () => handDelete(rowData)}
-              >
-                {rowData.status === '已暂停' ? '' : <Button type='primary' danger style={{marginLeft:'15px'}}>暂停</Button>}
-              </Popconfirm>
-            </div>
-          )
-      }
-    }
-  ];
-
   const effect_column = [
     {
       title: '日期',
@@ -552,6 +436,128 @@ const Task = () => {
   };
   
   const attachment = '/excel/task_detail_daily.xlsx'
+
+  const column = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      fixed: 'left'
+    },
+    {
+      title: '任务包名称',
+      dataIndex: 'name',
+      fixed: 'left'
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
+    },
+    {
+      title: '所属项目',
+      dataIndex: 'item',
+    },
+    {
+      title: '基地',
+      dataIndex: 'base',
+    },
+    // {
+    //   title: '任务包进度',
+    //   render:(e)=>{
+    //     return (
+    //       <Progress percent={e.task_progress} />
+    //     )
+    //   }
+    // },
+    {
+      title: '业务负责人',
+      dataIndex: 'business_leader',
+    },
+    {
+      title: '项目经理',
+      dataIndex: 'item_manager',
+    },
+    {
+      title: '组长',
+      dataIndex: 'group_manager',
+    },
+    {
+      title: '标注团队',
+      dataIndex: 'work_team',
+    },
+    {
+      title: '结算类型',
+      dataIndex: 'settlement_type',
+    },
+    {
+      title: '任务包数量级',
+      dataIndex: 'amount',
+    },
+    {
+      title: '任务包周期',
+      dataIndex: 'day',
+    },
+    {
+      title: '任务包状态',
+      dataIndex: 'status',
+    },
+    {
+      title: '交付要求',
+      dataIndex: 'delivery_requirement',
+    },
+    {
+      title: '是否交付',
+      dataIndex: 'is_delivery',
+    },
+    {
+      title: '作业日期',
+      dataIndex: 'start_date',
+      render:(start_date)=>{
+        return (
+          dayjs(start_date).format('YYYY-MM-DD')
+        )
+      }
+    },
+    {
+      title: '交付日期',
+      dataIndex: 'delivery_date',
+    },
+    {
+      title: '完成日期',
+      dataIndex: 'end_date',
+    },
+    {
+      title: '创建日期',
+      dataIndex: 'create_time',
+      render:(create_time)=>{
+        return (
+          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
+        )
+      }
+    },
+    {
+      title: '操作',
+      key: 'operation',
+      fixed: 'right',
+      render:(rowData)=>{
+          return (
+            <div>
+              <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
+              <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>详情</Button> }
+              <Popconfirm
+                description='是否暂停?'
+                okText='确认'
+                cancelText='取消'
+                onConfirm={ () => handDelete(rowData)}
+              >
+                {rowData.status === '已暂停' ? '' : <Button type='primary' danger style={{marginLeft:'15px'}}>暂停</Button>}
+              </Popconfirm>
+            </div>
+          )
+      }
+    }
+  ];
 
   return (
     <div className='style'>
@@ -717,12 +723,12 @@ const Task = () => {
               disabled={_disable}
               onChange={ (e) => selectHandle(e) }
             >
-              {
-                service_lineData?.map((option)=>(
-                  <Option key={option.id} value={option.name}>
-                    {option.name}
-                  </Option>
-                ))
+             {_service_lineData?.filter((option) => option.name !== "全部")
+                  ?.map((option) => (
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
               }
             </Select>
           </Form.Item>
