@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2025-02-27 10:51:51
+ * @LastEditTime: 2025-03-04 11:43:31
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -14,9 +14,14 @@ import { reqGetItemDatas,
          reqAddItemDatas, 
          reqEditItemDatas, 
          reqDeleteItemDatas, 
-         reqGetBaseDatas, reqGetBaseDatas_,
+         reqGetBaseDatas, 
+         reqGetBaseDatas_,
          reqGetServiceLineDatas,
-         reqGetSettlementTypeDatas,reqItemManagerDatas,reqGroupManagerDatas,reqGetTrainersDatas,
+         reqGetServiceLineDatas_,
+         reqGetSettlementTypeDatas,
+         reqItemManagerDatas,
+         reqGroupManagerDatas,
+         reqGetTrainersDatas,
          reqGetOvertimeTypeDatas } from '../../api/index'
 const { TextArea } = Input;
 // const { RangePicker } = DatePicker;
@@ -36,6 +41,7 @@ const Item = () => {
   const [ baseData, setBaseData ] = useState([])
   const [ _baseData, _setBaseData ] = useState([])
   const [ service_lineData, setServiceLineDataData ] = useState([])
+  const [ _service_lineData, _setServiceLineDataData ] = useState([])
   const [ settlement_type, setSettlementTypeData ] = useState([])
   const [ overtime_type, setOvertimeTypeData ] = useState([])
   const [ aaa, setAaa ] = useState(false)
@@ -48,7 +54,7 @@ const Item = () => {
   useEffect(() => {
     // getTableData()
     _getBaseData()
-    // getServiceLineData()
+    _getServiceLineData()
     getSettlementTypeData()
     getOvertimeTypeData()
     getItemManagerData()
@@ -117,6 +123,11 @@ const Item = () => {
     return new Promise((resolve) => {
       setTimeout(() => resolve(reqData.data), 100);
     });
+  }
+
+  const _getServiceLineData = async () => {
+    const reqData = await reqGetServiceLineDatas_()
+    _setServiceLineDataData(reqData.data)
   }
 
   const getSettlementTypeData = async () => {
@@ -576,7 +587,7 @@ const Item = () => {
               disabled={_disable}
               allowClear={true}
             >
-              {service_lineData?.filter((option) => option.name !== "全部")
+              {_service_lineData?.filter((option) => option.name !== "全部")
                   ?.map((option) => (
                     <Option key={option.id} value={option.name}>
                       {option.name}
