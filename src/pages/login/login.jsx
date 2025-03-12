@@ -2,7 +2,7 @@
  * @Description: login页
  * @Author: wangyonghong
  * @Date: 2024-08-29 16:44:35
- * @LastEditTime: 2025-02-26 17:02:56
+ * @LastEditTime: 2025-03-11 15:34:31
  */
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,8 @@ export default function Login() {
             storageUtils.saveRole(role_id)
             storageUtils.saveRoleName(role)
             storageUtils.saveToken(response.token)
+            //4小时
+            localStorage.setItem('tokenExpiry', Date.now() + 4 * 60 * 60 * 1000);
             navigate('/page')   
         }else{
           message.error(response.msg)
