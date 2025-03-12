@@ -2,11 +2,11 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-03-04 12:10:36
+ * @LastEditTime: 2025-03-12 13:39:47
  */
 import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Popconfirm, Divider, Upload } from 'antd'
+import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Popconfirm, Divider, Upload, Tooltip } from 'antd'
 import dayjs from 'dayjs';
 import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
@@ -45,7 +45,6 @@ const Task = () => {
   const [ check_data, setCheckDatas ] = useState([])
   const [ id, setId ] = useState(0)
   const [ task_id, setTaskId ] = useState(0)
-  const [ _disable, setDisable ] = useState(false)
   const [ table_loading, setTableLoading ] = useState(true)
   const [ delay_date_status, setDelayDateStatus ] = useState(true)
   const [ settlement_type, setSettlementTypeData ] = useState([])
@@ -56,7 +55,9 @@ const Task = () => {
   const [ _service_lineData, _setServiceLineDataData ] = useState([])
   const [ aaa, setAaa ] = useState(false)
   const [ bbb, setBbb ] = useState(false)
-  const [ ccc, setCcc ] = useState(true)
+  const [ task_day_status, setTaskDayStatus ] = useState(true)
+  const [ task_hour_status, setTaskHourStatus ] = useState(true)
+  const [ task_month_status, setTaskMonthStatus ] = useState(true)
   const [ form ] = Form.useForm();
   const [ form_add ] = Form.useForm();
   const [ form_effect ] = Form.useForm();
@@ -169,10 +170,11 @@ const Task = () => {
     if(type === 'add'){
       setIsModalOpen(!isModalOpen)
       setModalType(0)
-      setDisable(false)
       setDelayDateStatus(true)
+      setTaskMonthStatus(true)
+      setTaskDayStatus(true)
+      setTaskHourStatus(true)
       setId(rowData?rowData.id:'')
-      setCcc(true)
     }else if(type === 'effect'){
       setTaskId(rowData.id)
       setIsEffectModalOpen(!isEffectModalOpen)
@@ -181,10 +183,26 @@ const Task = () => {
     }else if(type === 'edit'){ 
       setIsModalOpen(!isModalOpen)
       setModalType(1)
-      setDisable(true)
       setDelayDateStatus(false)
-      setCcc(true)
       const cloneData = JSON.parse(JSON.stringify(rowData))
+      const settlement_type = cloneData.settlement_type
+      if(settlement_type === '包月'){
+        setTaskMonthStatus(false)
+        setTaskDayStatus(true)
+        setTaskHourStatus(true)
+      }else if(settlement_type === '包天'){
+        setTaskMonthStatus(true)
+        setTaskDayStatus(false)
+        setTaskHourStatus(true)
+      }else if(settlement_type === '包时'){
+        setTaskMonthStatus(true)
+        setTaskDayStatus(true)
+        setTaskHourStatus(false)
+      }else{
+        setTaskMonthStatus(true)
+        setTaskDayStatus(true)
+        setTaskHourStatus(true)
+      }
       cloneData.start_date    = dayjs(cloneData.start_date)
       cloneData.delivery_date = cloneData.delivery_date ? dayjs(cloneData.delivery_date) : ''
       cloneData.end_date      = cloneData.end_date ? dayjs(cloneData.end_date) : ''
@@ -215,7 +233,6 @@ const Task = () => {
         if(modalType === 0){
           const result = await reqAddTaskDatas(val)
           if(result.status === 1){
-            setCcc(true)
             setIsModalOpen(false)
             form_add.resetFields()
             getTableData()
@@ -229,7 +246,6 @@ const Task = () => {
           val.delay_date = val.delay_date ? dayjs(val.delay_date).format('YYYY-MM-DD') : ''
           const result = await reqEditTaskDatas(val)
           if(result.status === 1){
-            setCcc(true)
             setIsModalOpen(false)
             form_add.resetFields()
             getTableData()
@@ -244,7 +260,6 @@ const Task = () => {
   }
 
   const handleCancle = () => {
-    setCcc(true)
     setIsModalOpen(false)
     form_add.resetFields()
   }
@@ -300,7 +315,6 @@ const Task = () => {
 
   const selectHandle = async (e) => {
     const reqData = await reqGetItemsDatas({service_line:e})
-    setCcc(false)
     setItemData(reqData.data)
   }
   
@@ -309,6 +323,26 @@ const Task = () => {
     // form_add.setFieldValue(reqData.data[0])
     const cloneData = JSON.parse(JSON.stringify(reqData.data))
     form_add.setFieldsValue(cloneData[0])
+  }
+  
+  const selectSettlementTypeHandle = (e) => {
+    if(e === '包月'){
+      setTaskMonthStatus(false)
+      setTaskDayStatus(true)
+      setTaskHourStatus(true)
+    }else if(e === '包天'){
+      setTaskMonthStatus(true)
+      setTaskDayStatus(false)
+      setTaskHourStatus(true)
+    }else if(e === '包时'){
+      setTaskMonthStatus(true)
+      setTaskDayStatus(true)
+      setTaskHourStatus(false)
+    }else{
+      setTaskMonthStatus(true)
+      setTaskDayStatus(true)
+      setTaskHourStatus(true)
+    }
   }
   
   const effect_column = [
@@ -449,6 +483,10 @@ const Task = () => {
       fixed: 'left'
     },
     {
+      title: '基地',
+      dataIndex: 'base',
+    },
+    {
       title: '业务线',
       dataIndex: 'service_line',
     },
@@ -457,8 +495,8 @@ const Task = () => {
       dataIndex: 'item',
     },
     {
-      title: '基地',
-      dataIndex: 'base',
+      title: '任务包数量级',
+      dataIndex: 'amount',
     },
     // {
     //   title: '任务包进度',
@@ -485,20 +523,12 @@ const Task = () => {
       dataIndex: 'work_team',
     },
     {
-      title: '结算类型',
-      dataIndex: 'settlement_type',
-    },
-    {
-      title: '任务包数量级',
-      dataIndex: 'amount',
-    },
-    {
-      title: '任务包周期',
-      dataIndex: 'day',
-    },
-    {
       title: '任务包状态',
       dataIndex: 'status',
+    },
+    {
+      title: '结算类型',
+      dataIndex: 'settlement_type',
     },
     {
       title: '交付要求',
@@ -520,6 +550,17 @@ const Task = () => {
     {
       title: '交付日期',
       dataIndex: 'delivery_date',
+      render:(delivery_date)=>{
+        if(!delivery_date){
+          return (
+            <>长期</>
+          )
+        }else{
+          return (
+            dayjs(delivery_date).format('YYYY-MM-DD')
+          )
+        }
+      }
     },
     {
       title: '完成日期',
@@ -537,21 +578,21 @@ const Task = () => {
     {
       title: '操作',
       key: 'operation',
-      fixed: 'right',
+      // fixed: 'right',
       render:(rowData)=>{
           return (
             <div>
               <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
               { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
-              <Button onClick={()=> handClink('check',rowData)}>质检信息</Button>&nbsp;&nbsp;
-              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>详情</Button> }
+              <Button onClick={()=> handClink('check',rowData)}>质检</Button>&nbsp;&nbsp;
+              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>生产报告</Button> }
               <Popconfirm
                 description='是否暂停?'
                 okText='确认'
                 cancelText='取消'
                 onConfirm={ () => handDelete(rowData)}
               >
-                {rowData.status === '已暂停' ? '' : <Button type='primary' danger style={{marginLeft:'15px'}}>暂停</Button>}
+                {rowData.status === '已暂停' ? '' : <Button style={{marginLeft:'15px'}}>暂停</Button>}
               </Popconfirm>
             </div>
           )
@@ -710,7 +751,7 @@ const Task = () => {
             name="name"
             rules={[{required:true,message:'请输入任务包名称'}]}
           >
-            <Input placeholder='请输入任务包名称' disabled={_disable}/>
+            <Input placeholder='请输入任务包名称'/>
           </Form.Item>
           <Form.Item
             label='业务线'
@@ -720,7 +761,6 @@ const Task = () => {
             <Select
               placeholder="请输入业务线"
               style={{textAlign:'left'}}
-              disabled={_disable}
               onChange={ (e) => selectHandle(e) }
             >
              {_service_lineData?.filter((option) => option.name !== "全部")
@@ -740,7 +780,6 @@ const Task = () => {
            <Select
                 style={{textAlign:'left'}}
                 onChange={ (e) => selectItemHandle(e) }
-                disabled={ccc}
               >
               {
                 itemData?.map((option)=>(
@@ -756,7 +795,7 @@ const Task = () => {
             name="base"
             rules={[{required:true,message:'请输入基地'}]}
           >
-            <Input disabled={true}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label='业务负责人'
@@ -764,7 +803,7 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入业务负责人'}]}
           >
-            <Input disabled={true}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label='项目经理'
@@ -772,7 +811,7 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入项目经理'}]}
           >
-            <Input disabled={true}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label='组长'
@@ -780,7 +819,7 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入小组长'}]}
           >
-            <Input disabled={true}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label='标注团队'
@@ -788,23 +827,30 @@ const Task = () => {
             initialValue=''
             rules={[{required:true,message:'请输入标注团队'}]}
           >
-            <Input placeholder='请输入标注团队' disabled={_disable}/>
+            <Input placeholder='请输入标注团队'/>
           </Form.Item>
           <Form.Item
-            label='团队作业人员'
+            label={
+              <span>
+                团队作业人员
+                <Tooltip title="请输入所有任务包作业人员姓名 请勿换行 输入形式如：李华、张强">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
             name="workers"
             initialValue=''
             rules={[{required:true,message:'请输入标注员'}]}
           >
-            <TextArea placeholder='请输入标注员 如:李华、小明...' rows={4} />
+            <TextArea placeholder='请输入标注员' rows={6} />
           </Form.Item>
           <Form.Item
-            label='任务包数量级'
+            label='任务包数量级(条、个、件)'
             name="amount"
             initialValue={0}
             rules={[{required:true,message:'请输入任务包数量'}]}
           >
-            <InputNumber placeholder='请输入任务包数量' disabled={_disable} min={0}/>
+            <InputNumber placeholder='请输入任务包数量' min={0}/>
           </Form.Item>
           <Form.Item
             label='交付要求'
@@ -815,7 +861,6 @@ const Task = () => {
               placeholder="请输入交付要求"
               style={{textAlign:'left'}}
               allowClear={true}
-              disabled={_disable}
             >
               {
                 delivery_requirement?.map((option)=>(
@@ -827,6 +872,53 @@ const Task = () => {
             </Select>
           </Form.Item>
           <Form.Item
+            label={
+              <span>
+                商务单价 (元) 
+                <Tooltip title="商务单价是指公司拿到的项目价格">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
+            name="business_price"
+            initialValue={0}
+            rules={[{required:true,message:'请输入商务单价'}]}
+          >
+            <InputNumber min={0} />
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+              <InputNumber 
+                defaultValue={0}
+                min={0} 
+                onChange={(value) => form_add.setFieldsValue({ business_price: value })}
+              />
+              <span style={{ marginLeft: 8, color:'red' }}>公司拿到的项目价格</span>
+            </div> */}
+          </Form.Item>
+          <Form.Item
+            label={
+              <span>
+                下放单价 (元) 
+                <Tooltip title="下放单价是指员工拿到的项目价格">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
+            name="price"
+            initialValue={0}
+            rules={[{required:true,message:'请输入下放单价'}]}
+          >
+            <InputNumber min={0} />
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+              <InputNumber
+                // defaultValue={0}
+                value={form_add.getFieldValue('price')} 
+                min={0} 
+                onChange={(value) => form_add.setFieldsValue({ price: value })}
+               />
+              <span style={{ marginLeft: 8, color:'red' }}>员工拿到的项目价格</span>
+            </div> */}
+          </Form.Item>
+          <Form.Item
             label='结算类型'
             name="settlement_type"
             rules={[{required:true,message:'请输入结算类型'}]}
@@ -835,7 +927,7 @@ const Task = () => {
               placeholder="请输入结算类型"
               style={{textAlign:'left'}}
               allowClear={true}
-              disabled={_disable}
+              onChange={ (e) => selectSettlementTypeHandle(e) }
             >
               {
                 settlement_type?.map((option)=>(
@@ -847,28 +939,28 @@ const Task = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            label='商务单价'
-            name="business_price"
+            label='任务包周期(月)'
+            name="month"
             initialValue={0}
-            rules={[{required:true,message:'请输入商务单价'}]}
+            hidden={task_month_status}
           >
-            <InputNumber placeholder='请输入商务单价' disabled={_disable} min={0}/>
+            <InputNumber placeholder='请输入任务包周期' min={0}/>
           </Form.Item>
           <Form.Item
-            label='下方单价'
-            name="price"
-            initialValue={0}
-            rules={[{required:true,message:'请输入下方单价'}]}
-          >
-            <InputNumber placeholder='请输入下方单价' disabled={_disable} min={0}/>
-          </Form.Item>
-          <Form.Item
-            label='任务包周期'
+            label='任务包周期(天)'
             name="day"
             initialValue={0}
-            rules={[{required:true,message:'请输入任务包周期'}]}
+            hidden={task_day_status}
           >
-            <InputNumber placeholder='请输入任务包周期' disabled={_disable} min={0}/>
+            <InputNumber placeholder='请输入任务包周期' min={0}/>
+          </Form.Item>
+          <Form.Item
+            label='任务包周期(时)'
+            name="hour"
+            initialValue={0}
+            hidden={task_hour_status}
+          >
+            <InputNumber placeholder='请输入任务包周期' min={0}/>
           </Form.Item>
           <Form.Item
             label='出勤要求'
@@ -877,7 +969,6 @@ const Task = () => {
           >
             <Select
                 placeholder='请输入出勤要求'
-                disabled={_disable}
                 options={[
                   {
                     value: '双休',
@@ -906,31 +997,62 @@ const Task = () => {
             <DatePicker
               placeholder={['请选择时间']}
               style={{width:'200px'}}
-              disabled={_disable}
               />
           </Form.Item>
           <Form.Item
-            label='完成日期'
-            name="end_date"
-          >
-            <DatePicker
-              placeholder={['请选择时间']}
-              style={{width:'200px'}} disabled={_disable}
-              />
-          </Form.Item>
-          <Form.Item
-            label='交付日期'
+          label={
+            <span>
+              交付日期
+              <Tooltip title="长期项目不需要填写">
+                <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+              </Tooltip>
+            </span>
+          }
             name="delivery_date"
           >
-            <DatePicker placeholder={['请选择时间']} style={{width:'200px'}} disabled={_disable}/>
-            {/* <span style={{color:'red',marginLeft:'10px'}}>长期项目不填</span> */}
+            <DatePicker 
+                placeholder={['请选择时间']} 
+                style={{width:'200px'}}
+            />
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+              <DatePicker 
+                placeholder={['请选择时间']} 
+                style={{width:'200px'}}
+                onChange={(date) => form_add.setFieldsValue({ delivery_date: date })}
+              />
+              <span style={{ marginLeft: 8, color:'red' }}>长期项目不填</span>
+            </div> */}
+          </Form.Item>
+          <Form.Item
+            label={
+              <span>
+                完成日期
+                <Tooltip title="任务包预计实际完成的日期">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
+            name="end_date"
+          >
+            <DatePicker 
+              placeholder={['请选择时间']} 
+              style={{width:'200px'}}
+            />
+             {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+              <DatePicker 
+                placeholder={['请选择时间']} 
+                style={{width:'200px'}}
+                onChange={(date) => form_add.setFieldsValue({ end_date: date })}
+              />
+              <span style={{ marginLeft: 8, color:'red' }}>项目预计完成日期、长期项目不填</span>
+            </div> */}
           </Form.Item>
           <Form.Item
             label='内部人员薪资结构'
             name="salary_structure"
             initialValue=''
           >
-            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍' disabled={_disable}/>
+            <Input placeholder='如:底薪3000、全勤500、加班费1.5倍'/>
           </Form.Item>
           <Form.Item
             label='备注'
@@ -940,21 +1062,42 @@ const Task = () => {
             <TextArea placeholder='请输入任务包简介' rows={4} />
           </Form.Item>
           <Form.Item
-            label='领取日期'
+            label={
+              <span>
+                领取日期
+                <Tooltip title="指任务包的领取日期、具体哪天拿到的任务包数据">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
             name="get_task_date"
             hidden={delay_date_status}
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='延期日期'
+            label={
+              <span>
+                延期日期
+                <Tooltip title="指任务包未按预期日期完成、延期至那天完成">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
             name="delay_date"
             hidden={delay_date_status}
           >
             <DatePicker placeholder={['请选择时间']} style={{width:'200px'}}/>
           </Form.Item>
           <Form.Item
-            label='是否完成交付'
+            label={
+              <span>
+                是否完成交付
+                <Tooltip title="完成交付给甲方的日期">
+                  <InfoCircleOutlined style={{ marginLeft: 4, color: '#999' }} />
+                </Tooltip>
+              </span>
+            }
             name="is_delivery"
             hidden={delay_date_status}
           >
@@ -1138,7 +1281,7 @@ const Task = () => {
             <Input variant="borderless" disabled={true}/>
           </Form.Item>
           <Form.Item
-            label='下方单价'
+            label='下放单价'
             name="price"
           >
             <Input variant="borderless" disabled={true}/>
