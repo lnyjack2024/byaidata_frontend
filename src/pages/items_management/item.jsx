@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:33:58
- * @LastEditTime: 2025-03-04 11:43:31
+ * @LastEditTime: 2025-03-13 15:09:10
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -251,14 +251,12 @@ const Item = () => {
       fixed: 'left'
     },
     {
-      title: '业务线',
-      dataIndex: 'service_line',
-      fixed: 'left'
-    },
-    {
       title: '基地',
       dataIndex: 'base',
-      fixed: 'left'
+    },
+    {
+      title: '业务线',
+      dataIndex: 'service_line',
     },
     {
       title: '业务负责人',
@@ -370,7 +368,7 @@ const Item = () => {
     {
       title: '操作',
       key: 'operation',
-      fixed: 'right',
+      // fixed: 'right',
       render:(rowData)=>{
         if(rowData.children){
           return (
