@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-02-20 13:38:43
+ * @LastEditTime: 2025-03-17 16:42:44
  */
 
 import React, { useEffect, useState } from 'react'
@@ -644,12 +644,12 @@ const Roster = () => {
       label: "濮阳",
       children: [
         {
-          value: "恒丰中央广场B座2201室",
-          label: "恒丰中央广场B座2201室",
+          value: "恒丰中央广场B座",
+          label: "恒丰中央广场B座",
         },
         {
-          value: "崛起时代A座1006室",
-          label: "崛起时代A座1006室",
+          value: "崛起时代A座",
+          label: "崛起时代A座",
         },
       ],
     },
