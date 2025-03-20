@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wangyonghong
  * @Date: 2024-11-18 13:13:51
- * @LastEditTime: 2024-12-02 15:08:40
+ * @LastEditTime: 2025-03-18 14:12:32
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, RedoOutlined} from '@ant-design/icons';
@@ -95,7 +95,7 @@ const Logs = () => {
               </Col>
               <Col span={6}>
                 <Form.Item  >
-                  <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />}> 重置 </Button>&nbsp;
+                  <Button onClick={ handReset } type='primary' htmlType='button' icon={<RedoOutlined />} style={{backgroundColor: "#808080",color:'white'}}> 重置 </Button>&nbsp;
                   <Button onClick={ handSearch } type='primary' htmlType='submit' icon={<SearchOutlined />}> 查询 </Button>
                 </Form.Item>
               </Col>
