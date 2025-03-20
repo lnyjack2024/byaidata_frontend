@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-03-19 16:22:37
+ * @LastEditTime: 2025-03-20 16:45:12
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -256,6 +256,10 @@ const Home = () => {
                   label: '项目人员招聘',
               },
               {
+                key: '/items/behavior',
+                label: '行为分列表',
+            },
+              {
                   key: '/items/account',
                   label: '对账列表',
               }
@@ -271,6 +275,25 @@ const Home = () => {
                   label: '任务包列表',
               }
           ]
+      },
+      {
+        key: '/clocking',
+        label: '考勤管理',
+        icon: <BoxPlotOutlined />,
+        children: [
+            {
+                key: '/clocking/clocking_search',
+                label: '考勤数据查询',
+            },
+            {
+                key: '/clocking/clocking_add',
+                label: '考勤数据录入',
+            },
+            {
+                key: '/clocking/clocking_edit',
+                label: '考勤数据修改',
+            },
+        ]
       },
       {
         key: '/train',
@@ -379,6 +402,10 @@ const Home = () => {
                     label: '项目人员招聘',
                 },
                 {
+                    key: '/items/behavior',
+                    label: '行为分列表',
+                },
+                {
                     key: '/items/account',
                     label: '对账列表',
                 }
@@ -395,6 +422,25 @@ const Home = () => {
                 }
             ]
         },
+        {
+            key: '/clocking',
+            label: '考勤管理',
+            icon: <BoxPlotOutlined />,
+            children: [
+                {
+                    key: '/clocking/clocking_search',
+                    label: '考勤数据查询',
+                },
+                {
+                    key: '/clocking/clocking_add',
+                    label: '考勤数据录入',
+                },
+                {
+                    key: '/clocking/clocking_edit',
+                    label: '考勤数据修改',
+                },
+            ]
+          },
         {
             key: '/train',
             label: '培训管理',
@@ -577,6 +623,10 @@ const Home = () => {
                     label: '项目人员招聘',
                 },
                 {
+                    key: '/items/behavior',
+                    label: '行为分列表',
+                },
+                {
                     key: '/items/account',
                     label: '对账列表',
                 }
@@ -593,6 +643,25 @@ const Home = () => {
                 }
             ]
         },
+        {
+            key: '/clocking',
+            label: '考勤管理',
+            icon: <BoxPlotOutlined />,
+            children: [
+                {
+                    key: '/clocking/clocking_search',
+                    label: '考勤数据查询',
+                },
+                {
+                    key: '/clocking/clocking_add',
+                    label: '考勤数据录入',
+                },
+                {
+                    key: '/clocking/clocking_edit',
+                    label: '考勤数据修改',
+                },
+            ]
+          },
         {
             key: '/train',
             label: '培训管理',
@@ -704,6 +773,10 @@ const Home = () => {
                     label: '项目人员招聘',
                 },
                 {
+                    key: '/items/behavior',
+                    label: '行为分列表',
+                },
+                {
                     key: '/items/account',
                     label: '对账列表',
                 }
@@ -720,6 +793,25 @@ const Home = () => {
                 }
             ]
         },
+        {
+            key: '/clocking',
+            label: '考勤管理',
+            icon: <BoxPlotOutlined />,
+            children: [
+                {
+                    key: '/clocking/clocking_search',
+                    label: '考勤数据查询',
+                },
+                {
+                    key: '/clocking/clocking_add',
+                    label: '考勤数据录入',
+                },
+                {
+                    key: '/clocking/clocking_edit',
+                    label: '考勤数据修改',
+                },
+            ]
+          },
         {
             key: '/train',
             label: '培训管理',
@@ -792,6 +884,10 @@ const Home = () => {
                     label: '项目人员招聘',
                 },
                 {
+                    key: '/items/behavior',
+                    label: '行为分列表',
+                },
+                {
                     key: '/items/account',
                     label: '对账列表',
                 }
@@ -808,6 +904,25 @@ const Home = () => {
                 }
             ]
         },
+        {
+            key: '/clocking',
+            label: '考勤管理',
+            icon: <BoxPlotOutlined />,
+            children: [
+                {
+                    key: '/clocking/clocking_search',
+                    label: '考勤数据查询',
+                },
+                {
+                    key: '/clocking/clocking_add',
+                    label: '考勤数据录入',
+                },
+                {
+                    key: '/clocking/clocking_edit',
+                    label: '考勤数据修改',
+                },
+            ]
+          },
         {
             key: '/config',
             label: '配置管理',
