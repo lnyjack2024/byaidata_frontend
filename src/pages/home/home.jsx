@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-02-07 12:38:05
+ * @LastEditTime: 2025-03-19 16:22:37
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -19,7 +19,8 @@ import { AccountBookOutlined,
          SettingOutlined,
          ClusterOutlined,
          FileTextOutlined,
-         InsertRowLeftOutlined
+         InsertRowLeftOutlined,
+         BoxPlotOutlined
        } from '@ant-design/icons';
 const { Header, Sider, Content } = Layout;
 
@@ -56,23 +57,9 @@ const Home = () => {
                   key: '/person/black',
                   label: '人员花名册-黑名单',
               },
-              {
-                  key: '/person/clocking',
-                  label: '人员考勤列表',
-              }
           ]
       },
-      {
-          key: '/train',
-          label: '培训管理',
-          icon: <InsertRowLeftOutlined />,
-          children: [
-              {
-                  key: '/train/trainer',
-                  label: '培训师列表',
-              }
-          ]
-      },
+   
       {
           key: '/items',
           label: '项目管理',
@@ -83,8 +70,12 @@ const Home = () => {
                   label: '项目列表'
               },
               {
-                  key: '/person/portrait',
+                  key: '/items/portrait',
                   label: '项目人员招聘',
+              },
+              {
+                  key: '/items/behavior',
+                  label: '行为分列表',
               },
               {
                   key: '/items/account',
@@ -102,6 +93,36 @@ const Home = () => {
                   label: '任务包列表',
               }
           ]
+      },
+      {
+        key: '/clocking',
+        label: '考勤管理',
+        icon: <BoxPlotOutlined />,
+        children: [
+            {
+                key: '/clocking/clocking_search',
+                label: '考勤数据查询',
+            },
+            {
+                key: '/clocking/clocking_add',
+                label: '考勤数据录入',
+            },
+            {
+                key: '/clocking/clocking_edit',
+                label: '考勤数据修改',
+            },
+        ]
+      },
+      {
+        key: '/train',
+        label: '培训管理',
+        icon: <InsertRowLeftOutlined />,
+        children: [
+            {
+                key: '/train/trainer',
+                label: '培训师列表',
+            }
+        ]
       },
       {
           key: '/finance',
@@ -219,23 +240,8 @@ const Home = () => {
                   key: '/person/black',
                   label: '人员花名册-黑名单',
               },
-              {
-                  key: '/person/clocking',
-                  label: '人员考勤列表',
-              },
           ]
       },
-      {
-        key: '/train',
-        label: '培训管理',
-        icon: <InsertRowLeftOutlined />,
-        children: [
-            {
-                key: '/train/trainer',
-                label: '培训师列表',
-            }
-        ]
-    },
       {
           key: '/items',
           label: '项目管理',
@@ -266,6 +272,17 @@ const Home = () => {
               }
           ]
       },
+      {
+        key: '/train',
+        label: '培训管理',
+        icon: <InsertRowLeftOutlined />,
+        children: [
+            {
+                key: '/train/trainer',
+                label: '培训师列表',
+            }
+        ]
+    },
       {
           key: '/finance',
           label: '财务管理',
@@ -345,23 +362,9 @@ const Home = () => {
                     key: '/person/black',
                     label: '人员花名册-黑名单',
                 },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
             ]
         },
-        {
-            key: '/train',
-            label: '培训管理',
-            icon: <InsertRowLeftOutlined />,
-            children: [
-                {
-                    key: '/train/trainer',
-                    label: '培训师列表',
-                }
-            ]
-        },
+        
         {
             key: '/items',
             label: '项目管理',
@@ -389,6 +392,17 @@ const Home = () => {
                 {
                     key: '/tasks/task',
                     label: '任务包列表',
+                }
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
+                {
+                    key: '/train/trainer',
+                    label: '培训师列表',
                 }
             ]
         },
@@ -471,10 +485,6 @@ const Home = () => {
                     key: '/person/black',
                     label: '人员花名册-黑名单',
                 },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
             ]
         },
         {
@@ -551,21 +561,6 @@ const Home = () => {
                     key: '/person/black',
                     label: '人员花名册-黑名单',
                 },
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
-            ]
-        },
-        {
-            key: '/train',
-            label: '培训管理',
-            icon: <InsertRowLeftOutlined />,
-            children: [
-                {
-                    key: '/train/trainer',
-                    label: '培训师列表',
-                }
             ]
         },
         {
@@ -595,6 +590,17 @@ const Home = () => {
                 {
                     key: '/tasks/task',
                     label: '任务包列表',
+                }
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
+                {
+                    key: '/train/trainer',
+                    label: '培训师列表',
                 }
             ]
         },
@@ -683,17 +689,7 @@ const Home = () => {
             icon: <PieChartOutlined />,
             label: '首页',
         },
-        {
-            key: '/train',
-            label: '培训管理',
-            icon: <InsertRowLeftOutlined />,
-            children: [
-                {
-                    key: '/train/trainer',
-                    label: '培训师列表',
-                }
-            ]
-        },
+        
         {
             key: '/items',
             label: '项目管理',
@@ -721,6 +717,17 @@ const Home = () => {
                 {
                     key: '/tasks/task',
                     label: '任务包列表',
+                }
+            ]
+        },
+        {
+            key: '/train',
+            label: '培训管理',
+            icon: <InsertRowLeftOutlined />,
+            children: [
+                {
+                    key: '/train/trainer',
+                    label: '培训师列表',
                 }
             ]
         },
@@ -770,17 +777,6 @@ const Home = () => {
             key: '/page',
             icon: <PieChartOutlined />,
             label: '首页',
-        },
-        {
-            key: '/person',
-            label: '人员管理',
-            icon: <UsergroupAddOutlined />,
-            children: [
-                {
-                    key: '/person/clocking',
-                    label: '人员考勤列表',
-                },
-            ]
         },
         {
             key: '/items',
