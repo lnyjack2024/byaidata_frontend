@@ -1,20 +1,19 @@
 /*
- * @Description: 
+ * @Description: 旧版-考勤模块
  * @Author: wangyonghong
  * @Date: 2024-09-30 14:55:23
- * @LastEditTime: 2024-12-19 11:39:19
+ * @LastEditTime: 2025-03-20 15:47:43
  */
 import React, { useRef, useEffect, useState } from 'react'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Table, Select, Col, Row, Tabs, DatePicker, message } from 'antd'
+import { Button, Form, Input, Table, Col, Row, Tabs, DatePicker, message } from 'antd'
 import dayjs from 'dayjs';
 import { HotTable } from "@handsontable/react";
 import { addClassesToRows } from "../handsontable/hooksCallbacks.ts";
 import 'handsontable/dist/handsontable.full.min.css';
 import '../common_css/style.css'
-import { reqGetClockingDatas, reqAddClockingDatas, reqEditClockingDatas, reqDeleteClockingDatas, reqGetBaseDatas } from '../../api/index'
+import { reqGetClockingDatas, reqAddClockingDatas, reqEditClockingDatas, reqDeleteClockingDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:4},wrapperCol:{span:15} }
-const { Option } = Select;
 
 const Clocking = () => {
   const hotRef = useRef(null);
@@ -22,19 +21,12 @@ const Clocking = () => {
   const [ data, setData ] = useState([])
   const [ table_loading, setTableLoading ] = useState(true)
   const [ height, setHeight ] = useState(0);
-  const [ baseData, setBaseData ] = useState([])
   const [ form ] = Form.useForm();
   
   useEffect(() => {
     getTableData();
-    getBaseData()
-    setHeight(window.innerHeight * 0.7); //动态设置表格高度为屏幕的高度（例如：80%）
+    setHeight(window.innerHeight * 0.6); //动态设置表格高度为屏幕的高度（例如：80%）
   },[])
-
-  const getBaseData = async () => {
-    const reqData = await reqGetBaseDatas()
-    setBaseData(reqData.data)
-  }
 
   const getTableData = async () => {
     const reqData = await reqGetClockingDatas()
@@ -110,36 +102,10 @@ const Clocking = () => {
       fixed: 'left'
     },
     {
-      title: '基地',
-      dataIndex: 'base',
-      width: 90,
-      fixed: 'left'
-    },
-    {
-      title: '所属规则',
+      title: '项目-任务包',
       dataIndex: 'item',
-      width: 150,
+      width: 250,
       fixed: 'left'
-    },
-    {
-      title: '应出勤(天)',
-      dataIndex: 'should_attendance',
-      width: 100,
-    },
-    {
-      title: '实际出勤(天)',
-      dataIndex: 'actual_attendance',
-      width: 120,
-    },
-    {
-      title: '病假(天)',
-      dataIndex: 'sick_leave',
-      width: 100,
-    },
-    {
-      title: '事假(天)',
-      dataIndex: 'things_leave',
-      width: 100,
     },
     {
       title: '1号',
@@ -330,12 +296,7 @@ const Clocking = () => {
               columns={[
                 { title: "姓名", width: 100 },      
                 { title: "年月", width: 100 },      
-                { title: "基地", width: 100 },    
-                { title: "所属规则", width: 200 },      
-                { title: "应出勤(天)", width: 100 },      
-                { title: "实际出勤(天)", width: 100 },      
-                { title: "病假(天)", width: 100 },      
-                { title: "事假(天)", width: 100 },      
+                { title: "项目-任务包", width: 200 },      
                 { title: "1号", width: 70 },      
                 { title: "2号", width: 70 },      
                 { title: "3号", width: 70 },      
@@ -397,8 +358,7 @@ const Clocking = () => {
             <HotTable
               ref={hotRef1}
               data={data}
-              colHeaders={["ID","姓名","年月","基地","所属规则","应出勤(天)",
-              "实际出勤(天)","病假(天)","事假(天)","1号","2号","3号",
+              colHeaders={["ID","姓名","年月","项目-任务包","1号","2号","3号",
               "4号","5号","6号","7号","8号","9号","10号","11号","12号",
               "13号","14号","15号","16号","17号","18号","19号","20号",
               "21号","22号","23号","24号","25号","26号","27号","28号",
@@ -449,28 +409,6 @@ const Clocking = () => {
                   style={{width:'200px'}}
                   allowClear={false}
                 />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item 
-                name="base" 
-                label="基地" 
-                initialValue={'上海'}
-                {...itemLayout}
-                rules={[{required:true}]}
-              >
-               <Select
-                    placeholder='请输入基地'
-                    style={{textAlign:'left',width:'250px'}}
-                    allowClear={false}                  >
-                  {
-                    baseData?.map((option)=>(
-                      <Option key={option.id} value={option.name}>
-                        {option.name}
-                      </Option>
-                    ))
-                  }
-                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
