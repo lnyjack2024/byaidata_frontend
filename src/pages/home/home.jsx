@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-03-20 16:45:12
+ * @LastEditTime: 2025-04-08 11:04:29
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -105,11 +105,11 @@ const Home = () => {
             },
             {
                 key: '/clocking/clocking_add',
-                label: '考勤数据录入',
+                label: '人员信息录入',
             },
             {
                 key: '/clocking/clocking_edit',
-                label: '考勤数据修改',
+                label: '人员考勤数据录入',
             },
         ]
       },
@@ -287,11 +287,11 @@ const Home = () => {
             },
             {
                 key: '/clocking/clocking_add',
-                label: '考勤数据录入',
+                label: '人员信息录入',
             },
             {
                 key: '/clocking/clocking_edit',
-                label: '考勤数据修改',
+                label: '人员考勤数据录入',
             },
         ]
       },
@@ -433,11 +433,11 @@ const Home = () => {
                 },
                 {
                     key: '/clocking/clocking_add',
-                    label: '考勤数据录入',
+                    label: '人员信息录入',
                 },
                 {
                     key: '/clocking/clocking_edit',
-                    label: '考勤数据修改',
+                    label: '人员考勤数据录入',
                 },
             ]
           },
@@ -654,11 +654,11 @@ const Home = () => {
                 },
                 {
                     key: '/clocking/clocking_add',
-                    label: '考勤数据录入',
+                    label: '人员信息录入',
                 },
                 {
                     key: '/clocking/clocking_edit',
-                    label: '考勤数据修改',
+                    label: '人员考勤数据录入',
                 },
             ]
           },
@@ -804,11 +804,11 @@ const Home = () => {
                 },
                 {
                     key: '/clocking/clocking_add',
-                    label: '考勤数据录入',
+                    label: '人员信息录入',
                 },
                 {
                     key: '/clocking/clocking_edit',
-                    label: '考勤数据修改',
+                    label: '人员考勤数据录入',
                 },
             ]
           },
@@ -915,11 +915,11 @@ const Home = () => {
                 },
                 {
                     key: '/clocking/clocking_add',
-                    label: '考勤数据录入',
+                    label: '人员信息录入',
                 },
                 {
                     key: '/clocking/clocking_edit',
-                    label: '考勤数据修改',
+                    label: '人员考勤数据录入',
                 },
             ]
           },
