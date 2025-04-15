@@ -2,7 +2,7 @@
  * @Description: 考勤数据录入
  * @Author: wangyonghong
  * @Date: 2025-03-19 15:53:17
- * @LastEditTime: 2025-03-21 13:39:33
+ * @LastEditTime: 2025-04-08 10:45:42
  */
 import React, { useRef, useState, useEffect } from 'react'
 import { Button, message } from 'antd'
@@ -108,7 +108,7 @@ export default function ClockingAdd() {
               type="primary" 
               icon={<PlusOutlined />} 
               onClick={saveClickCallback}>
-              新增
+              提交考勤数据
             </Button>
           </div>
         </div>
