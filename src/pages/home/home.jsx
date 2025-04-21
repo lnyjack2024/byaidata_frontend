@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-04-08 11:04:29
+ * @LastEditTime: 2025-04-16 10:22:02
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -191,7 +191,7 @@ const Home = () => {
           label: '权限管理',
           children: [
               {
-                  key: '/auth/user',
+                  key: '/auth/operator',
                   label: '操作员列表',
               },
               {
@@ -740,7 +740,7 @@ const Home = () => {
             label: '权限管理',
             children: [
                 {
-                    key: '/auth/user',
+                    key: '/auth/operator',
                     label: '操作员列表',
                 },
                 {
