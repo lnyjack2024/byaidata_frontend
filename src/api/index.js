@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2025-03-03 15:32:44
+ * @LastEditTime: 2025-04-17 17:19:42
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -11,13 +11,13 @@ import { BASE } from '../utils/networkUrl'
 export const reqLogin = (data) => reqApi( BASE + '/login', data, 'POST' )
 
 //权限管理-操作员列表-查询
-export const reqGetUserDatas = (data) => reqApi( BASE + '/user/search', data, 'GET')
+export const reqGetUserDatas = (data) => reqApi( BASE + '/operator/search', data, 'GET')
 
 //权限管理-操作员列表-新增
-export const reqAddUserDatas = (data) => reqApi( BASE + '/user/add', data, 'POST')
+export const reqAddUserDatas = (data) => reqApi( BASE + '/operator/add', data, 'POST')
 
 //权限管理-操作员列表-删除
-export const reqDeleteUserDatas = (data) => reqApi( BASE + '/user/delete', data, 'POST')
+export const reqDeleteUserDatas = (data) => reqApi( BASE + '/operator/delete', data, 'POST')
 
 //权限管理-角色列表-查询
 export const reqGetRoleDatas = () => reqApi( BASE + '/role/search', {}, 'GET')
@@ -246,4 +246,10 @@ export const reqDeleteTrainersDatas = (data) => reqApi( BASE + '/config/trainers
 
 //修改密码
 export const reqEditPasswordDatas = (data) => reqApi( BASE + '/user/set_password', data, 'POST')
+
+//项目管理-行为分列表-查询
+export const reqGetBehaviorDatas = (data) => reqApi( BASE + '/items/behavior/search', data, 'GET')
+
+//项目管理-行为分列表-新增
+export const reqAddBehaviorDatas = (data) => reqApi( BASE + '/items/behavior/add', data, 'POST')
 
