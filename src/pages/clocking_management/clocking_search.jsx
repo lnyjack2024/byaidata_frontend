@@ -2,24 +2,27 @@
  * @Description: 考勤数据查询
  * @Author: wangyonghong
  * @Date: 2025-03-19 15:51:34
- * @LastEditTime: 2025-03-21 15:37:52
+ * @LastEditTime: 2025-04-15 16:44:21
  */
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined, VerticalAlignBottomOutlined, RedoOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Table, Col, Row, DatePicker, Tooltip } from 'antd'
+import { Button, Form, Select, Table, Col, Row, DatePicker, Tooltip } from 'antd'
 import dayjs from 'dayjs';
 import '../common_css/style.css'
 import { BASE } from '../../utils/networkUrl'
 import storageUtils from '../../utils/storageUtils'
-import { reqGetClockingDatas } from '../../api/index'
+import { reqGetClockingDatas, reqGetBaseDatas } from '../../api/index'
 const itemLayout = { labelCol:{span:4},wrapperCol:{span:15} }
+const { Option } = Select;
 
 const ClockinSearch = () => {
   const [ data, setData ] = useState([])
+  const [ baseData, setBaseData ] = useState([])
   const [ table_loading, setTableLoading ] = useState(true)
   const [ form ] = Form.useForm();
 
   useEffect(() => {
+    getBaseData()
     const getTableData = async () => {
       form.validateFields().then( async (val)=>{
         val.years = dayjs(val.years).format('YYYY-MM')
@@ -30,6 +33,11 @@ const ClockinSearch = () => {
     }
     getTableData();
   },[form])
+
+  const getBaseData = async () => {
+    const reqData = await reqGetBaseDatas()
+    setBaseData(reqData.data)
+  }
 
   const handSearch = () => {
     form.validateFields().then( async (val)=>{
@@ -81,6 +89,7 @@ const ClockinSearch = () => {
     {
       title: '基地',
       dataIndex: 'base',
+      fixed: 'left'
     },
     {
       title: '组长',
@@ -96,19 +105,19 @@ const ClockinSearch = () => {
     },
     {
       title: '实际出勤天数',
-      dataIndex: 'planned_work_days',
+      dataIndex: 'real_work_days',
     },
     {
       title: '请假调休天数',
-      dataIndex: 'planned_work_days',
+      dataIndex: 'leave_adjustment_days',
     },
     {
       title: '加班总工时',
-      dataIndex: 'planned_work_days',
+      dataIndex: 'total_overtime_hours',
     },
     {
       title: '培训期天数',
-      dataIndex: 'planned_work_days',
+      dataIndex: 'training_days',
     },
     {
       title: (
@@ -119,7 +128,7 @@ const ClockinSearch = () => {
           &nbsp;在项天数
         </span>
       ),
-      dataIndex: 'planned_work_days',
+      dataIndex: 'days_in_works',
     },
     {
       title: '1号',
@@ -271,8 +280,19 @@ const ClockinSearch = () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="name" label="姓名" {...itemLayout}>
-                <Input placeholder='请输入姓名' />
+              <Form.Item name="base" label="基地" {...itemLayout}>
+                <Select
+                  placeholder='请输入基地'
+                  style={{textAlign:'left'}}
+                >
+                {baseData?.filter((option) => option.name !== "全部")
+                  ?.map((option) => (
+                    <Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Option>
+                  ))
+                }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={8}>

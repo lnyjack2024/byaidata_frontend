@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2025-03-19 16:10:55
+ * @LastEditTime: 2025-04-16 10:22:08
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home                from '../pages/home/home'
@@ -23,7 +23,7 @@ import ClockingAdd         from '../pages/clocking_management/clocking_add'
 import ClockingEdit        from '../pages/clocking_management/clocking_edit'
 // import Settle              from '../pages/financial_management/settle'
 import Performance_xhs     from '../pages/performance_management/performance_xhs'
-import User                from '../pages/auth_management/user'
+import Users               from '../pages/auth_management/user'
 import Role                from '../pages/auth_management/role'
 import ServiceLine         from '../pages/auth_management/service_line'
 import Base                from '../pages/auth_management/base'
@@ -190,8 +190,8 @@ const routes = [
                 path:'auth',
                 children:[
                     {
-                        path:'user',
-                        Component:User,
+                        path:'operator',
+                        Component:Users,
                     },
                     {
                         path:'role',
