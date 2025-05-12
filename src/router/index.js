@@ -2,7 +2,7 @@
  * @Description: 路由配置文件
  * @Author: wangyonghong
  * @Date: 2024-09-30 10:15:55
- * @LastEditTime: 2025-04-16 10:22:08
+ * @LastEditTime: 2025-04-24 11:54:02
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Home                from '../pages/home/home'
@@ -21,8 +21,8 @@ import Task                from '../pages/task_package_management/task'
 import ClockingSearch      from '../pages/clocking_management/clocking_search'
 import ClockingAdd         from '../pages/clocking_management/clocking_add'
 import ClockingEdit        from '../pages/clocking_management/clocking_edit'
-// import Settle              from '../pages/financial_management/settle'
-import Performance_xhs     from '../pages/performance_management/performance_xhs'
+import Settle              from '../pages/financial_management/settle'
+import Performance         from '../pages/performance_management/performance'
 import Users               from '../pages/auth_management/user'
 import Role                from '../pages/auth_management/role'
 import ServiceLine         from '../pages/auth_management/service_line'
@@ -131,21 +131,21 @@ const routes = [
                     }
                 ]
             },
-            // {
-            //     path:'finance',
-            //     children:[
-            //         {
-            //             path:'settle',
-            //             Component:Settle,
-            //         }
-            //     ]
-            // },
+            {
+                path:'finance',
+                children:[
+                    {
+                        path:'settle',
+                        Component:Settle,
+                    }
+                ]
+            },
             {
                 path:'performances',
                 children:[
                     {
-                        path:'Performance_xhs',
-                        Component:Performance_xhs,
+                        path:'Performance',
+                        Component:Performance,
                     }
                 ]
             },
