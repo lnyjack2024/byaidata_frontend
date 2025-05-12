@@ -2,7 +2,7 @@
  * @Description: 前端请求api集合
  * @Author: wangyonghong
  * @Date: 2024-09-25 09:51:56
- * @LastEditTime: 2025-04-17 17:19:42
+ * @LastEditTime: 2025-04-28 15:43:09
  */
 import reqApi from "./requestApi";
 import { BASE } from '../utils/networkUrl'
@@ -193,6 +193,9 @@ export const reqGetCheckDatas = (data) => reqApi( BASE + '/tasks/task/check', da
 //任务包管理-质检-新增
 export const reqAddCheckDatas = (data) => reqApi( BASE + '/tasks/task/check_add', data, 'POST')
 
+//任务包管理-每日作业数据-新增
+export const reqAddTaskDayDatas = (data) => reqApi( BASE + '/tasks/task/day_add', data, 'POST')
+
 //任务包进度
 // export const reqTaskProgressDatas = (data) => reqApi( BASE + '/tasks/task/progress', data, 'GET')
 
@@ -252,4 +255,8 @@ export const reqGetBehaviorDatas = (data) => reqApi( BASE + '/items/behavior/sea
 
 //项目管理-行为分列表-新增
 export const reqAddBehaviorDatas = (data) => reqApi( BASE + '/items/behavior/add', data, 'POST')
+
+//绩效管理-项目工时
+export const reqGetTaskItemTimeDatas = (data) => reqApi( BASE + '/tasks/task/item_time_search', data, 'GET')
+
 
