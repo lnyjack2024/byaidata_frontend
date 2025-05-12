@@ -2,19 +2,22 @@
  * @Description: 任务包管理
  * @Author: wangyonghong
  * @Date: 2024-09-30 20:37:02
- * @LastEditTime: 2025-03-12 13:39:47
+ * @LastEditTime: 2025-05-12 13:38:36
  */
-import React, { useEffect, useState } from 'react'
-import { SearchOutlined, RedoOutlined, UploadOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Popconfirm, Divider, Upload, Tooltip } from 'antd'
+import React, { useRef, useEffect, useState } from 'react'
+import { SearchOutlined, RedoOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Table, Select, message, Col, Row, DatePicker, InputNumber, Divider, Tooltip, Tabs } from 'antd'
 import dayjs from 'dayjs';
-import { BASE } from '../../utils/networkUrl'
+// import { BASE } from '../../utils/networkUrl'
 import '../common_css/style.css'
+import { HotTable } from "@handsontable/react";
+import { addClassesToRows } from "../handsontable/hooksCallbacks.ts";
+import 'handsontable/dist/handsontable.full.min.css';
 import storageUtils from '../../utils/storageUtils'
 import { reqGetTaskDatas,
          reqAddTaskDatas,    
          reqEditTaskDatas, 
-         reqDeleteTaskDatas,
+        //  reqDeleteTaskDatas,
          reqGetTaskEffectDetailDatas,
          reqGetCheckDatas,
          reqAddCheckDatas,
@@ -24,7 +27,7 @@ import { reqGetTaskDatas,
          reqGetItemsDatas,
          reqGetBaseDatas,
          reqGetServiceLineDatas,
-         reqGetServiceLineDatas_,
+         reqGetServiceLineDatas_,reqAddTaskDayDatas
        } from '../../api/index'
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -35,6 +38,8 @@ const itemLayout = {
 const { Option } = Select;
 
 const Task = () => {
+  const hotRef = useRef(null);
+  const [ height, setHeight ] = useState(0);
   const [ modalType, setModalType ] = useState(0)
   const [ isModalOpen, setIsModalOpen ] = useState(false)
   const [ isEffectModalOpen, setIsEffectModalOpen ] = useState(false)
@@ -45,6 +50,8 @@ const Task = () => {
   const [ check_data, setCheckDatas ] = useState([])
   const [ id, setId ] = useState(0)
   const [ task_id, setTaskId ] = useState(0)
+  const [ _item, setItem ] = useState('')
+  const [ _base, setBase ] = useState('')
   const [ table_loading, setTableLoading ] = useState(true)
   const [ delay_date_status, setDelayDateStatus ] = useState(true)
   const [ settlement_type, setSettlementTypeData ] = useState([])
@@ -66,7 +73,7 @@ const Task = () => {
   const [ messageApi, contextHolder ] = message.useMessage();
 
   useEffect(() => {
-    // getTableData()
+    setHeight(window.innerHeight * 0.5); //动态设置表格高度为屏幕的高度（例如：80%）
     getSettlementTypeData()
     getDeliveryRequirementData()
     _getServiceLineData()
@@ -177,6 +184,8 @@ const Task = () => {
       setId(rowData?rowData.id:'')
     }else if(type === 'effect'){
       setTaskId(rowData.id)
+      setItem(rowData.item)
+      setBase(rowData.base)
       setIsEffectModalOpen(!isEffectModalOpen)
       form_effect.setFieldsValue(rowData)
       reqGetEffectDetailDatas({id:rowData.id})
@@ -281,15 +290,15 @@ const Task = () => {
     form.resetFields()
   }
   
-  const handDelete = async (e) => {
-    const result = await reqDeleteTaskDatas(e)
-    if(result.status === 1){
-      getTableData()
-      message.info('已暂停...')
-    }else{
-      message.error('暂停失败...')
-    }
-  }
+  // const handDelete = async (e) => {
+  //   const result = await reqDeleteTaskDatas(e)
+  //   if(result.status === 1){
+  //     getTableData()
+  //     message.info('已暂停...')
+  //   }else{
+  //     message.error('暂停失败...')
+  //   }
+  // }
 
   const handleCheckCancle = () => {
     setIsModalCheckOpen(false)
@@ -345,70 +354,112 @@ const Task = () => {
     }
   }
   
+  const saveClickCallback = async () => {
+    const hot = hotRef.current?.hotInstance;
+    const item = _item
+    const base = _base
+    const _task_id = task_id
+    const result = await reqAddTaskDayDatas({
+      data:hot?.getData(),
+      item:item,
+      base:base,
+      task_id:_task_id
+    })
+    if(result.status === 1){
+      message.info('新增成功...')
+      hot.loadData([])
+    }else{
+      message.error('新增失败...')
+    }
+  };
+
+  const handleTabChange = (key) => {
+    if(key === '1'){
+      reqGetEffectDetailDatas({id:task_id})
+    }
+  };
+
+  //当月的日期
+  const yearMonthOptions = generateCurrentMonthOptions();
+  
+  function generateCurrentMonthOptions() {
+    const options = [];
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 注意：getMonth() 是 0~11，0代表1月
+  
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // 当月天数
+  
+    for (let day = 2; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const formatted = date.toISOString().split('T')[0]; // 格式化成 'YYYY-MM-DD'
+      options.push(formatted);
+    }
+  
+    return options;
+  }
+  
   const effect_column = [
     {
       title: '日期',
       dataIndex: 'date',
-      fixed: 'left'
+      type: 'dropdown',
+      width: 120,
+      source: yearMonthOptions 
+    },
+    {
+      title: '时间段',
+      dataIndex: 'time_frame',
+      width: 150
     },
     {
       title: '姓名',
       dataIndex: 'worker_name',
-      fixed: 'left'
+      width: 110
     },
     {
-      title: '工号',
-      dataIndex: 'worker_number',
-      fixed: 'left'
+      title: '标注量级',
+      dataIndex: 'work_amount'
     },
     {
-      title: '时段',
-      dataIndex: 'time_frame',
+      title: '完成量级',
+      dataIndex: 'completed_amount'
     },
     {
-      title: '标注量',
-      dataIndex: 'work_amount',
+      title: '质检量级',
+      dataIndex: 'quality_amount'
     },
     {
-      title: '完成量',
-      dataIndex: 'completed_amount',
+      title: '抽检总量',
+      dataIndex: 'spot_check_amount'
+    },
+    {
+      title: '错误总量',
+      dataIndex: 'error_amount'
     },
     {
       title: '正确率',
-      dataIndex: 'accuracy',
+      dataIndex: 'accuracy'
     },
     {
-      title: '错误量',
-      dataIndex: 'error_amount',
+      title: '生产工时',
+      dataIndex: 'task_hour'
     },
     {
-      title: '质检量',
-      dataIndex: 'quality_amount',
+      title: '非生产工时',
+      dataIndex: 'task_no_hour'
     },
     {
-      title: '返修量',
-      dataIndex: 'rework_amount',
+      title: '非生产工时备注',
+      dataIndex: 'task_no_hour_detail'
     },
     {
-      title: '任务工时',
-      dataIndex: 'task_hour',
+      title: '加班工时',
+      dataIndex: 'overtime'
     },
     {
-      title: '非任务工时',
-      dataIndex: 'task_no_hour',
-    },
-    {
-      title: '操作人',
-      dataIndex: 'user',
-    },
-    {
-      title: '操作时间',
-      dataIndex: 'create_time',
-      render:(create_time)=>{
-        return (
-          dayjs(create_time).format('YYYY-MM-DD HH:mm:ss')
-        )
-      }
+      title: '项目标准时效',
+      dataIndex: 'item_timeliness'
     }
   ];
 
@@ -445,31 +496,31 @@ const Task = () => {
     },
   ];
 
-  const props = {
-    name: 'file',
-    accept: ".xls,.xlsx",
-    action: `${BASE}/tasks/task/upload?task_id=${task_id}`,
-    headers: {
-      authorization: 'authorization-text',
-      'token': storageUtils.getToken()
-    },
-    onChange(info) {
-      if (info.file.status === 'done') {
-        if(info.file.response.status === 1){
-          message.success(`文件${info.file.name}导入成功`);
-          reqGetEffectDetailDatas({id:task_id})
-        }else if(info.file.response.status === 0){
-          message.error(`文件${info.file.name}导入失败`);
-        }else if(info.file.response.status === 3){
-          message.error(info.file.response.msg);
-        }
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name}上传失败`);
-      }
-    },
-  };
+  // const props = {
+  //   name: 'file',
+  //   accept: ".xls,.xlsx",
+  //   action: `${BASE}/tasks/task/upload?task_id=${task_id}`,
+  //   headers: {
+  //     authorization: 'authorization-text',
+  //     'token': storageUtils.getToken()
+  //   },
+  //   onChange(info) {
+  //     if (info.file.status === 'done') {
+  //       if(info.file.response.status === 1){
+  //         message.success(`文件${info.file.name}导入成功`);
+  //         reqGetEffectDetailDatas({id:task_id})
+  //       }else if(info.file.response.status === 0){
+  //         message.error(`文件${info.file.name}导入失败`);
+  //       }else if(info.file.response.status === 3){
+  //         message.error(info.file.response.msg);
+  //       }
+  //     } else if (info.file.status === 'error') {
+  //       message.error(`${info.file.name}上传失败`);
+  //     }
+  //   },
+  // };
   
-  const attachment = '/excel/task_detail_daily.xlsx'
+  // const attachment = '/excel/task_detail_daily.xlsx'
 
   const column = [
     {
@@ -582,28 +633,90 @@ const Task = () => {
       render:(rowData)=>{
           return (
             <div>
-              <Button onClick={()=> handClink('effect',rowData)}>人效</Button>&nbsp;&nbsp;
+              <Button onClick={()=> handClink('effect',rowData)}>每日作业数据</Button>&nbsp;&nbsp;
               { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('edit',rowData)}>编辑</Button> } &nbsp;&nbsp;
               <Button onClick={()=> handClink('check',rowData)}>质检</Button>&nbsp;&nbsp;
-              { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>生产报告</Button> }
-              <Popconfirm
+              {/* { storageUtils.getRoleName() === '组长' ? <></> : <Button onClick={()=> handClink('detail',rowData)}>生产报告</Button> } */}
+              {/* <Popconfirm
                 description='是否暂停?'
                 okText='确认'
                 cancelText='取消'
                 onConfirm={ () => handDelete(rowData)}
               >
                 {rowData.status === '已暂停' ? '' : <Button style={{marginLeft:'15px'}}>暂停</Button>}
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           )
       }
     }
   ];
 
+  const tabItems = [
+    {
+      key: '1',
+      label: '数据列表',
+      children: 
+      <div> 
+        <div style={{ width: '100%', height: '90%',overflow:'auto' }}>
+            <Table 
+              columns={ effect_column } 
+              dataSource={ effect_detail_data } 
+              rowKey={ data => data.id }  
+              // scroll={{ x: 'max-content', y: height }}
+              // loading={ table_loading }
+            />
+        </div>
+      </div>
+    },
+    {
+      key: '2',
+      label: '数据录入',
+      children: 
+      <div> 
+         <HotTable
+            ref={hotRef}
+            rowHeaders={true}
+            columns={effect_column}
+            height={height}
+            scrollable={true}
+            // dropdownMenu={true}
+            hiddenColumns={{
+              indicators: true
+            }}
+            contextMenu={true}
+            multiColumnSorting={true}
+            filters={true}
+            autoWrapRow={true}
+            autoWrapCol={true}
+            headerClassName="htCenter htMiddle"
+            beforeRenderer={addClassesToRows}
+            manualRowMove={true}
+            navigableHeaders={true}
+            minSpareRows={100}
+            // persistentState={true}
+            licenseKey="non-commercial-and-evaluation"
+        />
+        <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{marginLeft:'10px', marginTop:'20px'}}>
+            <span style={{color:'blue'}}>时间段 输入格式为: 09:00-12:00 或者 13:30-18:00</span>
+          </div>
+          <div style={{marginRight:'50px', marginTop:'20px'}}>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />} 
+              onClick={saveClickCallback}>
+              提交数据
+            </Button>
+          </div>
+        </div>
+      </div>
+    }
+  ];
+
   return (
     <div className='style'>
       <div className='flex-box'>
-      <Form form={form}
+        <Form form={form}
           className='flex-box-form'
           layout='inline'
           initialValues={{
@@ -1123,7 +1236,7 @@ const Task = () => {
         okText='确定'
         cancelText='取消'
         maskClosable={false}
-        width={'85%'}
+        width={'90%'}
         footer={null}
       >
         <Form
@@ -1153,7 +1266,7 @@ const Task = () => {
           </Form.Item>
         </Form>
         <Divider style={{color:'#1677ff',fontWeight:'bold'}}>作业人员每日作业数据</Divider>
-        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+        {/* <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
             <div>
               <Upload
                   showUploadList={false} 
@@ -1180,7 +1293,8 @@ const Task = () => {
             rowKey={ data => data.id }  
             scroll={{x: 'max-content'}}
           />
-        </div>
+        </div> */}
+        <Tabs type="card" items={tabItems} onChange={handleTabChange} />
       </Modal>
       <Modal
         open={isModalDetailOpen}

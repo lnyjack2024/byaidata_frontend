@@ -2,7 +2,7 @@
  * @Description: 登录展示页
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:31:50
- * @LastEditTime: 2025-04-16 10:22:02
+ * @LastEditTime: 2025-04-29 11:23:03
  */
 import React from 'react'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -114,6 +114,17 @@ const Home = () => {
         ]
       },
       {
+        key: '/performances',
+        label: '绩效管理',
+        icon: <ContainerOutlined />,
+        children: [
+            {
+                key: '/performances/performance',
+                label: '绩效源数据',
+            }
+        ]
+      },
+      {
         key: '/train',
         label: '培训管理',
         icon: <InsertRowLeftOutlined />,
@@ -135,17 +146,7 @@ const Home = () => {
               }
           ]
       },
-      {
-          key: '/performances',
-          label: '绩效管理',
-          icon: <ContainerOutlined />,
-          children: [
-              {
-                  key: '/performances/performance_xhs',
-                  label: '字节绩效列表',
-              }
-          ]
-      },
+      
       {
           key: '/config',
           label: '配置管理',
@@ -296,6 +297,17 @@ const Home = () => {
         ]
       },
       {
+        key: '/performances',
+        label: '绩效管理',
+        icon: <ContainerOutlined />,
+        children: [
+            {
+                key: '/performances/performance',
+                label: '绩效源数据',
+            }
+        ]
+      },
+      {
         key: '/train',
         label: '培训管理',
         icon: <InsertRowLeftOutlined />,
@@ -440,7 +452,18 @@ const Home = () => {
                     label: '人员考勤数据录入',
                 },
             ]
-          },
+        },
+        {
+            key: '/performances',
+            label: '绩效管理',
+            icon: <ContainerOutlined />,
+            children: [
+                {
+                    key: '/performances/performance',
+                    label: '绩效源数据',
+                }
+            ]
+        },
         {
             key: '/train',
             label: '培训管理',
@@ -661,7 +684,18 @@ const Home = () => {
                     label: '人员考勤数据录入',
                 },
             ]
-          },
+        },
+        {
+            key: '/performances',
+            label: '绩效管理',
+            icon: <ContainerOutlined />,
+            children: [
+                {
+                    key: '/performances/performance',
+                    label: '绩效源数据',
+                }
+            ]
+        },
         {
             key: '/train',
             label: '培训管理',
@@ -681,17 +715,6 @@ const Home = () => {
                 {
                     key: '/finance/settle',
                     label: '结算列表',
-                }
-            ]
-        },
-        {
-            key: '/performances',
-            label: '绩效管理',
-            icon: <ContainerOutlined />,
-            children: [
-                {
-                    key: '/performances/performance_xhs',
-                    label: '字节绩效列表',
                 }
             ]
         },
@@ -811,7 +834,18 @@ const Home = () => {
                     label: '人员考勤数据录入',
                 },
             ]
-          },
+        },
+        {
+            key: '/performances',
+            label: '绩效管理',
+            icon: <ContainerOutlined />,
+            children: [
+                {
+                    key: '/performances/performance',
+                    label: '绩效源数据',
+                }
+            ]
+        },
         {
             key: '/train',
             label: '培训管理',
@@ -922,7 +956,18 @@ const Home = () => {
                     label: '人员考勤数据录入',
                 },
             ]
-          },
+        },
+        {
+            key: '/performances',
+            label: '绩效管理',
+            icon: <ContainerOutlined />,
+            children: [
+                {
+                    key: '/performances/performance',
+                    label: '绩效源数据',
+                }
+            ]
+        },
         {
             key: '/config',
             label: '配置管理',
