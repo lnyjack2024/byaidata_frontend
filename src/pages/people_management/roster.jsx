@@ -2,7 +2,7 @@
  * @Description: 人员花名册
  * @Author: wangyonghong
  * @Date: 2024-09-29 16:00:53
- * @LastEditTime: 2025-03-17 16:42:44
+ * @LastEditTime: 2025-05-16 14:21:41
  */
 
 import React, { useEffect, useState } from 'react'
@@ -781,6 +781,10 @@ const Roster = () => {
                       label: '商务拓展专员',
                     },
                     {
+                      value: '数据交付总监',
+                      label: '数据交付总监',
+                    },
+                    {
                       value: 'CEO助理',
                       label: 'CEO助理',
                     },
@@ -1138,6 +1142,10 @@ const Roster = () => {
                   {
                     value: '商务拓展专员',
                     label: '商务拓展专员',
+                  },
+                  {
+                    value: '数据交付总监',
+                    label: '数据交付总监',
                   },
                   {
                     value: 'CEO助理',
